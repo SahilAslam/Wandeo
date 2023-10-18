@@ -45,14 +45,14 @@ const userLogin = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
 
-    const user = await userModel.findOne({ email }).where({ isBlocked: false });
+    const user = await userModel.findOne({ email });
 
     if (!user) {
-      res.status(401).json({ message: "User not Found" });
+      return res.status(401).json({ message: "User not Found" });
     }
 
     if (user?.isBlocked === true) {
-      res.status(401).json({ message: "User is blocked" });
+      return res.status(401).json({ message: "User is blocked" });
     }
 
     if (user && (await user.matchPassword(password))) {

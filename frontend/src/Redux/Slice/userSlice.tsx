@@ -29,7 +29,7 @@ const userSlice = createSlice({
             state.user = null
             localStorage.removeItem('userData')
             localStorage.removeItem('token')
-        }
+        },
     }
 })
 

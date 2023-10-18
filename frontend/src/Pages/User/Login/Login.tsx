@@ -31,12 +31,19 @@ function Login() {
       return;
     }
 
-    axios
-      .post(`${UserBaseUrl}/login`, {
+    try {
+      const response = await axios.post(`${UserBaseUrl}/login`, {
         email: trimmedEmail,
         password: trimmedPassword,
-      })
-      .then((response) => {
+      });
+      
+      const userData = response.data;
+
+      if(userData.isBlocked) {
+        console.log(userData.isBlocked,"user is blov");
+        
+        toast.error('Your account is blocked. Please contact support.');
+      } else {
         localStorage.setItem("token", JSON.stringify(response.data.token));
 
         dispatch(login(response.data))
@@ -45,10 +52,14 @@ function Login() {
           navigate('/')          
         }, 2000)
         toast.success('Logged In successfull')
-      })
-      .catch((error) => {
+      }
+    }catch (error) {
+      if (error.response && error.response.status === 401 && error.response.data.message === "User is blocked") {
+        toast.error('Your account is blocked. Please contact support.');
+      } else {
         toast.error(error.response.data.message);
-      });
+      }
+    }
   };
 
   return (
