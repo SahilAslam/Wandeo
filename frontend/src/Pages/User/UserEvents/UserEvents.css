@@ -1,0 +1,7 @@
+.event-card {
+    border: 1px solid #ccc;
+    padding: 15px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+    max-width: 300px; /* Adjust the width as needed */
+  }

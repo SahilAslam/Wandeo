@@ -132,7 +132,7 @@ function SignupNavbar() {
                 <Link to="/">
                   <a
                     className={`block py-2 pl-3 pr-4 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 ${
-                      isHomePage ? "bg-green-800 text-white" : "text-gray-900"
+                      isHomePage ? "bg-green-800 text-white underline" : "text-gray-900"
                     }`}
                     aria-current="page"
                   >
@@ -229,7 +229,7 @@ function SignupNavbar() {
               <Link to="/">
                 <a
                   className={`block py-2 pl-3 pr-4 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 ${
-                    isHomePage ? "text-green-800 font-bold" : "text-gray-900"
+                    isHomePage ? "text-green-800 font-bold underline" : "text-gray-900"
                   }`}
                   aria-current="page"
                 >
@@ -249,7 +249,7 @@ function SignupNavbar() {
               <Link to="/events">
                 <a
                   className={`block py-2 pl-3 pr-4 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 ${
-                    isEventsPage ? "text-green-800 font-bold" : "text-gray-900"
+                    isEventsPage ? "text-green-800 font-bold underline" : "text-gray-900"
                   }`}
                 >
                   Events

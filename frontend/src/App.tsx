@@ -6,8 +6,10 @@ import HomePage from './Pages/User/HomePage/HomePage'
 import Signup from './Pages/User/Signup/Signup'
 import UserEvents from './Pages/User/UserEvents/UserEvents'
 import { PrivateRoutes } from './Components/PrivatePages'
+import { AdminPrivateRoutes } from './Components/PrivatePages'
 import { AdminDashboard } from './Pages/Admin/AdminDashboard/AdminDashboard'
 import { AdminLogin } from './Pages/Admin/AdminLogin/AdminLogin'
+import UsersList from './Pages/Admin/AdminUsersList/UsersList'
 
 function App() {
   
@@ -28,8 +30,13 @@ function App() {
 
         {/* Admin routes */}
 
-        <Route path='/admin/dashboard' element={<AdminDashboard/>} />
         <Route path='/admin/login' element={<AdminLogin/>} />
+
+        {/* admin protected routes */}
+        <Route element={<AdminPrivateRoutes/>}>
+          <Route path='/admin/dashboard' element={<AdminDashboard/>} />
+          <Route path='/admin/usersList' element={<UsersList/>} />
+        </Route>     
       </Routes>
     </Router>
   )

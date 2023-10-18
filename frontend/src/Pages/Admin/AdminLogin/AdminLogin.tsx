@@ -3,6 +3,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import adminInstance from "../../../Axios/adminInstance";
 import { login, selectAdmin } from "../../../Redux/Slice/adminSlice";
+import { toast, ToastContainer } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 export const AdminLogin = () => {
   const [adminEmail, setAdminEmail] = useState("");
@@ -27,7 +29,7 @@ export const AdminLogin = () => {
     }
 
     try {
-      const response = await adminInstance.post("admin/login", {
+      const response = await adminInstance.post("/login", {
         email: trimmedEmail,
         password: trimmedPassword,
       });
@@ -63,6 +65,7 @@ export const AdminLogin = () => {
 
   return (
     <>
+      <ToastContainer/>
       <div className="adminLogin flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8 items-center h-screen">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
           <div className="bg-slate-700 p-7 pl-12 pr-12 shadow-xl rounded-lg">

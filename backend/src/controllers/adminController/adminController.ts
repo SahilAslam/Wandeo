@@ -34,6 +34,7 @@ export const getUsers = async (req: Request, res: Response) => {
         const users = await userModel.find().exec();
 
         if(users) {
+            console.log(users);            
             res.status(200).json({
                 users
             })
@@ -44,5 +45,44 @@ export const getUsers = async (req: Request, res: Response) => {
         }
     } catch(error) {
         console.error(error);
+    }
+}
+
+export const blockUser = async(req: Request, res: Response) => {
+    console.log('/////////////////////')
+    try {
+        const userId = req.params.id;
+
+        const updateUser = await userModel.findByIdAndUpdate(userId, 
+            {isBlocked : true} , {new : true}
+        );
+
+        if(!updateUser){
+            return res.status(404).json({error : 'User not found'});
+        }
+
+        res.status(200).json({message : `Blocked ${updateUser.name}`});
+
+    } catch (error: any) {
+        console.log(error);
+        
+    }
+}
+
+export const unblockUser = async (req: Request, res: Response) => {
+    try {
+        const userId = req.params.id;
+
+        const updateUser = await userModel.findByIdAndUpdate(userId, 
+            {isBlocked: false}, {new: true}
+        )
+
+        if(!updateUser){
+            return res.status(404).json({error : 'User not found'});
+        }
+
+        res.status(200).json({message : `Unblocked ${updateUser.name}`});
+    } catch (error) {
+        console.log(error);
     }
 }

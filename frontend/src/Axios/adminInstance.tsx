@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const adminInstance = axios.create({
-    baseURL: "http://localhost:5000",
+    baseURL: "http://localhost:5000/admin",
 });
 
 adminInstance.interceptors.request.use(
@@ -11,7 +11,7 @@ adminInstance.interceptors.request.use(
             try {
                 const token = JSON.parse(tokenString)
 
-                config.headers.Authorization = `Bearer ${token}`
+                config.headers.authorization = `Bearer ${token}`
             } catch(error) {
                 console.error("Error while parsing token: ", error)
             }

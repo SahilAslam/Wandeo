@@ -2,6 +2,7 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
 import userModel from "../models/userModel";
 import asyncHandler from "express-async-handler";
+import { Document } from "mongoose";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -22,34 +23,38 @@ declare global {
 }
 
 const protect = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
-    const token = req.header.authorization?.split(" ")[1];
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    const token = req.headers.authorization?.split(" ")[1];
     const secretKey = process.env.JWT_SECRET as string;
 
-    try {
-      if (!token) {
-        return res.status(401).json({ message: "Token not provided" });
-      }
-      const decoded = jwt.verify(token, secretKey) as JwtPayload;
-      const userId: string = decoded.userId;
-      console.log("token is valid", decoded);
+    if (!token) {
+      res.status(401).json({ message: "Token not provided" });
+      return 
+    }
 
-      const user: Document | null = await userModel
-        .findById(userId)
-        .select("-password");
+    if (token) {
+      try {
+        const decoded = jwt.verify(token, secretKey) as JwtPayload;
+        const userId: string = decoded.user_id;
+        console.log("token is valid", decoded);
 
-      if (user) {
-        req.user = user as unknown as customUser;
-        next();
-      } else {
-        res.status(404);
-        throw new Error("user not found");
+        const user: Document | null = await userModel
+          .findById(userId)
+          .select("-password");
+
+        if (user) {
+          req.user = user as unknown as customUser;
+          next();
+        } else {
+          res.status(404);
+          throw new Error("User not found");
+        }
+      } catch (error) {
+        res.status(401);
+        throw new Error("Not authorized or Invalid token");
       }
-    } catch (error) {
-      res.status(401);
-      throw new Error("Not authorized or Invalid token");
     }
   }
 );
 
-export {protect};
+export { protect };
