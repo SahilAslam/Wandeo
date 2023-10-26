@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef, ChangeEvent } from "react";
 import { IoMdClose } from "react-icons/io";
 import axiosInstance from "../../Axios/Axios";
 import { toast, ToastContainer } from "react-toastify";
 import { useSelector } from "react-redux";
 import { selectUser } from "../../Redux/Slice/userSlice";
+import axios from "axios";
 
 interface CreateEventProps {
   closeModal: () => void;
@@ -17,173 +18,251 @@ const CreateEvent: React.FC<CreateEventProps> = ({ visible, closeModal }) => {
   const [endDate, setEndDate] = useState("");
   const [attendeesLimit, setAttendeesLimit] = useState("");
   const [description, setDescription] = useState("");
+  const [image, setImage] = useState("");
+  const [cloudnaryUrl, setCloudnaryUrl] = useState("");
 
-  const user =  useSelector(selectUser)
-  const id = user?.user?._id
-  console.log(id)
+  const scrollContainerRef = useRef(null);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-   
-    axiosInstance.post(`/createEvent/${id}`, {
-      eventName: eventName,
-      location: location,
-      startDate: startDate,
-      endDate: endDate,
-      attendeesLimit: attendeesLimit,
-      description: description,
-    })
-    .then((res) => {   
-      if(res.data.message) {
-        console.log(res.data.message);
-        closeModal();       
-      }   
-    })
-    .catch((err) => console.log(err))
+  useEffect(() => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.classList.add("hide-scrollbar");
+    }
+  }, []);
+
+  const user = useSelector(selectUser);
+  const id = user?.user?._id;
+  console.log(id);
+
+  function handleChange(e: ChangeEvent<HTMLInputElement>) {
+    if (e.target.files && e.target.files.length > 0) {
+      setImage(e.target.files[0]);
+    }
   }
+
+  const handleImageUpload = async () => {
+    try {
+      const formData = new FormData();
+      if (image) {
+        formData.append("file", image);
+        formData.append("upload_preset", "qeulrdc5");
+        formData.append("cloud_name", "dkba47utw");
+        const response = await axios.post(
+          "https://api.cloudinary.com/v1_1/dkba47utw/image/upload",
+          formData
+        );
+
+        console.log(response.data,"llllll");
+        setCloudnaryUrl(response.data.public_id);
+      }else{
+       return toast.error("no images please upload")
+      }
+    } catch (error) {
+      console.error("Error while uploading the image:", error);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    await handleImageUpload();
+
+    if (!cloudnaryUrl) {
+      toast.error("Error while uploading the image");
+      return;
+    }
+
+    axiosInstance
+      .post(`/createEvent/${id}`, {
+        eventName: eventName,
+        location: location,
+        startDate: startDate,
+        endDate: endDate,
+        attendeesLimit: attendeesLimit,
+        image: cloudnaryUrl,
+        description: description,
+      })
+      .then((res) => {
+        if (res.data.message) {
+          console.log(res.data.message);
+          closeModal();
+        }
+      })
+      .catch((err) => console.log(err));
+  };
 
   return (
     <>
+      <ToastContainer/>
       {visible && (
-        <div
-          className="fixed z-50 top-0 left-0 inset-0 overflow-y-auto"
-          id="wrapper"
-        >
-          <div className="flex items-center justify-center  pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-            <div className="fixed inset-0 transition-opacity">
-              <div className="absolute inset-0 bg-[#131313] bg-opacity-30 backdrop-blur-sm">
-                <span className="hidden sm:inline-block sm:align-middle sm:h-screen"></span>
-                <div
-                  className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full"
-                  role="dialog"
-                  aria-modal="true"
-                  aria-labelledby="modal-headline"
-                >
-                  <div className="flex justify-between px-6 py-5 bg-blue-100">
-                    <label
-                      htmlFor="name"
-                      className="font-medium text-xl text-ascent-1 text-left text-slate-500"
-                    >
-                      Create an Event
-                    </label>
-                    <button
-                      className="text-ascent-1 cursor-pointer text-slate-500"
-                      onClick={closeModal}
-                    >
-                      <IoMdClose size={26} />
-                    </button>
-                  </div>
-                  <form
-                    encType="multipart/form-data"
-                    className="px-4 sm:px-6 flex flex-col gap-3 2xl:gap-6"
-                    onSubmit={handleSubmit}
+        <div className="modal-content" ref={scrollContainerRef}>
+          <div
+            style={{
+              overflowY: "scroll",
+              scrollbarWidth: "none", // Hide the scrollbar in Firefox
+              msOverflowStyle: "none", // Hide the scrollbar in IE/Edge
+            }}
+            className="fixed z-50 top-0 left-0 inset-0 bg-[#131313] bg-opacity-30 backdrop-blur-sm"
+            id="wrapper"
+          >
+            <div className="flex items-center justify-center  pt-4 px-4 pb-20 text-center sm:block sm:p-0 ">
+              <div className="inset-0 transition-opacity">
+                <div className="absolute inset-0">
+                  <span className="hidden sm:inline-block sm:align-middle sm:h-screen"></span>
+                  <div
+                    className="inline-block align-bottom bg-white rounded-lg text-left  shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full"
+                    role="dialog"
+                    aria-modal="true"
+                    aria-labelledby="modal-headline"
                   >
-                    <div className="flex flex-col gap-1 mt-5">
+                    <div className="flex justify-between px-6 py-5 bg-blue-100">
                       <label
-                        className="text-ascent-2 text-base mb-1"
                         htmlFor="name"
+                        className="font-medium text-xl text-ascent-1 text-left text-slate-500"
                       >
-                        Event Name
+                        Create an Event
                       </label>
-                      <input
-                        type="text"
-                        value={eventName}
-                        name="eventName"
-                        onChange={(e) => setEventName(e.target.value)}
-                        className="w-full bg-secondary rounded border 
-                        border-[#66666690] outline-none text-sm text-ascent-1 px-4 py-3 placeholder:text=[#666]"
-                      />
-                      <label
-                        className="text-ascent-2 text-base mb-1"
-                        htmlFor="location"
+                      <button
+                        className="text-ascent-1 cursor-pointer text-slate-500"
+                        onClick={closeModal}
                       >
-                        Where
-                      </label>
-                      <input
-                        type="text"
-                        value={location}
-                        name="location"
-                        onChange={(e) => setLocation(e.target.value)}
-                        className="w-full bg-secondary rounded border 
-                        border-[#66666690] outline-none text-sm text-ascent-1 px-4 py-3 placeholder:text=[#666]"
-                      />
+                        <IoMdClose size={26} />
+                      </button>
                     </div>
-                    <div className="">
-                      <h4 className="text-base">When</h4>
-                      <div className="grid grid-cols-2 gap-2 mt-1">
-                        <div className="grid grid-cols-1 gap-1">
-                          <label
-                            className="text-ascent-2 text-sm mb-1"
-                            htmlFor="startDate"
-                          >
-                            Start Date
-                          </label>
-                          <input
-                            type="date"
-                            value={startDate}
-                            name="startDate"
-                            onChange={(e) => setStartDate(e.target.value)}
-                            className="w-full bg-secondary rounded border 
-                        border-[#66666690] outline-none text-sm text-ascent-1 px-4 py-3 placeholder:text=[#666]"
-                          />
-                        </div>
-                        <div className="grid grid-cols-1 gap-1">
-                          <label
-                            className="text-ascent-2 text-sm mb-1"
-                            htmlFor="endDate"
-                          >
-                            End Date
-                          </label>
-                          <input
-                            type="date"
-                            value={endDate}
-                            name="where"
-                            onChange={(e) => setEndDate(e.target.value)}
-                            className="w-full bg-secondary rounded border 
-                        border-[#66666690] outline-none text-sm text-ascent-1 px-4 py-3 placeholder:text=[#666]"
-                          />
+                    <form
+                      encType="multipart/form-data"
+                      className="px-4 sm:px-6 flex flex-col gap-3 2xl:gap-6"
+                      onSubmit={handleSubmit}
+                    >
+                      <div className="flex flex-col gap-1 mt-5">
+                        <label
+                          className="text-ascent-2 text-base mb-1"
+                          htmlFor="name"
+                        >
+                          Event Name
+                        </label>
+                        <input
+                          type="text"
+                          value={eventName}
+                          name="eventName"
+                          onChange={(e) => setEventName(e.target.value)}
+                          className="w-full bg-secondary rounded border 
+                          border-[#66666690] outline-none text-sm text-ascent-1 px-4 py-3 placeholder:text=[#666]"
+                        />
+                        <label
+                          className="text-ascent-2 text-base mb-1"
+                          htmlFor="location"
+                        >
+                          Where
+                        </label>
+                        <input
+                          type="text"
+                          value={location}
+                          name="location"
+                          onChange={(e) => setLocation(e.target.value)}
+                          className="w-full bg-secondary rounded border 
+                          border-[#66666690] outline-none text-sm text-ascent-1 px-4 py-3 placeholder:text=[#666]"
+                        />
+                      </div>
+                      <div className="">
+                        <h4 className="text-base">When</h4>
+                        <div className="grid grid-cols-2 gap-2 mt-1">
+                          <div className="grid grid-cols-1 gap-1">
+                            <label
+                              className="text-ascent-2 text-sm mb-1"
+                              htmlFor="startDate"
+                            >
+                              Start Date
+                            </label>
+                            <input
+                              type="date"
+                              value={startDate}
+                              name="startDate"
+                              onChange={(e) => setStartDate(e.target.value)}
+                              className="w-full bg-secondary rounded border 
+                          border-[#66666690] outline-none text-sm text-ascent-1 px-4 py-3 placeholder:text=[#666]"
+                            />
+                          </div>
+                          <div className="grid grid-cols-1 gap-1">
+                            <label
+                              className="text-ascent-2 text-sm mb-1"
+                              htmlFor="endDate"
+                            >
+                              End Date
+                            </label>
+                            <input
+                              type="date"
+                              value={endDate}
+                              name="where"
+                              onChange={(e) => setEndDate(e.target.value)}
+                              className="w-full bg-secondary rounded border 
+                          border-[#66666690] outline-none text-sm text-ascent-1 px-4 py-3 placeholder:text=[#666]"
+                            />
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    <div className="grid grid-cols-1 gap-1">
-                      <label
-                        className="text-ascent-2 text-base mb-1"
-                        htmlFor="attandeesLimit"
+                      <div className="grid grid-cols-1 gap-1">
+                        <label
+                          className="text-ascent-2 text-base mb-1"
+                          htmlFor="attandeesLimit"
+                        >
+                          Limit Attendees
+                        </label>
+                        <input
+                          type="number"
+                          value={attendeesLimit}
+                          name="attandeesLimit"
+                          onChange={(e) => setAttendeesLimit(e.target.value)}
+                          className="w-full bg-secondary rounded border 
+                          border-[#66666690] outline-none text-sm text-ascent-1 px-4 py-3 placeholder:text=[#666]"
+                        />
+                      </div>
+                      <div className="grid grid-cols-1 gap-1">
+                        <label
+                          className="text-ascent-2 text-base mb-1"
+                          htmlFor="image"
+                        >
+                          Image
+                        </label>
+                        <input
+                          type="file"
+                          name="image"
+                          accept="image/*"
+                          onChange={handleChange}
+                          className="w-full bg-secondary rounded border 
+                          border-[#66666690] outline-none text-sm text-ascent-1 px-4 py-3 placeholder:text=[#666]"
+                        />
+                        {image && (
+                          <img
+                            src={URL.createObjectURL(image)}
+                            alt="Event"
+                            style={{ height: "100px", width: "100px" }}
+                          />
+                        )}
+                      </div>
+                      <div className="grid grid-cols-1 gap-1">
+                        <label
+                          className="text-ascent-2 text-base mb-1"
+                          htmlFor="description"
+                        >
+                          Description
+                        </label>
+                        <input
+                          type="text"
+                          value={description}
+                          name="description"
+                          onChange={(e) => setDescription(e.target.value)}
+                          className="w-full bg-secondary rounded border 
+                          border-[#66666690] outline-none text-sm text-ascent-1 px-4 py-3 placeholder:text=[#666]"
+                        />
+                      </div>
+                      <button
+                        type="submit"
+                        className="inline-flex mt-2 justify-center rounded-md bg-green-600 hover:bg-green-500 px-8 py-2 mb-8 text-lg font-medium text-white outline-none"
                       >
-                        Limit Attendees
-                      </label>
-                      <input
-                        type="number"
-                        value={attendeesLimit}
-                        name="attandeesLimit"
-                        onChange={(e) => setAttendeesLimit(e.target.value)}
-                        className="w-full bg-secondary rounded border 
-                        border-[#66666690] outline-none text-sm text-ascent-1 px-4 py-3 placeholder:text=[#666]"
-                      />
-                    </div>
-                    <div className="grid grid-cols-1 gap-1">
-                      <label
-                        className="text-ascent-2 text-base mb-1"
-                        htmlFor="description"
-                      >
-                        Description
-                      </label>
-                      <input
-                        type="text"
-                        value={description}
-                        name="description"
-                        onChange={(e) => setDescription(e.target.value)}
-                        className="w-full bg-secondary rounded border 
-                        border-[#66666690] outline-none text-sm text-ascent-1 px-4 py-3 placeholder:text=[#666]"
-                      />
-                    </div>
-                    <button
-                      type="submit"
-                      className="inline-flex mt-2 justify-center rounded-md bg-green-600 hover:bg-green-500 px-8 py-2 mb-8 text-lg font-medium text-white outline-none"
-                    >
-                      Save
-                    </button>
-                  </form>
+                        Save
+                      </button>
+                    </form>
+                  </div>
                 </div>
               </div>
             </div>

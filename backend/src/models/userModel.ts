@@ -7,6 +7,7 @@ interface User extends Document {
     email: string,
     password: string,
     phone: number,
+    eventsAttending: mongoose.Schema.Types.ObjectId[],
     createdAt: Date,
     updatedAt: Date,
     isBlocked: boolean,
@@ -27,13 +28,18 @@ const userSchema = new Schema<User>({
         required: true,
     },
     phone: {
-        type: Number,
-        
+        type: Number,        
     },
     password: {
         type: String,
         required: true,
     },
+    eventsAttending: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Event',
+        }
+    ],
     createdAt: {
         type: Date,
         required: true,

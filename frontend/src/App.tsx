@@ -10,6 +10,7 @@ import { AdminPrivateRoutes } from './Components/PrivatePages'
 import { AdminDashboard } from './Pages/Admin/AdminDashboard/AdminDashboard'
 import { AdminLogin } from './Pages/Admin/AdminLogin/AdminLogin'
 import UsersList from './Pages/Admin/AdminUsersList/UsersList'
+import UserProfile from './Pages/User/Profile/UserProfile'
 
 function App() {
   
@@ -25,6 +26,7 @@ function App() {
         <Route element={<PrivateRoutes/>}>
           <Route path='/' element={<HomePage/>} />
           <Route path='/events' element={<UserEvents/>} />
+          <Route path='/profile' element={<UserProfile/>} />
         </Route>
 
 

@@ -95,21 +95,21 @@ function UserTable() {
                   {index + 1}
                 </th>
                 <td className="px-6 py-4">
-                    {user.name}
+                    {user?.name}
                 </td>
                 <td className="px-6 py-4  bg-gray-50 dark:bg-gray-800">
-                    {user.username}
+                    {user?.username}
                 </td>
                 <td className="px-6 py-4">
-                    {user.email}
+                    {user?.email}
                 </td>
                 <td className="px-6 py-4  bg-gray-50 dark:bg-gray-800">
-                {!user.isBlocked ? (
-                    <button onClick={() => blockUser(user._id) } type="button" className={"text-white bg-gradient-to-r from-red-400 via-red-500 to-red-600 font-medium rounded-lg text-sm px-7 py-2.5 text-center mr-2 mb-2"}>
+                {!user?.isBlocked ? (
+                    <button onClick={() => blockUser(user?._id) } type="button" className={"text-white bg-gradient-to-r from-red-400 via-red-500 to-red-600 font-medium rounded-lg text-sm px-7 py-2.5 text-center mr-2 mb-2"}>
                       Block
                     </button>
                 ) : (
-                    <button onClick={() => unBlockUser(user._id)} 
+                    <button onClick={() => unBlockUser(user?._id)} 
                     className="text-gray-900 bg-gradient-to-r from-lime-200 via-lime-400 to-lime-500 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2">
                         UnBlock 
                     </button>

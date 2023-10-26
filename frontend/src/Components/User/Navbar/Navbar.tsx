@@ -16,6 +16,7 @@ function SignupNavbar() {
   const location = useLocation()
   const isHomePage = location.pathname === '/'
   const isEventsPage = location.pathname === '/events'
+  const isProfilePage = location.pathname === '/profile'
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -168,12 +169,15 @@ function SignupNavbar() {
                 </a>
               </li>
               <li>
-                <a
-                  href="#"
-                  className="block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0"
-                >
-                  Profile
-                </a>
+                <Link to="/profile">
+                  <a
+                    className={`block py-2 pl-3 pr-4 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 ${
+                      isProfilePage ? "bg-green-800 text-white" : "text-gray-900"
+                    }`}
+                  >
+                    Profile
+                  </a>
+                </Link>
               </li>
               <li>
                 <a
@@ -265,12 +269,15 @@ function SignupNavbar() {
               </a>
             </li>
             <li>
-              <a
-                href="#"
-                className="block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 "
-              >
-                Profile
-              </a>
+              <Link to="/profile">
+                <a               
+                  className={`block py-2 pl-3 pr-4 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 ${
+                    isProfilePage ? "text-green-800 font-bold underline" : "text-gray-900"
+                  }`}
+                >
+                  Profile
+                </a>
+              </Link>
             </li>
             <div className="relative">
               <li>

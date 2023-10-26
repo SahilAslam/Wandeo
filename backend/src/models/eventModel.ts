@@ -9,7 +9,7 @@ interface IEvent extends Document {
   description: string;
   image: string;
   organizedBy: mongoose.Schema.Types.ObjectId;
-  attendees: mongoose.Schema.Types.ObjectId;
+  attendees: mongoose.Schema.Types.ObjectId[];
   comments: string[];
   createdAt: Date;
   updatedAt: Date;
@@ -41,7 +41,7 @@ const eventSchema = new Schema<IEvent>(
       type: String,
       required: true,
     },
-    image: {
+    image: {   
       type: String,
     },
     organizedBy: {

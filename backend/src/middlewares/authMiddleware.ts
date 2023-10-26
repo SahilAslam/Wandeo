@@ -2,13 +2,13 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
 import userModel from "../models/userModel";
 import asyncHandler from "express-async-handler";
-import { Document } from "mongoose";
+import { Document, ObjectId } from "mongoose";
 import dotenv from "dotenv";
 
 dotenv.config();
 
 interface customUser {
-  id: string;
+  id: ObjectId;
   username: string;
   user: any | null;
 }
@@ -42,7 +42,7 @@ const protect = asyncHandler(
           .findById(userId)
           .select("-password");
 
-        if (user) {
+        if (user) {   
           req.user = user as unknown as customUser;
           next();
         } else {
