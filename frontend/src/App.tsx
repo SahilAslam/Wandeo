@@ -11,6 +11,7 @@ import { AdminDashboard } from './Pages/Admin/AdminDashboard/AdminDashboard'
 import { AdminLogin } from './Pages/Admin/AdminLogin/AdminLogin'
 import UsersList from './Pages/Admin/AdminUsersList/UsersList'
 import UserProfile from './Pages/User/Profile/UserProfile'
+import EditProfile from './Pages/User/Profile/EditProfile'
 
 function App() {
   
@@ -18,6 +19,9 @@ function App() {
   return (
     <Router>
       <Routes>
+
+      {/* User routes */}
+
         <Route path='*' element={<h1>Page not Found</h1>} />
         <Route path='/login' element={<Login/>} />
         <Route path='/signup' element={<Signup/>} />
@@ -27,6 +31,7 @@ function App() {
           <Route path='/' element={<HomePage/>} />
           <Route path='/events' element={<UserEvents/>} />
           <Route path='/profile' element={<UserProfile/>} />
+          <Route path='/editProfile/:id' element={<EditProfile/>} />
         </Route>
 
 

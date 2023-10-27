@@ -5,12 +5,14 @@ import {
 } from "../../controllers/userController/userController";
 import { createUserEvent, eventUsersAttending, getUserEvent, joinUserEvent,  } from "../../controllers/userController/eventController";
 import { protect } from "../../middlewares/authMiddleware";
+import { getUserProfile } from "../../controllers/userController/profileController";
 const userRouter = express.Router();
 
 userRouter.post("/signup", userSignup);
 
 userRouter.post("/login", userLogin);
 
+// User events
 userRouter.post("/createEvent/:id", protect, createUserEvent);
 
 userRouter.get("/getEvent", protect, getUserEvent)
@@ -19,6 +21,7 @@ userRouter.get("/joinEvent/:eventId", protect, joinUserEvent)
 
 userRouter.get("/attendingEvents/:id", protect, eventUsersAttending)
 
-
+// User Profile
+userRouter.get("/profile/:userId", protect, getUserProfile);
 
 export default userRouter;

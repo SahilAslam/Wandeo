@@ -1,3 +1,52 @@
 .navbar {
     border-bottom: 2px solid #ccc; /* You can adjust the color and thickness as needed */
   }
+
+  @media (max-width: 950px) {
+    .search{
+      display: none;
+    }
+
+    .togglesearchbutton{
+      display: block;
+    }
+
+    .togglenavbardiv{
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+    }
+
+    .togglenavbar{
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      padding: 1rem/* 16px */;
+      margin-top: 1rem/* 16px */;
+      font-weight: 500;
+      border-width: 1px;
+      --tw-border-opacity: 1;
+      border-color: rgb(243 244 246 / var(--tw-border-opacity));
+      border-radius: 0.5rem/* 8px */;
+      --tw-bg-opacity: 1;
+      background-color: rgb(249 250 251 / var(--tw-bg-opacity));
+    }
+
+    .togglenavitem{
+      display: block;
+      padding-top: 0.5rem/* 8px */;
+      padding-bottom: 0.5rem/* 8px */;
+      padding-left: 0.75rem/* 12px */;
+      padding-right: 1rem/* 16px */;
+      border-radius: 0.25rem/* 4px */;
+    }
+
+    .togglenavitem:hover{
+      --tw-bg-opacity: 1;
+      background-color: rgb(243 244 246 / var(--tw-bg-opacity));
+    }
+
+    .home{
+      margin-left: 2rem/* 16px */;
+    }
+  }

@@ -7,6 +7,7 @@ interface User extends Document {
     email: string,
     password: string,
     phone: number,
+    profileImage: string,
     eventsAttending: mongoose.Schema.Types.ObjectId[],
     createdAt: Date,
     updatedAt: Date,
@@ -29,6 +30,9 @@ const userSchema = new Schema<User>({
     },
     phone: {
         type: Number,        
+    },
+    profileImage: {
+        type: String
     },
     password: {
         type: String,

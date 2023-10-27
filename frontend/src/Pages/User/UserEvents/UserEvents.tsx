@@ -169,52 +169,54 @@ function UserEvents() {
               </div>
             </div>
           </div>
-          <div className="flex items-center flex-col border border-slate-300 bg-white mx-4 md:ml-0 md:w-auto lg:w-[655px] lg:mx-0">
-            <div className="p-5 w-full lg:w-[655px] mb-0">
-              <h1 className="font-semibold text-slate-800 text-lg">Events</h1>
-            </div>
-            <div className="w-full bg-white">
-              {Array.isArray(userEvents) ? (
-                userEvents.map((event, index) => (
-                  <div key={event?._id} className="w-auto event-card border-t">
-                    <div className="flex flex-row gap-4">
-                      <div>
-                        <img
-                          style={{ width: "100px", height: "100px" }}
-                          src={`${baseUrl}/${event?.image}`}
-                          alt={event.eventName}
-                        />
-                      </div>
-                      <div>
-                        <h1 className="text-green-700 hover:text-green-900 hover:underline underline-offset-1 font-semibold text-lg cursor-pointer">
-                          {event?.eventName}
-                        </h1>
-                        <h2 className="text-slate-800 text-base">
-                          {event?.location}
-                        </h2>
-                        <h2 className="text-slate-800 font-semibold text-base">
-                          {format(new Date(event?.startDate), "dd-MM-yyyy")} to{" "}
-                          {format(new Date(event?.endDate), "dd-MM-yyyy")}
-                        </h2>
-                        <h2 className="text-slate-800 text-base">
-                          {event.attendees ? event.attendees.length : 0}{" "}
-                          Attending
-                        </h2>
-                        {!isAttendingEvent(event?._id) && ( // Conditionally render the button
-                          <button
-                            onClick={() => handleJoin(event?._id)}
-                            className="bg-green-700 px-5 py-1 rounded-sm text-white mt-2"
-                          >
-                            Join
-                          </button>
-                        )}
+          <div className="mx-4 my-2 md:my-0 md:ml-0 w-auto sm:mr-4 md:w-auto lg:w-[655px] xl:w-[655px]">
+            <div className="flex items-center flex-col bg-white border border-slate-300">
+              <div className="p-5 w-full lg:w-[655px] mb-0">
+                <h1 className="font-semibold text-slate-800 text-lg">Events</h1>
+              </div>
+              <div className="w-full bg-white">
+                {Array.isArray(userEvents) ? (
+                  userEvents.map((event, index) => (
+                    <div key={event?._id} className="w-auto event-card border-t">
+                      <div className="flex flex-row gap-4">
+                        <div>
+                          <img
+                            style={{ width: "100px", height: "100px" }}
+                            src={`${baseUrl}/${event?.image}`}
+                            alt={event.eventName}
+                          />
+                        </div>
+                        <div>
+                          <h1 className="text-green-700 hover:text-green-900 hover:underline underline-offset-1 font-semibold text-lg cursor-pointer">
+                            {event?.eventName}
+                          </h1>
+                          <h2 className="text-slate-800 text-base">
+                            {event?.location}
+                          </h2>
+                          <h2 className="text-slate-800 font-semibold text-base">
+                            {format(new Date(event?.startDate), "dd-MM-yyyy")} to{" "}
+                            {format(new Date(event?.endDate), "dd-MM-yyyy")}
+                          </h2>
+                          <h2 className="text-slate-800 text-base">
+                            {event.attendees ? event.attendees.length : 0}{" "}
+                            Attending
+                          </h2>
+                          {!isAttendingEvent(event?._id) && ( // Conditionally render the button
+                            <button
+                              onClick={() => handleJoin(event?._id)}
+                              className="bg-green-700 px-5 py-1 rounded-sm text-white mt-2"
+                            >
+                              Join
+                            </button>
+                          )}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))
-              ) : (
-                <p>Loading or no events available.</p>
-              )}
+                  ))
+                ) : (
+                  <p>Loading or no events available.</p>
+                )}
+              </div>            
             </div>
           </div>
         </div>
