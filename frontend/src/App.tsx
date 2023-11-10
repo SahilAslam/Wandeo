@@ -12,34 +12,42 @@ import { AdminLogin } from './Pages/Admin/AdminLogin/AdminLogin'
 import UsersList from './Pages/Admin/AdminUsersList/UsersList'
 import UserProfile from './Pages/User/Profile/UserProfile'
 import EditProfile from './Pages/User/Profile/EditProfile'
+import EventDetailedPage from './Pages/User/UserEvents/EventDetailedPage/EventDetailedPage'
+import GroupPage from './Pages/User/UserGroup/GroupPage'
+import CreateGroup from './Pages/User/UserGroup/CreateGroup'
+import FindHosts from './Pages/User/Search/FindHosts/FindHosts'
+import GroupDetailedPage from './Pages/User/UserGroup/GroupDetailedPage/GroupDetailedPage'
+import GroupDiscussionPage from './Pages/User/UserGroup/GroupDiscussionPage'
 
 function App() {
   
-
   return (
     <Router>
       <Routes>
-
-      {/* User routes */}
-
+        {/* User routes */}
         <Route path='*' element={<h1>Page not Found</h1>} />
         <Route path='/login' element={<Login/>} />
         <Route path='/signup' element={<Signup/>} />
 
-        {/* protected routes */}
+        {/*User's protected routes */}
         <Route element={<PrivateRoutes/>}>
           <Route path='/' element={<HomePage/>} />
           <Route path='/events' element={<UserEvents/>} />
           <Route path='/profile' element={<UserProfile/>} />
           <Route path='/editProfile/:id' element={<EditProfile/>} />
+          <Route path='/eventDetailedPage/:id' element={<EventDetailedPage/>} />
+          <Route path='/groups' element={<GroupPage/>} />
+          <Route path='/createGroup' element={<CreateGroup/>} />
+          <Route path='/groupDetailedPage/:id' element={<GroupDetailedPage/>} />
+          <Route path='/findHosts' element={<FindHosts/>} />
+          <Route path='/discussionPage/:id' element={<GroupDiscussionPage />} />
         </Route>
 
 
         {/* Admin routes */}
-
         <Route path='/admin/login' element={<AdminLogin/>} />
 
-        {/* admin protected routes */}
+        {/* Admin's protected routes */}
         <Route element={<AdminPrivateRoutes/>}>
           <Route path='/admin/dashboard' element={<AdminDashboard/>} />
           <Route path='/admin/usersList' element={<UsersList/>} />

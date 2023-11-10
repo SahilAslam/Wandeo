@@ -9,9 +9,10 @@ import axios from "axios";
 interface CreateEventProps {
   closeModal: () => void;
   visible: boolean;
+  updateUI: (data: boolean) => void;
 }
 
-const CreateEvent: React.FC<CreateEventProps> = ({ visible, closeModal }) => {
+const CreateEvent: React.FC<CreateEventProps> = ({ visible, closeModal, updateUI }) => {
   const [eventName, setEventName] = useState("");
   const [location, setLocation] = useState("");
   const [startDate, setStartDate] = useState("");
@@ -20,6 +21,7 @@ const CreateEvent: React.FC<CreateEventProps> = ({ visible, closeModal }) => {
   const [description, setDescription] = useState("");
   const [image, setImage] = useState("");
   const [cloudnaryUrl, setCloudnaryUrl] = useState("");
+  const [error, setError] = useState('');
 
   const scrollContainerRef = useRef(null);
 
@@ -51,10 +53,10 @@ const CreateEvent: React.FC<CreateEventProps> = ({ visible, closeModal }) => {
           formData
         );
 
-        console.log(response.data,"llllll");
+        console.log(response.data, "llllll");
         setCloudnaryUrl(response.data.public_id);
-      }else{
-       return toast.error("no images please upload")
+      } else {
+        return toast.error("no images please upload");
       }
     } catch (error) {
       console.error("Error while uploading the image:", error);
@@ -63,6 +65,11 @@ const CreateEvent: React.FC<CreateEventProps> = ({ visible, closeModal }) => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (new Date(endDate) <= new Date(startDate)) {
+      toast.error("End date must be greater than the start date");
+      return;
+    }
 
     await handleImageUpload();
 
@@ -84,15 +91,43 @@ const CreateEvent: React.FC<CreateEventProps> = ({ visible, closeModal }) => {
       .then((res) => {
         if (res.data.message) {
           console.log(res.data.message);
+          updateUI((prev: boolean) => ! prev)
           closeModal();
         }
       })
       .catch((err) => console.log(err));
   };
 
+  const today = new Date().toISOString().split('T')[0];
+
+  const handleStartDateChange = (e) => {
+    const newStartDate = e.target.value;
+    setStartDate(newStartDate);
+
+    // Check if the end date is less than the start date
+    if (endDate < newStartDate) {
+      setError('End date cannot be before the start date');
+    } else {
+      setError('');
+    }
+  };
+
+  const handleEndDateChange = (e) => {
+    const newEndDate = e.target.value;
+    setEndDate(newEndDate);
+
+    // Check if the end date is less than the start date
+    if (newEndDate < startDate) {
+      setError('End date cannot be before the start date');
+    } else {
+      setError('');
+    }
+  };
+
+
   return (
     <>
-      <ToastContainer/>
+      <ToastContainer />
       {visible && (
         <div className="modal-content" ref={scrollContainerRef}>
           <div
@@ -177,7 +212,8 @@ const CreateEvent: React.FC<CreateEventProps> = ({ visible, closeModal }) => {
                               type="date"
                               value={startDate}
                               name="startDate"
-                              onChange={(e) => setStartDate(e.target.value)}
+                              onChange={handleStartDateChange}
+                              min={today}
                               className="w-full bg-secondary rounded border 
                           border-[#66666690] outline-none text-sm text-ascent-1 px-4 py-3 placeholder:text=[#666]"
                             />
@@ -193,12 +229,14 @@ const CreateEvent: React.FC<CreateEventProps> = ({ visible, closeModal }) => {
                               type="date"
                               value={endDate}
                               name="where"
-                              onChange={(e) => setEndDate(e.target.value)}
+                              onChange={handleEndDateChange}
+                              min={today}
                               className="w-full bg-secondary rounded border 
                           border-[#66666690] outline-none text-sm text-ascent-1 px-4 py-3 placeholder:text=[#666]"
                             />
                           </div>
                         </div>
+                        {error && <p className="text-red-500">{error}</p>}
                       </div>
                       <div className="grid grid-cols-1 gap-1">
                         <label
@@ -246,14 +284,16 @@ const CreateEvent: React.FC<CreateEventProps> = ({ visible, closeModal }) => {
                         >
                           Description
                         </label>
-                        <input
-                          type="text"
+                        
+                        <textarea
+                          name=""
+                          id=""
+                          rows="6"
                           value={description}
-                          name="description"
                           onChange={(e) => setDescription(e.target.value)}
                           className="w-full bg-secondary rounded border 
-                          border-[#66666690] outline-none text-sm text-ascent-1 px-4 py-3 placeholder:text=[#666]"
-                        />
+                            border-[#66666690] outline-none text-sm text-ascent-1 px-4 py-3 placeholder:text=[#666]"
+                        ></textarea>
                       </div>
                       <button
                         type="submit"

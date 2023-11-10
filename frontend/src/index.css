@@ -1,6 +1,8 @@
+@import url('https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,400;6..96,500&family=Lobster&family=Monoton&family=Pacifico&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
 
 body {
     background-color: #F1EFEA;

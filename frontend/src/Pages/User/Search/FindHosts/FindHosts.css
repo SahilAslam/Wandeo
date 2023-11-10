@@ -1,0 +1,11 @@
+@media (max-width: 355px) {
+    .card-details {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    .image {
+        display: flex;
+        justify-content: center;
+    }
+}

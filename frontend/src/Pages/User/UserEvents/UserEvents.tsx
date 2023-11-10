@@ -9,15 +9,16 @@ import axiosInstance from "../../../Axios/Axios";
 import { format } from "date-fns";
 import "./UserEvents.css";
 
+
 function UserEvents() {
   const navigate = useNavigate();
   const [isBlocked, setIsBlocked] = useState<boolean>(false);
   const [eventModal, setEventModal] = useState<boolean>(false);
   const [userEvents, setUserEvents] = useState([]);
   const [attendingEvents, setAttendingEvents] = useState([]);
+  const [updateUI, setUpdateUI] = useState<boolean>(false)
 
-  const baseUrl =
-    "https://res.cloudinary.com/dkba47utw/image/upload/v1698223651";
+  const baseUrl = "https://res.cloudinary.com/dkba47utw/image/upload/v1698223651";
 
   const user = useSelector(selectUser);
   const id = user?.user?._id;
@@ -29,18 +30,22 @@ function UserEvents() {
         if (res.data.message && Array.isArray(res.data.message)) {
           setUserEvents(res.data.message);
         } else {
-          console.error("Invalid data received from the API:", res.data.message);
+          console.error(
+            "Invalid data received from the API:",
+            res.data.message
+          );
         }
       })
       .catch((error) => console.log(error, "axios another user"));
-  }, [setUserEvents]);
+  }, [setUserEvents, updateUI]);
 
   useEffect(() => {
     axiosInstance
       .get(`/attendingEvents/${id}`)
       .then((response) => {
         if (response.data.user) {
-          setAttendingEvents(response.data.user);         
+          setAttendingEvents(response.data.user);
+          
         } else {
           console.log(
             "Invalid data received from the API:",
@@ -51,22 +56,8 @@ function UserEvents() {
       .catch((error) => {
         console.error("API request error:", error);
       });
-  }, []);
+  }, [updateUI]);
 
-  useEffect(() => {
-    axiosInstance
-      .patch(`/blockUser/${id}`)
-      .then((response) => response.json())
-      .then((data) => {
-        setIsBlocked(data.isBlocked); // Set the isBlocked state based on the API response.
-        if (data.isBlocked) {
-          navigate("/login"); // Redirect to the login page if blocked.
-        }
-      })
-      .catch((error) => {
-        console.error("API request error:", error);
-      });
-  }, []);
 
   const openModal = () => {
     setEventModal(true);
@@ -78,9 +69,11 @@ function UserEvents() {
 
   const handleJoin = async (eventId: string) => {
     try {
+      
       const response = await axiosInstance.get(`/joinEvent/${eventId}`);
       // Handle the response if needed
       console.log("Joined event:", response.data);
+      setUpdateUI((prev) => ! prev)
 
       // You can also update the userEvents state or perform other actions as needed
     } catch (error) {
@@ -96,9 +89,9 @@ function UserEvents() {
     );
   };
 
-  // const isEventCreater = (eventId) => {
-  //   return userEvents?.organizedBy?.
-  // }
+  const getEventDetails = async (eventId: string) => {
+    navigate(`/eventDetailedPage/${eventId}`);
+  };
 
   return (
     <>
@@ -136,28 +129,33 @@ function UserEvents() {
                       className="w-auto event-card border-t"
                     >
                       <div className="flex flex-row gap-4">
-                      <div>
-                        <img
-                          className="h-[100px] w-[100px] sm:w-[100px] md:w-[150px] lg:w-[150px] xl:w-[150px]"
-                          src={`${baseUrl}/${event?.image}`}
-                          alt={event.eventName}
-                        />
-                      </div>
-                      <div>
-                      <h1 className=" text-green-900 hover:text-green-700 hover:underline underline-offset-1 font-semibold cursor-pointer" style={{ fontSize: "17px", lineHeight: "1.1" }}>
-                        {event?.eventName}
-                      </h1>
-                      <h2 className="text-slate-800 text-base">
-                        {event?.location}
-                      </h2>
-                      <h2 className="text-slate-800 font-semibold text-base">
-                        {format(new Date(event?.startDate), "dd-MM-yyyy")} to{" "}
-                        {format(new Date(event?.endDate), "dd-MM-yyyy")}
-                      </h2>
-                      <h2 className="text-slate-800 text-base">
-                        {event.attendees ? event.attendees.length : 0} Attending
-                      </h2>
-                      </div>
+                        <div>
+                          <img
+                            className="h-[100px] w-[100px] sm:w-[100px] md:w-[150px] lg:w-[150px] xl:w-[150px]"
+                            src={`${baseUrl}/${event?.image}`}
+                            alt={event.eventName}
+                          />
+                        </div>
+                        <div>
+                          <h1
+                            className=" text-green-900 hover:text-green-700 hover:underline underline-offset-1 font-semibold cursor-pointer"
+                            style={{ fontSize: "17px", lineHeight: "1.1" }}
+                            onClick={() => getEventDetails(event?._id)}
+                          >
+                            {event?.eventName}
+                          </h1>
+                          <h2 className="text-slate-800 text-base">
+                            {event?.location}
+                          </h2>
+                          <h2 className="text-slate-800 font-semibold text-base">
+                            {format(new Date(event?.startDate), "dd-MM-yyyy")}{" "}
+                            to {format(new Date(event?.endDate), "dd-MM-yyyy")}
+                          </h2>
+                          <h2 className="text-slate-800 text-base">
+                            {event.attendees ? event.attendees.length : 0}{" "}
+                            Attending
+                          </h2>
+                        </div>
                       </div>
                     </div>
                   ))
@@ -177,7 +175,10 @@ function UserEvents() {
               <div className="w-full bg-white">
                 {Array.isArray(userEvents) ? (
                   userEvents.map((event, index) => (
-                    <div key={event?._id} className="w-auto event-card border-t">
+                    <div
+                      key={event?._id}
+                      className="w-auto event-card border-t"
+                    >
                       <div className="flex flex-row gap-4">
                         <div>
                           <img
@@ -187,15 +188,18 @@ function UserEvents() {
                           />
                         </div>
                         <div>
-                          <h1 className="text-green-700 hover:text-green-900 hover:underline underline-offset-1 font-semibold text-lg cursor-pointer">
+                          <h1
+                            className="text-green-700 hover:text-green-900 hover:underline underline-offset-1 font-semibold text-lg cursor-pointer"
+                            onClick={() => getEventDetails(event?._id)}
+                          >
                             {event?.eventName}
                           </h1>
                           <h2 className="text-slate-800 text-base">
                             {event?.location}
                           </h2>
                           <h2 className="text-slate-800 font-semibold text-base">
-                            {format(new Date(event?.startDate), "dd-MM-yyyy")} to{" "}
-                            {format(new Date(event?.endDate), "dd-MM-yyyy")}
+                            {format(new Date(event?.startDate), "dd-MM-yyyy")}{" "}
+                            to {format(new Date(event?.endDate), "dd-MM-yyyy")}
                           </h2>
                           <h2 className="text-slate-800 text-base">
                             {event.attendees ? event.attendees.length : 0}{" "}
@@ -216,13 +220,13 @@ function UserEvents() {
                 ) : (
                   <p>Loading or no events available.</p>
                 )}
-              </div>            
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      <CreateEvent closeModal={closeModal} visible={eventModal} />
+      <CreateEvent closeModal={closeModal} visible={eventModal} updateUI={setUpdateUI} />
     </>
   );
 }
