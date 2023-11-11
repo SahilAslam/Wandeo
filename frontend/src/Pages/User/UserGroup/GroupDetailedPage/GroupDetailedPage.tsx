@@ -191,7 +191,8 @@ const GroupDetailedPage = () => {
                 groupData.discussions.map((discussion) => (
                   <div className="px-4 py-4 flex justify-between ">
                     <div className="flex gap-4">
-                      {discussion?.userId.profileImage ? (
+                      
+                      {discussion?.userId?.profileImage ? (
                         <img
                           src={`${BASE_URL}/${discussion?.userId.profileImage}`}
                           alt="img"
@@ -206,7 +207,7 @@ const GroupDetailedPage = () => {
                       )}
                       <div className="flex flex-col">
                         <p
-                          onClick={() => handleClick(groupData?._id)}
+                          onClick={() => handleClick(discussion?._id)}
                           className="text-slate-800 font-medium hover:underline cursor-pointer"
                         >
                           {discussion.title}

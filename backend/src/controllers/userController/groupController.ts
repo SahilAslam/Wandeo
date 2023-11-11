@@ -55,7 +55,15 @@ const getGroupDetailedPage = async (req: Request, res: Response) => {
   try {
     const groupId = req.params.groupId;
 
-    const group = await GroupModel.findById(groupId).populate("members").populate("discussions.userId");
+    const group = await GroupModel.findById(groupId)
+        .populate("members")
+        .populate({
+            path: "discussions",
+            populate: {
+              path: "userId",
+              model: "userCollection"
+            }
+        });
     if (group) {
       res.status(201).json({ group });
       console.log(group);

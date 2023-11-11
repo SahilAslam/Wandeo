@@ -7,7 +7,7 @@ import { createUserEvent, eventUsersAttending, getEventDetailedPage, getUserEven
 import { protect } from "../../middlewares/authMiddleware";
 import { addProfileImage, editUserProfile, getUserProfile } from "../../controllers/userController/profileController";
 import { createUserGroup, getGroupDetailedPage, getUserGroup, joinUserGroup, leaveUserGroup, userJoinedGroup } from "../../controllers/userController/groupController";
-import { createNewDiscussion } from "../../controllers/userController/groupDiscussionController";
+import { createNewDiscussion, getSingleDiscussion, postDiscussionReply } from "../../controllers/userController/groupDiscussionController";
 const userRouter = express.Router();
 
 userRouter.post("/signup", userSignup);
@@ -48,5 +48,9 @@ userRouter.patch("/leaveGroup/:groupId", protect, leaveUserGroup);
 userRouter.get("/joinedGroups/:userId", protect, userJoinedGroup);
 
 userRouter.post("/createDiscussion/:groupId", protect, createNewDiscussion)
+
+userRouter.get("/getDiscussion/:discussionId", protect, getSingleDiscussion)
+
+userRouter.post("/discussionReply/:discussionId", protect, postDiscussionReply);
 
 export default userRouter;

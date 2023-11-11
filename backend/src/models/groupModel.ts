@@ -4,7 +4,7 @@ interface Group extends Document {
     name: string;
     description: string;
     location: string;
-    discussions: string[];
+    discussions: mongoose.Schema.Types.ObjectId[];
     members: mongoose.Schema.Types.ObjectId[];
     image: string
     createdBy: mongoose.Schema.Types.ObjectId;
@@ -40,40 +40,8 @@ const groupSchema = new Schema<Group> ({
     },
     discussions: [
         {
-            userId: {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: "userCollection"
-            },
-            title: {
-                type: String,
-                required: true,
-            },
-            content: {
-                type: String,
-                required: true,
-            },
-            createdAt: {
-                type: Date,
-                required: true,
-                default: Date.now,
-            },
-            replies: [
-                {
-                    userId: {
-                        type: mongoose.Schema.Types.ObjectId,
-                        ref: "userCollection"
-                    },
-                    replyMessage: {
-                        type: String,
-                        required: true
-                    },
-                    createdAt: {
-                        type: Date,
-                        required: true,
-                        default: Date.now,
-                    },
-                },
-            ],
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Discussion",
         },
     ],
     

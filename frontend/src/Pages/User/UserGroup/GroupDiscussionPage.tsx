@@ -2,9 +2,10 @@ import React, { useEffect, useState } from "react";
 import Navbar from "../../../Components/User/Navbar/Navbar";
 import axiosInstance from "../../../Axios/Axios";
 import { useParams } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
 
 const GroupDiscussionPage = () => {
-  const [groupData, setGroupData] = useState("");
+  const [discussion, setDiscussion] = useState("");
   const [updateUI, setUpdateUI] = useState<boolean>(false);
   const [reply, setReply] = useState("");
 
@@ -13,23 +14,41 @@ const GroupDiscussionPage = () => {
   const BASE_URL =
     "https://res.cloudinary.com/dkba47utw/image/upload/v1698223651";
 
-  const getGroupDetails = async (id: string) => {
+  const getDiscussion = async (id: string) => {
     // eslint-disable-next-line no-useless-catch
     try {
-      const response = await axiosInstance.get(`/groupDetailedPage/${id}`);
-      const groupDetails = response.data?.group;
-      console.log(response.data?.group);
+      const response = await axiosInstance.get(`/getDiscussion/${id}`);
+      const groupDetails = response.data?.discussion;
+      console.log(response.data?.discussion);
 
-      setGroupData(groupDetails);
-      setUpdateUI((prevState) => !prevState);
+      setDiscussion(groupDetails);
     } catch (error) {
       throw error;
     }
   };
 
   useEffect(() => {
-    getGroupDetails(id);
-  }, [updateUI, id]);
+    getDiscussion(id);
+  }, [updateUI,id]);
+
+  const handleSubmit = async (
+    e: React.FormEvent<HTMLFormElement | HTMLTextAreaElement>
+  ) => {
+    // eslint-disable-next-line no-useless-catch
+    try {
+      e.preventDefault();
+      const response = await axiosInstance.post(`/discussionReply/${id}`, {
+        replyMessage: reply,
+      });
+      if (response.data) {
+        console.log(response.data);
+        toast.success(response.data?.message);
+        setUpdateUI(prevState => !prevState)
+      }
+    } catch (error) {
+      throw error;
+    }
+  };
 
   const timeAgo = (date: string) => {
     const currentDate = new Date();
@@ -66,111 +85,90 @@ const GroupDiscussionPage = () => {
   return (
     <div className="pb-10">
       <Navbar />
+      <ToastContainer />
       <div className="py-4 flex justify-center ">
         <div className="px-5 w-[850px] bg-white shadow-lg">
-          {groupData.discussions?.length > 0 ? (
-            groupData.discussions.map((discussion) => (
+          <div>
+            <div className="py-5 border-b-4 border-slate-300">
+              <h1 className="text-xl font-semibold text-slate-800">
+                {discussion.title}
+              </h1>
+              <p>
+                Posted in{" "}
+                <span className="text-sky-700 hover:underline cursor-pointer">
+                  {discussion?.groupId?.name}
+                </span>
+              </p>
+              <h6 className="text-xs font-bold text-green-700 pt-4">
+                INITIAL POST
+              </h6>
+            </div>
+            <div className="py-5 flex gap-3 border-b-4 border-slate-300">
               <div>
-                <div className="py-5 border-b-4 border-slate-300">
-                  <h1 className="text-xl font-semibold text-slate-800">
-                    {discussion.title}
-                  </h1>
-                  <p>
-                    Posted in{" "}
-                    <span className="text-sky-700 hover:underline cursor-pointer">
-                      {groupData.name}
-                    </span>
-                  </p>
-                  <h6 className="text-xs font-bold text-green-700 pt-4">
-                    INITIAL POST
-                  </h6>
-                </div>
-                <div className="py-5 flex gap-3 border-b-4 border-slate-300">
-                  <div>
-                    {discussion?.userId.profileImage ? (
-                      <img
-                        src={`${BASE_URL}/${discussion?.userId.profileImage}`}
-                        alt="img"
-                        className="border rounded-full w-8 h-8"
-                      />
-                    ) : (
-                      <img
-                        src={`/profile-picture-placeholder.png`}
-                        alt=""
-                        className="w-8 h-8 object-cover rounded-full opacity-100"
-                      />
-                    )}
-                  </div>
-                  <div className="flex flex-col w-full">
-                    <div className="flex justify-between pb-1">
-                      <h1 className="text-xl font-semibold text-slate-800 hover:underline cursor-pointer">
-                        {discussion?.userId?.name}
-                      </h1>
-                      <p className="text-gray-400 text-xs  pt-2">
-                        {timeAgo(discussion.createdAt)}
-                      </p>
-                    </div>
-                    <p className="text-sm text-gray-400 pb-3">
-                      {discussion?.userId?.address}
-                    </p>
-                    <p>{discussion?.content}</p>
-                  </div>
-                </div>
-              </div>
-            ))
-          ) : (
-            <p className="px-5 py-3 bg-slate-100 text-center">
-              No Discussions yet!
-            </p>
-          )}
-
-          <div className=" border-b-4 border-slate-300">
-            <div className="flex gap-3 border-b py-5">
-              <div>
-                <img src="" alt="img" className="w-8 h-8 border rounded-full" />
+                {discussion?.userId?.profileImage ? (
+                  <img
+                    src={`${BASE_URL}/${discussion?.userId?.profileImage}`}
+                    alt="img"
+                    className="border rounded-full w-8 h-8"
+                  />
+                ) : (
+                  <img
+                    src={`/profile-picture-placeholder.png`}
+                    alt=""
+                    className="w-8 h-8 object-cover rounded-full opacity-100"
+                  />
+                )}
               </div>
               <div className="flex flex-col w-full">
                 <div className="flex justify-between pb-1">
                   <h1 className="text-xl font-semibold text-slate-800 hover:underline cursor-pointer">
-                    Anshik Bansal
+                    {discussion?.userId?.name}
                   </h1>
-                  <p className="text-gray-400 text-xs  pt-2">6 days ago</p>
+                  <p className="text-gray-400 text-xs  pt-2">
+                    {timeAgo(discussion.createdAt)}
+                  </p>
                 </div>
                 <p className="text-sm text-gray-400 pb-3">
-                  Ghaziabad, Uttar Pradesh, India
+                  {discussion?.userId?.address}
                 </p>
-                <p>
-                  I would not recommend you visit New Delhi during December, as
-                  there can be a lot of smog in the environment due to the
-                  burning of crops in the nearby states, or be ready with a mask
-                  in the early weeks of December. If you're a winter or a snow
-                  lover, then visit Himachal Pradesh and Uttrakhand, and if not,
-                  you can visit South India (Kerala, Tamil Nadu, Karnataka) or
-                  Eastern India (Meghalaya, Darjeeling, Odisha), or travel to
-                  Western India, and visit Rann Utsav in Gujarat.
-                </p>
-              </div>
-            </div>
-            <div className="flex gap-3 border-b py-5">
-              <div>
-                <img src="" alt="img" className="w-8 h-8 border rounded-full" />
-              </div>
-              <div className="flex flex-col w-full">
-                <div className="flex justify-between pb-1">
-                  <h1 className="text-xl font-semibold text-slate-800">
-                    Josekutty Jose
-                  </h1>
-                  <p className="text-gray-400 text-xs  pt-2">5 days ago</p>
-                </div>
-                <p className="text-sm text-gray-400 pb-3">
-                  Kochi, Kerala, India
-                </p>
-                <p>If you intend to visit Kochi ping me</p>
+                <p>{discussion?.content}</p>
               </div>
             </div>
           </div>
+
+          <div className=" border-b-4 border-slate-300">
+            {discussion?.replies?.length > 0 ? (
+              discussion.replies.map((reply) => (
+                <div className="flex gap-3 border-b py-5">
+                  <div>
+                    <img
+                      src={`${BASE_URL}/${reply?.userId?.profileImage}`}
+                      alt="img"
+                      className="w-8 h-8 border rounded-full"
+                    />
+                  </div>
+                  <div className="flex flex-col w-full">
+                    <div className="flex justify-between pb-1">
+                      <h1 className="text-xl font-semibold text-slate-800 hover:underline cursor-pointer">
+                        {reply.userId?.name}
+                      </h1>
+                      <p className="text-gray-400 text-xs  pt-2">
+                        {timeAgo(reply.createdAt)}
+                      </p>
+                    </div>
+                    <p className="text-sm text-gray-400 pb-3">
+                      {reply?.userId?.address}
+                    </p>
+                    <p>{reply?.replyMessage}</p>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <></>
+            )}
+          </div>
           <div className="py-5">
-            <form>
+            <form onSubmit={handleSubmit}>
               <textarea
                 name=""
                 id=""
@@ -178,6 +176,7 @@ const GroupDiscussionPage = () => {
                 placeholder="write a reply..."
                 value={reply}
                 onChange={(e) => setReply(e.target.value)}
+                required
                 className="w-full border border-slate-300 hover:border-sky-700 rounded px-2 py-1"
               ></textarea>
               <div className="flex justify-end pt-2">
