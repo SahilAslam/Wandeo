@@ -18,6 +18,8 @@ import CreateGroup from './Pages/User/UserGroup/CreateGroup'
 import FindHosts from './Pages/User/Search/FindHosts/FindHosts'
 import GroupDetailedPage from './Pages/User/UserGroup/GroupDetailedPage/GroupDetailedPage'
 import GroupDiscussionPage from './Pages/User/UserGroup/GroupDiscussionPage'
+import AllGroups from './Pages/User/UserGroup/AllGroups'
+import DiffUserProfile from './Pages/User/Profile/DiffUserProfile'
 
 function App() {
   
@@ -41,6 +43,8 @@ function App() {
           <Route path='/groupDetailedPage/:id' element={<GroupDetailedPage/>} />
           <Route path='/findHosts' element={<FindHosts/>} />
           <Route path='/discussionPage/:id' element={<GroupDiscussionPage />} />
+          <Route path='/DiffProfile/:id' element={<DiffUserProfile />} />
+          <Route path='/allGroups' element={<AllGroups />} />
         </Route>
 
 

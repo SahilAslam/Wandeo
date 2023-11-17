@@ -21,7 +21,7 @@ function UserEvents() {
   const baseUrl = "https://res.cloudinary.com/dkba47utw/image/upload/v1698223651";
 
   const user = useSelector(selectUser);
-  const id = user?.user?._id;
+  const id = user?.id ? user?.id : user?.user?._id;
 
   useEffect(() => {
     axiosInstance

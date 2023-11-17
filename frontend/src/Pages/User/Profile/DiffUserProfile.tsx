@@ -4,22 +4,23 @@ import ProfileCard from "../../../Components/User/Profile/ProfileCard";
 import axiosInstance from "../../../Axios/Axios";
 import { useSelector } from "react-redux";
 import { selectUser } from "../../../Redux/Slice/userSlice";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { IoMdAdd } from "react-icons/io";
 import AddImage from "../../../Components/Modals/AddImage";
 import { ToastContainer } from "react-toastify";
 
-const UserProfile = () => {
+const DiffUserProfile = () => {
   const [userDatails, setUserDetails] = useState<any>([]);
   const [selectedMenuItem, setSelectedMenuItem] = useState("About");
   const [imageModal, setImageModal] = useState<boolean>(false);
-  const [updateUI, setUpdateUI] = useState<boolean>(false);
 
   const navigate = useNavigate();
 
+  const {id} = useParams();
+
   const user = useSelector(selectUser);
-  const id = user?.id ? user?.id : user?.user?._id;
-  console.log(id);
+  const userId = user?.id ? user?.id : user?.user?._id;
+  console.log(userId);
 
   useEffect(() => {
     axiosInstance
@@ -34,7 +35,7 @@ const UserProfile = () => {
         }
       })
       .catch((error) => console.log(error, "user profile error"));
-  }, [id, updateUI]);
+  }, [id]);
 
   const openModal = () => {
     setImageModal(true);
@@ -48,9 +49,10 @@ const UserProfile = () => {
     setSelectedMenuItem(menuItem);
   };
 
-  const handleButton = async () => {
-    navigate(`/editProfile/${id}`);
-  };
+
+
+  const baseUrl =
+    "https://res.cloudinary.com/dkba47utw/image/upload/v1698223651";
 
   const calculateAge = (birthdate: Date) => {
     const today = new Date();
@@ -82,7 +84,7 @@ const UserProfile = () => {
         <div className="pt-2 px-4 lg:px-32">
           <div className="flex flex-col md:flex-row gap-2">
             <div>
-              <ProfileCard userDetails={userDatails} updateUI={updateUI} />
+              <ProfileCard userDetails={userDatails} />
             </div>
             <div className="w-full flex flex-col gap-2">
               <div className="grid grid-cols-1 sm:grid-cols-2 bg-white">
@@ -96,14 +98,7 @@ const UserProfile = () => {
                     Last login 7 minutes ago
                   </p>
                 </div>
-                <div className="flex items-center justify-end px-5 pb-5 sm:pt-0 sm:py-0">
-                  <button
-                    className="bg-green-700 hover:bg-green-800 text-white font-medium px-4 py-2 rounded-sm"
-                    onClick={handleButton}
-                  >
-                    Edit My Profile
-                  </button>
-                </div>
+                
               </div>
               <div className="bg-white xl:h-[70px]">
                 <ul className="flex flex-row flex-wrap gap-x-14 gap-y-2 px-5 py-5 text-green-800 font-semibold">
@@ -251,7 +246,7 @@ const UserProfile = () => {
                     <div className="px-4 py-6 flex justify-start items-center">
                       {userDatails?.profileImage && (
                         <img
-                          src={`${userDatails?.profileImage}`}
+                          src={`${baseUrl}/${userDatails?.profileImage}`}
                           alt="profile img"
                           className="w-56 h-56 object-cover rounded mr-4"
                         />
@@ -285,9 +280,9 @@ const UserProfile = () => {
           </div>
         </div>
       </div>
-      <AddImage closeModal={closeModal} visible={imageModal} setUpdateUI={setUpdateUI} />
+      <AddImage closeModal={closeModal} visible={imageModal} />
     </>
   );
 };
 
-export default UserProfile;
+export default DiffUserProfile;

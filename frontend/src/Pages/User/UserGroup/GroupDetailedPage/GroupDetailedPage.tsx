@@ -17,7 +17,7 @@ const GroupDetailedPage = () => {
   const { id } = useParams();
 
   const user = useSelector(selectUser);
-  const userId = user?.user?._id;
+  const userId = user?.id ? user?.id : user?.user?._id;
 
   const navigate = useNavigate();
 
@@ -74,7 +74,6 @@ const GroupDetailedPage = () => {
   const leaveGroup = async (groupId: string) => {
     try {
       const response = await axiosInstance.patch(`/leaveGroup/${groupId}`);
-      console.log(response.data, "rrrrrrrrr");
 
       if (response.data.message) {
         console.log("leaved Group:", response.data.message);
@@ -85,6 +84,21 @@ const GroupDetailedPage = () => {
       console.error("Error while leaving the group:", error);
     }
   };
+
+  const deleteGroup = async (groupId: string) => {
+    try {
+      const response = await axiosInstance.delete(`/deleteGroup/${groupId}`);
+
+      if(response.data.message) {
+        setTimeout(() => {
+          toast.success(response.data.message)
+        }, 0)
+        navigate('/groups')
+      }
+    } catch (error) {
+      console.error("Error while leaving the group:", error);
+    }
+  }
 
   const timeAgo = (date: string) => {
     const currentDate = new Date();
@@ -147,7 +161,14 @@ const GroupDetailedPage = () => {
                 <p>{groupData?.description}</p>
               </div>
               {isCreaterUser() ? (
-                ""
+                <div className="flex justify-end">
+                  <button
+                      onClick={() => deleteGroup(groupData?._id)}
+                      className="border border-sky-700 rounded text-sky-700 px-3 py-1.5 transition duration-500 hover:transition hover:duration-300 hover:bg-sky-700 hover:text-white "
+                    >
+                      Delete Group
+                    </button>
+                </div>
               ) : (
                 <div className="flex justify-end">
                   {userIsMember() ? (

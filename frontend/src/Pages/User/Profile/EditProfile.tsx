@@ -6,12 +6,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { login, selectUser } from "../../../Redux/Slice/userSlice";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import HostingForm from "../../../Components/User/Profile/HostingForm";
 
 const EditProfile = () => {
   const [userDatails, setUserDetails] = useState({});
   const [menuOpen, setMenuOpen] = useState(false);
   const [selectedMenu, setSelectedMenu] = useState("Not Accepting Guests"); // Initialize with the default menu item
-  const [hosting, setHosting] = useState("");
+  const [hosting, setHosting] = useState("Not Accepting Guests");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [birthday, setBirthday] = useState("");
@@ -23,14 +24,21 @@ const EditProfile = () => {
   const [fluentlanguage, setFluentLanguage] = useState("");
   const [languageLearning, setLanguageLearning] = useState("");
   const [about, setAbout] = useState("");
-  const [updateUI, setUpdateUI] = useState<boolean>(false)
+  const [updateUI, setUpdateUI] = useState<boolean>(false);
+  const [isAbout, setIsAbout] = useState(true);
+
+  
+  
+    // State to keep track of selected days
+    
+
 
   const navigate = useNavigate();
 
   const dispatch = useDispatch();
 
   const user = useSelector(selectUser);
-  const id = user?.user?._id;
+  const id = user?.id ? user?.id : user?.user?._id;
 
   const ulRef = useRef<HTMLAnchorElement | null>(null); // Specify the correct type for ulRef
   const menuRef = useRef<HTMLLIElement | null>(null); // Specify the correct type for menuRef
@@ -47,6 +55,7 @@ const EditProfile = () => {
     }
   });
 
+ 
   useEffect(() => {
     axiosInstance
       .get(`/profile/${id}`)
@@ -116,6 +125,14 @@ const EditProfile = () => {
       });
   };
 
+  const handleClick = () => {
+    setIsAbout(false);
+  };
+
+  const handleCancel = () => {
+    navigate('/profile')
+  }
+
   return (
     <>
       <SignupNavbar />
@@ -138,12 +155,28 @@ const EditProfile = () => {
               </div>
               <div className="w-full xl:w-auto h-full bg-white">
                 <div className="w-full md:w-auto flex flex-col">
-                  <form onSubmit={(e) => handleSubmit(e)}>
-                    <div className="w-full md:w-auto h-[45px] border-b flex flex-row gap-4">
-                      <h1 className="block w-20 py-2 px-4 border-b-4 border-green-800">
-                        About
-                      </h1>
-                      <div className="w-full px-4 py-1.5 flex justify-end gap-4">
+                  <div className="w-full md:w-auto h-[45px] border-b flex flex-row gap-1">
+                    <h1
+                      onClick={() => setIsAbout(true)}
+                      className={`block w-20 py-2 px-4 cursor-pointer hover:animate-pulse ${
+                        isAbout
+                          ? "border-b-4 border-green-800 delay-75"
+                          : "delay-75"
+                      }`}
+                    >
+                      About
+                    </h1>
+                    <h1
+                      onClick={handleClick}
+                      className={`block w-20 py-2 px-3 cursor-pointer hover:animate-pulse ${
+                        !isAbout
+                          ? "border-b-4 border-green-800 delay-75"
+                          : "delay-75"
+                      }`}
+                    >
+                      Hosting
+                    </h1>
+                    {/* <div className="w-full px-4 py-1.5 flex justify-end gap-4">
                         <button
                           className="px-6 bg-green-600 text-white font-semibold rounded-md"
                           type="submit"
@@ -153,309 +186,318 @@ const EditProfile = () => {
                         <button className="px-5 bg-gray-400 text-white font-semibold rounded-md">
                           Cancel
                         </button>
-                      </div>
-                    </div>
-                    <div className="mx-4 px-1 py-6 flex flex-col md:flex-row border-b">
-                      <h1 className="w-44 text-slate-700 text-base font-semibold">
-                        Hosting Availability
-                      </h1>
-                      <div className="w-auto md:mx-6 flex flex-col relative">
-                        <input
-                          type="text"
-                          placeholder="Select an option"
-                          onClick={() => setMenuOpen(!menuOpen)}
-                          ref={ulRef}
-                          value={hosting ? hosting : selectedMenu}
-                          className="block w-fit sm:w-60 md:w-auto lg:w-60 rounded-md border-0 py-0.5 px-2 mt-2 md:mt-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:ring-gray-400 placeholder:text-gray-400 focus:ring-slate-800 sm:text-sm sm:leading-6"
-                        />
-                        {menuOpen && (
-                          <div className="bg-white w-auto md:w-60 text-sm shadow-xl -left-1 border rounded-md absolute ml-1 mt-9 md:mt-7">
-                            <ul>
-                              {Menus.map((menu, index) => (
-                                <li
-                                  key={index}
-                                  className="px-2 py-0.5 cursor-pointer hover:bg-blue-100"
-                                  onClick={() => {
-                                    setSelectedMenu(menu);
-                                    setHosting(menu);
-                                    setMenuOpen(false);
-                                  }}
-                                >
-                                  {<span>{menu}</span>}
-                                </li>
-                              ))}
-                            </ul>
+                      </div> */}
+                  </div>
+                  {isAbout ? (
+                    <div>
+                      <form onSubmit={(e) => handleSubmit(e)}>
+                        <div className="mx-4 px-1 py-6 flex flex-col md:flex-row border-b">
+                          <h1 className="w-44 text-slate-700 text-base font-semibold">
+                            Hosting Availability
+                          </h1>
+                          <div className="w-auto md:mx-6 flex flex-col relative">
+                            <input
+                              type="text"
+                              placeholder="Select an option"
+                              onClick={() => setMenuOpen(!menuOpen)}
+                              ref={ulRef}
+                              value={hosting ? hosting : selectedMenu}
+                              className="block w-fit sm:w-60 md:w-auto lg:w-60 rounded-md border-0 py-0.5 px-2 mt-2 md:mt-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:ring-gray-400 placeholder:text-gray-400 focus:ring-slate-800 sm:text-sm sm:leading-6"
+                            />
+                            {menuOpen && (
+                              <div className="bg-white w-auto md:w-60 text-sm shadow-xl -left-1 border rounded-md absolute ml-1 mt-9 md:mt-7">
+                                <ul>
+                                  {Menus.map((menu, index) => (
+                                    <li
+                                      key={index}
+                                      className="px-2 py-0.5 cursor-pointer hover:bg-blue-100"
+                                      onClick={() => {
+                                        setSelectedMenu(menu);
+                                        setHosting(menu);
+                                        setMenuOpen(false);
+                                      }}
+                                    >
+                                      {<span>{menu}</span>}
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                            )}
                           </div>
-                        )}
-                      </div>
+                        </div>
+                        <div className="mx-4 px-1 flex flex-col border-b">
+                          <div className="py-4 flex flex-col md:flex-row md:gap-4 ">
+                            <h1 className="w-44  text-slate-700 text-base font-semibold">
+                              Name
+                            </h1>
+                            <div className="md:mx-2 md:w-auto lg:w-auto xl:w-[30rem]  flex flex-col">
+                              <input
+                                type="text"
+                                placeholder=""
+                                required
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                                className="block w-full rounded-md border-0 py-0.5 px-2 mt-2 md:mt-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:ring-gray-400 placeholder:text-gray-400 focus:ring-slate-800 sm:text-sm sm:leading-6"
+                              />
+                            </div>
+                          </div>
+                          <div className="py-4 flex flex-col md:flex-row md:gap-6">
+                            <h1 className="w-44 text-slate-700 text-base font-semibold">
+                              Birthday
+                            </h1>
+                            <div className="md:w-auto lg:w-[12rem] xl:w-[12rem] flex flex-col">
+                              <input
+                                type="date"
+                                onChange={(e) => setBirthday(e.target.value)}
+                                value={birthday}
+                                placeholder=""
+                                className="block w-full rounded-md border-0 py-0.5 px-2 mt-2 md:mt-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:ring-gray-400 placeholder:text-gray-400 focus:ring-slate-800 sm:text-sm sm:leading-6"
+                              />
+                            </div>
+                          </div>
+                          <div className="py-4 flex flex-col md:flex-row md:gap-5">
+                            <h1 className="w-44 text-slate-700 text-base font-semibold">
+                              Gender
+                            </h1>
+                            <div className="md:mx-1 md:w-auto lg:w-[12rem] xl:w-[12rem] flex flex-col">
+                              <input
+                                type="text"
+                                value={gender}
+                                onChange={(e) => setGender(e.target.value)}
+                                placeholder=""
+                                className="block w-full rounded-md border-0 py-0.5 px-2 mt-2 md:mt-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:ring-gray-400 placeholder:text-gray-400 focus:ring-slate-800 sm:text-sm sm:leading-6"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                        <div className="mx-4 px-1 flex flex-col border-b">
+                          <div className="py-4 flex flex-col md:flex-row md:gap-4 ">
+                            <h1 className="w-44  text-slate-700 text-base font-semibold">
+                              Email
+                            </h1>
+                            <div className="md:mx-2 md:w-auto lg:w-auto xl:w-[30rem]  flex flex-col">
+                              <input
+                                type="text"
+                                placeholder=""
+                                required
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                className="block w-full rounded-md border-0 py-0.5 px-2 mt-2 md:mt-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:ring-gray-400 placeholder:text-gray-400 focus:ring-slate-800 sm:text-sm sm:leading-6"
+                              />
+                            </div>
+                          </div>
+                          <div className="py-4 flex flex-col md:flex-row md:gap-6">
+                            <h1 className="w-44 text-slate-700 text-base font-semibold">
+                              Phone
+                            </h1>
+                            <div className="md:w-auto lg:w-[25rem] xl:w-[30rem] flex flex-col">
+                              <input
+                                type="text"
+                                value={phone}
+                                onChange={(e) => setPhone(e.target.value)}
+                                placeholder=""
+                                className="block w-full rounded-md border-0 py-0.5 px-2 mt-2 md:mt-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:ring-gray-400 placeholder:text-gray-400 focus:ring-slate-800 sm:text-sm sm:leading-6"
+                              />
+                            </div>
+                          </div>
+                          <div className="py-4 flex flex-col md:flex-row md:gap-5">
+                            <h1 className="w-44 text-slate-700 text-base font-semibold">
+                              Home Address
+                            </h1>
+                            <div className="md:mx-1 md:w-auto lg:w-[25rem] xl:w-[30rem] flex flex-col">
+                              <input
+                                type="text"
+                                value={address}
+                                onChange={(e) => setAddress(e.target.value)}
+                                placeholder=""
+                                className="block w-full rounded-md border-0 py-0.5 px-2 mt-2 md:mt-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:ring-gray-400 placeholder:text-gray-400 focus:ring-slate-800 sm:text-sm sm:leading-6"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                        <div className="mx-4 px-1 flex flex-col border-b">
+                          {/* <div className="py-4 flex flex-col md:flex-row md:gap-4 ">
+                            <h1 className="w-44  text-slate-700 text-base font-semibold">
+                              Where I Grew Up
+                            </h1>
+                            <div className="md:mx-2 md:w-auto lg:w-auto xl:w-[30rem]  flex flex-col">
+                              <input
+                                type="text"
+                                value={location}
+                                onChange={(e) => setLocation(e.target.value)}
+                                placeholder=""
+                                className="block w-full rounded-md border-0 py-0.5 px-2 mt-2 md:mt-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:ring-gray-400 placeholder:text-gray-400 focus:ring-slate-800 sm:text-sm sm:leading-6"
+                              />
+                            </div>
+                          </div> */}
+                          <div className="py-4 flex flex-col md:flex-row md:gap-6">
+                            <h1 className="w-44 text-slate-700 text-base font-semibold">
+                              Occupation
+                            </h1>
+                            <div className="md:w-auto lg:w-[25rem] xl:w-[30rem] flex flex-col">
+                              <input
+                                type="text"
+                                value={occupation}
+                                onChange={(e) => setOccupation(e.target.value)}
+                                placeholder=""
+                                className="block w-full rounded-md border-0 py-0.5 px-2 mt-2 md:mt-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:ring-gray-400 placeholder:text-gray-400 focus:ring-slate-800 sm:text-sm sm:leading-6"
+                              />
+                            </div>
+                          </div>
+                          <div className="py-4 flex flex-col md:flex-row md:gap-5">
+                            <h1 className="w-44 text-slate-700 text-base font-semibold">
+                              Education
+                            </h1>
+                            <div className="md:mx-1 md:w-auto lg:w-[25rem] xl:w-[30rem] flex flex-col">
+                              <input
+                                type="text"
+                                value={education}
+                                onChange={(e) => setEducation(e.target.value)}
+                                placeholder=""
+                                className="block w-full rounded-md border-0 py-0.5 px-2 mt-2 md:mt-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:ring-gray-400 placeholder:text-gray-400 focus:ring-slate-800 sm:text-sm sm:leading-6"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                        <div className="mx-4 px-1 flex flex-col border-b">
+                          <div className="py-4 flex flex-col md:flex-row">
+                            <h1 className="w-44 text-slate-700 text-base font-semibold">
+                              Languages I'm Fluent In
+                            </h1>
+                            <div className="md:mx-6 md:w-auto lg:w-[25rem] xl:w-[30rem] flex flex-col">
+                              <p>Add Language</p>
+                              <input
+                                type="text"
+                                value={fluentlanguage}
+                                onChange={(e) =>
+                                  setFluentLanguage(e.target.value)
+                                }
+                                placeholder=""
+                                className="block w-full rounded-md border-0 py-0.5 px-2 mt-2 md:mt-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:ring-gray-400 placeholder:text-gray-400 focus:ring-slate-800 sm:text-sm sm:leading-6"
+                              />
+                            </div>
+                          </div>
+                          <div className="py-4 flex flex-col md:flex-row md:gap-4">
+                            <h1 className="w-44 text-slate-700 text-base font-semibold">
+                              Languages I'm Learning
+                            </h1>
+                            <div className="md:mx-2 md:w-auto lg:w-[25rem] xl:w-[30rem]  flex flex-col">
+                              <p>Add Language</p>
+                              <input
+                                type="text"
+                                value={languageLearning}
+                                onChange={(e) =>
+                                  setLanguageLearning(e.target.value)
+                                }
+                                placeholder=""
+                                className="block w-full rounded-md border-0 py-0.5 px-2 mt-2 md:mt-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:ring-gray-400 placeholder:text-gray-400 focus:ring-slate-800 sm:text-sm sm:leading-6"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                        <div className="mx-4 px-1 py-6 flex flex-col gap-4 border-b">
+                          <div>
+                            <h1 className="w-auto text-slate-700 text-base font-semibold">
+                              About Me
+                            </h1>
+                            <textarea
+                              name=""
+                              id=""
+                              rows="6"
+                              value={about}
+                              onChange={(e) => setAbout(e.target.value)}
+                              className="block w-full rounded-md border-0 py-0.5 px-2 mt-2 md:mt-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:ring-gray-400 placeholder:text-gray-400 focus:ring-slate-800 sm:text-sm sm:leading-6"
+                            ></textarea>
+                          </div>
+                          {/* <div>
+                            <h1 className="w-auto text-slate-700 text-base font-semibold">
+                              Why I'm on Wandeo
+                            </h1>
+                            <textarea
+                              name=""
+                              id=""
+                              rows="6"
+                              className="block w-full rounded-md border-0 py-0.5 px-2 mt-2 md:mt-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:ring-gray-400 placeholder:text-gray-400 focus:ring-slate-800 sm:text-sm sm:leading-6"
+                            ></textarea>
+                          </div>
+                          <div>
+                            <h1 className="w-auto text-slate-700 text-base font-semibold">
+                              One Amazing Thing I've Done
+                            </h1>
+                            <textarea
+                              name=""
+                              id=""
+                              rows="6"
+                              className="block w-full rounded-md border-0 py-0.5 px-2 mt-2 md:mt-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:ring-gray-400 placeholder:text-gray-400 focus:ring-slate-800 sm:text-sm sm:leading-6"
+                            ></textarea>
+                          </div>
+                          <div>
+                            <h1 className="w-auto text-slate-700 text-base font-semibold">
+                              Teach, Learn, Share
+                            </h1>
+                            <textarea
+                              name=""
+                              id=""
+                              rows="6"
+                              className="block w-full rounded-md border-0 py-0.5 px-2 mt-2 md:mt-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:ring-gray-400 placeholder:text-gray-400 focus:ring-slate-800 sm:text-sm sm:leading-6"
+                            ></textarea>
+                          </div>
+                          <div>
+                            <h1 className="w-auto text-slate-700 text-base font-semibold">
+                              What I Can Share With Hosts
+                            </h1>
+                            <textarea
+                              name=""
+                              id=""
+                              rows="6"
+                              className="block w-full rounded-md border-0 py-0.5 px-2 mt-2 md:mt-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:ring-gray-400 placeholder:text-gray-400 focus:ring-slate-800 sm:text-sm sm:leading-6"
+                            ></textarea>
+                          </div> */}
+                        </div>
+                        {/* <div className="mx-4 px-1 flex flex-col border-b">
+                          <div className="py-4 flex flex-col md:flex-row">
+                            <h1 className="text-slate-700 text-base font-semibold">
+                              Countries I've Visited
+                            </h1>
+                            <div className="md:mx-8 md:w-auto lg:w-[25rem] xl:w-[30rem] flex flex-col">
+                              <p>Add Country</p>
+                              <input
+                                type="text"
+                                placeholder=""
+                                className="block w-full rounded-md border-0 py-0.5 px-2 mt-2 md:mt-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:ring-gray-400 placeholder:text-gray-400 focus:ring-slate-800 sm:text-sm sm:leading-6"
+                              />
+                            </div>
+                          </div>
+                          <div className="py-4 flex flex-col md:flex-row md:gap-4">
+                            <h1 className="w-auto text-slate-700 text-base font-semibold">
+                              Countries I've Lived In
+                            </h1>
+                            <div className="md:mx-2 md:w-auto lg:w-[25rem] xl:w-[30rem] flex flex-col">
+                              <p>Add Country</p>
+                              <input
+                                type="text"
+                                placeholder=""
+                                className="block w-full rounded-md border-0 py-0.5 px-2 mt-2 md:mt-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:ring-gray-400 placeholder:text-gray-400 focus:ring-slate-800 sm:text-sm sm:leading-6"
+                              />
+                            </div>
+                          </div>
+                        </div> */}
+                        <div className="mx-4 px-1 py-4 flex flex-row gap-4">
+                          <button
+                            className="px-6 py-1 bg-green-600 text-white font-semibold rounded-sm"
+                            type="submit"
+                          >
+                            Save
+                          </button>
+                          <button onClick={handleCancel} className="px-5 py-1 bg-gray-400 text-white font-semibold rounded-sm">
+                            Cancel
+                          </button>
+                        </div>
+                      </form>
                     </div>
-                    <div className="mx-4 px-1 flex flex-col border-b">
-                      <div className="py-4 flex flex-col md:flex-row md:gap-4 ">
-                        <h1 className="w-44  text-slate-700 text-base font-semibold">
-                          Name
-                        </h1>
-                        <div className="md:mx-2 md:w-auto lg:w-auto xl:w-[30rem]  flex flex-col">
-                          <input
-                            type="text"
-                            placeholder=""
-                            required
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                            className="block w-full rounded-md border-0 py-0.5 px-2 mt-2 md:mt-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:ring-gray-400 placeholder:text-gray-400 focus:ring-slate-800 sm:text-sm sm:leading-6"
-                          />
-                        </div>
-                      </div>
-                      <div className="py-4 flex flex-col md:flex-row md:gap-6">
-                        <h1 className="w-44 text-slate-700 text-base font-semibold">
-                          Birthday
-                        </h1>
-                        <div className="md:w-auto lg:w-[12rem] xl:w-[12rem] flex flex-col">
-                          <input
-                            type="date"
-                            onChange={(e) => setBirthday(e.target.value)}
-                            value={birthday}
-                            placeholder=""
-                            className="block w-full rounded-md border-0 py-0.5 px-2 mt-2 md:mt-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:ring-gray-400 placeholder:text-gray-400 focus:ring-slate-800 sm:text-sm sm:leading-6"
-                          />
-                        </div>
-                      </div>
-                      <div className="py-4 flex flex-col md:flex-row md:gap-5">
-                        <h1 className="w-44 text-slate-700 text-base font-semibold">
-                          Gender
-                        </h1>
-                        <div className="md:mx-1 md:w-auto lg:w-[12rem] xl:w-[12rem] flex flex-col">
-                          <input
-                            type="text"
-                            value={gender}
-                            onChange={(e) => setGender(e.target.value)}
-                            placeholder=""
-                            className="block w-full rounded-md border-0 py-0.5 px-2 mt-2 md:mt-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:ring-gray-400 placeholder:text-gray-400 focus:ring-slate-800 sm:text-sm sm:leading-6"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                    <div className="mx-4 px-1 flex flex-col border-b">
-                      <div className="py-4 flex flex-col md:flex-row md:gap-4 ">
-                        <h1 className="w-44  text-slate-700 text-base font-semibold">
-                          Email
-                        </h1>
-                        <div className="md:mx-2 md:w-auto lg:w-auto xl:w-[30rem]  flex flex-col">
-                          <input
-                            type="text"
-                            placeholder=""
-                            required
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            className="block w-full rounded-md border-0 py-0.5 px-2 mt-2 md:mt-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:ring-gray-400 placeholder:text-gray-400 focus:ring-slate-800 sm:text-sm sm:leading-6"
-                          />
-                        </div>
-                      </div>
-                      <div className="py-4 flex flex-col md:flex-row md:gap-6">
-                        <h1 className="w-44 text-slate-700 text-base font-semibold">
-                          Phone
-                        </h1>
-                        <div className="md:w-auto lg:w-[25rem] xl:w-[30rem] flex flex-col">
-                          <input
-                            type="text"
-                            value={phone}
-                            onChange={(e) => setPhone(e.target.value)}
-                            placeholder=""
-                            className="block w-full rounded-md border-0 py-0.5 px-2 mt-2 md:mt-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:ring-gray-400 placeholder:text-gray-400 focus:ring-slate-800 sm:text-sm sm:leading-6"
-                          />
-                        </div>
-                      </div>
-                      <div className="py-4 flex flex-col md:flex-row md:gap-5">
-                        <h1 className="w-44 text-slate-700 text-base font-semibold">
-                          Home Address
-                        </h1>
-                        <div className="md:mx-1 md:w-auto lg:w-[25rem] xl:w-[30rem] flex flex-col">
-                          <input
-                            type="text"
-                            value={address}
-                            onChange={(e) => setAddress(e.target.value)}
-                            placeholder=""
-                            className="block w-full rounded-md border-0 py-0.5 px-2 mt-2 md:mt-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:ring-gray-400 placeholder:text-gray-400 focus:ring-slate-800 sm:text-sm sm:leading-6"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                    <div className="mx-4 px-1 flex flex-col border-b">
-                      {/* <div className="py-4 flex flex-col md:flex-row md:gap-4 ">
-                        <h1 className="w-44  text-slate-700 text-base font-semibold">
-                          Where I Grew Up
-                        </h1>
-                        <div className="md:mx-2 md:w-auto lg:w-auto xl:w-[30rem]  flex flex-col">
-                          <input
-                            type="text"
-                            value={location}
-                            onChange={(e) => setLocation(e.target.value)}
-                            placeholder=""
-                            className="block w-full rounded-md border-0 py-0.5 px-2 mt-2 md:mt-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:ring-gray-400 placeholder:text-gray-400 focus:ring-slate-800 sm:text-sm sm:leading-6"
-                          />
-                        </div>
-                      </div> */}
-                      <div className="py-4 flex flex-col md:flex-row md:gap-6">
-                        <h1 className="w-44 text-slate-700 text-base font-semibold">
-                          Occupation
-                        </h1>
-                        <div className="md:w-auto lg:w-[25rem] xl:w-[30rem] flex flex-col">
-                          <input
-                            type="text"
-                            value={occupation}
-                            onChange={(e) => setOccupation(e.target.value)}
-                            placeholder=""
-                            className="block w-full rounded-md border-0 py-0.5 px-2 mt-2 md:mt-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:ring-gray-400 placeholder:text-gray-400 focus:ring-slate-800 sm:text-sm sm:leading-6"
-                          />
-                        </div>
-                      </div>
-                      <div className="py-4 flex flex-col md:flex-row md:gap-5">
-                        <h1 className="w-44 text-slate-700 text-base font-semibold">
-                          Education
-                        </h1>
-                        <div className="md:mx-1 md:w-auto lg:w-[25rem] xl:w-[30rem] flex flex-col">
-                          <input
-                            type="text"
-                            value={education}
-                            onChange={(e) => setEducation(e.target.value)}
-                            placeholder=""
-                            className="block w-full rounded-md border-0 py-0.5 px-2 mt-2 md:mt-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:ring-gray-400 placeholder:text-gray-400 focus:ring-slate-800 sm:text-sm sm:leading-6"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                    <div className="mx-4 px-1 flex flex-col border-b">
-                      <div className="py-4 flex flex-col md:flex-row">
-                        <h1 className="w-44 text-slate-700 text-base font-semibold">
-                          Languages I'm Fluent In
-                        </h1>
-                        <div className="md:mx-6 md:w-auto lg:w-[25rem] xl:w-[30rem] flex flex-col">
-                          <p>Add Language</p>
-                          <input
-                            type="text"
-                            value={fluentlanguage}
-                            onChange={(e) => setFluentLanguage(e.target.value)}
-                            placeholder=""
-                            className="block w-full rounded-md border-0 py-0.5 px-2 mt-2 md:mt-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:ring-gray-400 placeholder:text-gray-400 focus:ring-slate-800 sm:text-sm sm:leading-6"
-                          />
-                        </div>
-                      </div>
-                      <div className="py-4 flex flex-col md:flex-row md:gap-4">
-                        <h1 className="w-44 text-slate-700 text-base font-semibold">
-                          Languages I'm Learning
-                        </h1>
-                        <div className="md:mx-2 md:w-auto lg:w-[25rem] xl:w-[30rem]  flex flex-col">
-                          <p>Add Language</p>
-                          <input
-                            type="text"
-                            value={languageLearning}
-                            onChange={(e) =>
-                              setLanguageLearning(e.target.value)
-                            }
-                            placeholder=""
-                            className="block w-full rounded-md border-0 py-0.5 px-2 mt-2 md:mt-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:ring-gray-400 placeholder:text-gray-400 focus:ring-slate-800 sm:text-sm sm:leading-6"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                    <div className="mx-4 px-1 py-6 flex flex-col gap-4 border-b">
-                      <div>
-                        <h1 className="w-auto text-slate-700 text-base font-semibold">
-                          About Me
-                        </h1>
-                        <textarea
-                          name=""
-                          id=""
-                          rows="6"
-                          value={about}
-                          onChange={(e) => setAbout(e.target.value)}
-                          className="block w-full rounded-md border-0 py-0.5 px-2 mt-2 md:mt-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:ring-gray-400 placeholder:text-gray-400 focus:ring-slate-800 sm:text-sm sm:leading-6"
-                        ></textarea>
-                      </div>
-                      {/* <div>
-                        <h1 className="w-auto text-slate-700 text-base font-semibold">
-                          Why I'm on Wandeo
-                        </h1>
-                        <textarea
-                          name=""
-                          id=""
-                          rows="6"
-                          className="block w-full rounded-md border-0 py-0.5 px-2 mt-2 md:mt-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:ring-gray-400 placeholder:text-gray-400 focus:ring-slate-800 sm:text-sm sm:leading-6"
-                        ></textarea>
-                      </div>
-                      <div>
-                        <h1 className="w-auto text-slate-700 text-base font-semibold">
-                          One Amazing Thing I've Done
-                        </h1>
-                        <textarea
-                          name=""
-                          id=""
-                          rows="6"
-                          className="block w-full rounded-md border-0 py-0.5 px-2 mt-2 md:mt-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:ring-gray-400 placeholder:text-gray-400 focus:ring-slate-800 sm:text-sm sm:leading-6"
-                        ></textarea>
-                      </div>
-                      <div>
-                        <h1 className="w-auto text-slate-700 text-base font-semibold">
-                          Teach, Learn, Share
-                        </h1>
-                        <textarea
-                          name=""
-                          id=""
-                          rows="6"
-                          className="block w-full rounded-md border-0 py-0.5 px-2 mt-2 md:mt-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:ring-gray-400 placeholder:text-gray-400 focus:ring-slate-800 sm:text-sm sm:leading-6"
-                        ></textarea>
-                      </div>
-                      <div>
-                        <h1 className="w-auto text-slate-700 text-base font-semibold">
-                          What I Can Share With Hosts
-                        </h1>
-                        <textarea
-                          name=""
-                          id=""
-                          rows="6"
-                          className="block w-full rounded-md border-0 py-0.5 px-2 mt-2 md:mt-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:ring-gray-400 placeholder:text-gray-400 focus:ring-slate-800 sm:text-sm sm:leading-6"
-                        ></textarea>
-                      </div> */}
-                    </div>
-                    {/* <div className="mx-4 px-1 flex flex-col border-b">
-                      <div className="py-4 flex flex-col md:flex-row">
-                        <h1 className="text-slate-700 text-base font-semibold">
-                          Countries I've Visited
-                        </h1>
-                        <div className="md:mx-8 md:w-auto lg:w-[25rem] xl:w-[30rem] flex flex-col">
-                          <p>Add Country</p>
-                          <input
-                            type="text"
-                            placeholder=""
-                            className="block w-full rounded-md border-0 py-0.5 px-2 mt-2 md:mt-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:ring-gray-400 placeholder:text-gray-400 focus:ring-slate-800 sm:text-sm sm:leading-6"
-                          />
-                        </div>
-                      </div>
-                      <div className="py-4 flex flex-col md:flex-row md:gap-4">
-                        <h1 className="w-auto text-slate-700 text-base font-semibold">
-                          Countries I've Lived In
-                        </h1>
-                        <div className="md:mx-2 md:w-auto lg:w-[25rem] xl:w-[30rem] flex flex-col">
-                          <p>Add Country</p>
-                          <input
-                            type="text"
-                            placeholder=""
-                            className="block w-full rounded-md border-0 py-0.5 px-2 mt-2 md:mt-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:ring-gray-400 placeholder:text-gray-400 focus:ring-slate-800 sm:text-sm sm:leading-6"
-                          />
-                        </div>
-                      </div>
-                    </div> */}
-                    <div className="mx-4 px-1 py-4 flex flex-row gap-4">
-                      <button
-                        className="px-6 py-1 bg-green-600 text-white font-semibold rounded-sm"
-                        type="submit"
-                      >
-                        Save
-                      </button>
-                      <button className="px-5 py-1 bg-gray-400 text-white font-semibold rounded-sm">
-                        Cancel
-                      </button>
-                    </div>
-                  </form>
+                  ) : (
+                    <HostingForm />
+                  )}
                 </div>
               </div>
             </div>

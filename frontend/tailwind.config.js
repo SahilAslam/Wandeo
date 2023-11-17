@@ -12,6 +12,10 @@ module.exports = {
   ],
   theme: {
     extend: {
+      colors: {
+        'link-color': '#287FB8',
+        'link-dark': '#2371A3',
+      },
       textShadow: {
         sm: '0 1px 2px var(--tw-shadow-color)',
         DEFAULT: '0 2px 4px var(--tw-shadow-color)',

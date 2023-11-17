@@ -51,6 +51,39 @@ const getUserGroup = async (req: Request, res: Response) => {
   }
 };
 
+const getPopularGroup = async (req: Request, res: Response) => {
+  try {
+    const popularGroups = await GroupModel.aggregate([
+      {
+        $project: {
+          _id: 1,
+          name: 1,
+          description: 1,
+          location: 1,
+          image: 1,
+          createdBy: 1,
+          discussions: 1,
+          createdAt: 1,
+          updatedAt: 1,
+          memberCount: { $size: "$members" }
+        }
+      },
+      { $sort: { memberCount: -1 } },
+      { $limit: 3 } // Change the limit to 3 for top three popular groups
+    ]).exec();
+    if (popularGroups.length > 0) {
+      console.log(popularGroups, "////////aaaaaaaa")
+      return res.status(200).json({ popularGroups }); // Adjust the response key to popularGroups for multiple groups
+    } else {
+      return res.status(404).json({ message: "Couldn't find the most popular groups!" });
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Internal server error!" });
+  }
+};
+
+
 const getGroupDetailedPage = async (req: Request, res: Response) => {
   try {
     const groupId = req.params.groupId;
@@ -179,6 +212,37 @@ const userJoinedGroup = async (req: Request, res: Response) => {
   }
 };
 
+const deleteUserGroup = async (req: Request, res: Response) => {
+  try {
+    const {groupId} = req.params;
+    
+    if (!groupId) {
+      return res.status(404).json({ message: "groupId not found!" });
+    }
+
+    const userId = req.user?.id;
+
+    if (!userId) {
+      return res.status(404).json({ message: "userId not found!" });
+    }
+
+    const group = await GroupModel.findByIdAndDelete(groupId);
+
+    if (group) {
+      // Remove group reference from all users who are members of that group
+      await userModel.updateMany(
+        { groups: groupId },
+        { $pull: { groups: groupId } }
+      );
+    }
+    return res.status(201).json({message: "Deleted Group"})
+
+  } catch (error) {
+    console.log(error)
+    return res.status(500).json({ message: "Internal server error!" });
+  }
+}
+
 export {
   createUserGroup,
   getUserGroup,
@@ -186,4 +250,6 @@ export {
   joinUserGroup,
   leaveUserGroup,
   userJoinedGroup,
+  getPopularGroup,
+  deleteUserGroup
 };

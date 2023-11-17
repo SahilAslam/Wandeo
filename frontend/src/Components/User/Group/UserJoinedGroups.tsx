@@ -10,7 +10,7 @@ const UserJoinedGroups = () => {
   const [userData, setUserData] = useState([]);
 
   const user = useSelector(selectUser);
-  const userId = user?.user?._id;
+  const userId = user?.id ? user?.id : user?.user?._id;
 
   const navigate = useNavigate();
 
@@ -22,7 +22,6 @@ const UserJoinedGroups = () => {
       .get(`/joinedGroups/${userId}`)
       .then((response) => {
         if (response.data.user) {
-          console.log(response.data.user);
           setUserData(response.data.user);
         } else {
           console.log(
@@ -35,6 +34,38 @@ const UserJoinedGroups = () => {
         console.error(error);
       });
   }, []);
+
+  const timeAgo = (date: string) => {
+    const currentDate = new Date();
+    const createdDate = new Date(date);
+    const difference = currentDate.getTime() - createdDate.getTime();
+    const seconds = Math.floor(difference / 1000);
+
+    let interval = Math.floor(seconds / 31536000);
+
+    if (interval >= 1) {
+      return `${interval} year${interval > 1 ? "s" : ""} ago`;
+    }
+    interval = Math.floor(seconds / 2592000);
+    if (interval >= 1) {
+      return `${interval} month${interval > 1 ? "s" : ""} ago`;
+    }
+    interval = Math.floor(seconds / 86400);
+    if (interval >= 1) {
+      return `${interval} day${interval > 1 ? "s" : ""} ago`;
+    }
+    interval = Math.floor(seconds / 3600);
+    if (interval >= 1) {
+      return `${interval} hour${interval > 1 ? "s" : ""} ago`;
+    }
+    interval = Math.floor(seconds / 60);
+    if (interval >= 1) {
+      return `${interval} minute${interval > 1 ? "s" : ""} ago`;
+    }
+    return `${Math.floor(seconds)} second${
+      Math.floor(seconds) !== 1 ? "s" : ""
+    } ago`;
+  };
 
   const handleClick = (groupId: string) => {
     navigate(`/groupDetailedPage/${groupId}`)
@@ -88,7 +119,7 @@ const UserJoinedGroups = () => {
                         Last Activity
                       </h3>
                       <p className="text-gray-400 text-xs font-semibold">
-                        17 days ago
+                      {timeAgo(group.updatedAt)}
                       </p>
                     </div>
                   </div>
@@ -99,7 +130,7 @@ const UserJoinedGroups = () => {
                       Last Activity
                     </h3>
                     <p className="text-slate-800 text-xs lg:text-sm">
-                      17 days ago
+                    {timeAgo(group.updatedAt)}
                     </p>
                   </div>
                 </div>

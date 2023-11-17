@@ -9,19 +9,28 @@ import axiosInstance from "../../Axios/Axios";
 interface CreateEventProps {
   closeModal: () => void;
   visible: boolean;
+  setUpdateUI: (data: boolean) => void;
 }
 
-const AddImage: React.FC<CreateEventProps> = ({ visible, closeModal }) => {
+const AddImage: React.FC<CreateEventProps> = ({ visible, closeModal, setUpdateUI }) => {
   const [cloudnaryUrl, setCloudnaryUrl] = useState("");
   const [image, setImage] = useState("");
 
   const user = useSelector(selectUser);
-  const id = user?.user?._id;
+  const id = user?.id ? user?.id : user?.user?._id;
   console.log(id);
 
   function handleChange(e: ChangeEvent<HTMLInputElement>) {
-    if (e.target.files && e.target.files.length > 0) {
-      setImage(e.target.files[0]);
+    const selectedFile = e.target.files?.[0];
+  
+    if (selectedFile) {
+      const allowedFormats = ["image/jpeg", "image/png", "image/gif"];
+  
+      if (allowedFormats.includes(selectedFile.type)) {
+        setImage(selectedFile);
+      } else {
+        toast.error("Only image formats (JPEG, PNG, GIF) are allowed.");
+      }
     }
   }
 
@@ -37,8 +46,8 @@ const AddImage: React.FC<CreateEventProps> = ({ visible, closeModal }) => {
           formData
         );
 
-        console.log(response.data, "llllll");
-        setCloudnaryUrl(response.data.public_id);
+        setCloudnaryUrl(response.data.secure_url);
+        setUpdateUI(state => !state)
       } else {
         return toast.error("no images please upload");
       }

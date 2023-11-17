@@ -3,11 +3,17 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { logout } from "../../../Redux/Slice/userSlice";
 import { toast } from "react-toastify";
+import { IoMdArrowDropdown } from "react-icons/io";
 import "./Navbar.css";
 
 function Navbar() {
   const [isNavOpen, setIsNavOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [searchMenuOpen, setSearchMenuOpen] = useState(false);
+  const [selectedMenu, setSelectedMenu] = useState("Explore")
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const toggleNav = () => {
     setIsNavOpen(!isNavOpen);
@@ -18,9 +24,6 @@ function Navbar() {
   const isEventsPage = location.pathname === "/events";
   const isProfilePage = location.pathname === "/profile";
   const isGroupPage = location.pathname === "/groups";
-
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
 
   const handleLogout = () => {
     dispatch(logout());
@@ -39,6 +42,26 @@ function Navbar() {
     }
   });
 
+  const searchUlRef = useRef<HTMLAnchorElement | null>(null); // Specify the correct type for ulRef
+  const searchMenuRef = useRef<HTMLLIElement | null>(null); // Specify the correct type for menuRef
+
+  const SearchMenus = [
+    "Find Hosts",
+    "Find Travelers",
+    "Find Users",
+    "Find Events",
+    "Find Groups",
+  ];
+
+  window.addEventListener("click", (e) => {
+    if (
+      e.target !== searchMenuRef.current &&
+      e.target !== searchUlRef.current
+    ) {
+      setSearchMenuOpen(false);
+    }
+  });
+
   return (
     <nav className="bg-white shadow-md navbar">
       <div className="max-w-screen-xl flex flex-row items-center justify-between mx-2 xl:mx-28 py-1 pl-4">
@@ -48,9 +71,37 @@ function Navbar() {
             <span className="logo self-center text-2xl font-semibold whitespace-nowrap text-green-900"></span>
           </a>
           <div className="flex md:order-1 pl-10">
-            <div className="search hidden md:block w-auto p-2 text-sm text-gray-900 border border-gray-300 rounded-l-lg bg-gray-50">
-              Find Events
+            <div className="relative">
+            <div
+              onClick={() => setSearchMenuOpen(!searchMenuOpen)}
+              ref={searchUlRef}
+              className="search hidden md:flex w-auto p-2 text-sm text-gray-900 border border-gray-300 rounded-l-lg bg-gray-50 cursor-pointer "
+            >
+              <h1 onClick={() => setSearchMenuOpen(!searchMenuOpen)}
+              ref={searchUlRef} className="">
+                {selectedMenu}
+              </h1>
+              <IoMdArrowDropdown className="mt-1.5 ml-1" />
             </div>
+              {searchMenuOpen && (
+                <div className="menus bg-white w-40 shadow-xl absolute xl:-left-1 md:-left-24">
+                  <ul>
+                    {SearchMenus.map((menu, index) => (
+                      <li
+                        key={index}
+                        className="p-2 cursor-pointer hover:bg-blue-100"
+                        onClick={() => {
+                          setSelectedMenu(menu);
+                          setSearchMenuOpen(false);
+                        }}
+                      >
+                        {menu}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              </div>
             <div className="search relative hidden md:block">
               <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                 <svg
@@ -164,8 +215,8 @@ function Navbar() {
                 <a
                   className={`block py-2 pl-3 pr-4 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 ${
                     isHomePage
-                      ? "text-green-800 font-bold underline"
-                      : "text-gray-900"
+                      ? "text-green-800 font-black underline"
+                      : "font-bold text-gray-900"
                   }`}
                   aria-current="page"
                 >
@@ -178,8 +229,8 @@ function Navbar() {
                 <a
                   className={`block py-2 pl-3 pr-4 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 ${
                     isGroupPage
-                      ? "text-green-800 font-bold underline"
-                      : "text-gray-900"
+                      ? "text-green-800 font-black underline"
+                      : "font-bold text-gray-900"
                   }`}
                 >
                   Group
@@ -191,8 +242,8 @@ function Navbar() {
                 <a
                   className={`block py-2 pl-3 pr-4 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 ${
                     isEventsPage
-                      ? "text-green-800 font-bold underline"
-                      : "text-gray-900"
+                      ? "text-green-800 font-black underline"
+                      : "font-bold text-gray-900"
                   }`}
                 >
                   Events
@@ -202,7 +253,7 @@ function Navbar() {
             <li>
               <a
                 href="#"
-                className="block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 "
+                className="block py-2 pl-3 pr-4 font-bold text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 "
               >
                 Inbox
               </a>
@@ -212,8 +263,8 @@ function Navbar() {
                 <a
                   className={`block py-2 pl-3 pr-4 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 ${
                     isProfilePage
-                      ? "text-green-800 font-bold underline"
-                      : "text-gray-900"
+                      ? "text-green-800 font-black underline"
+                      : "font-bold text-gray-900"
                   }`}
                 >
                   Profile
@@ -225,7 +276,7 @@ function Navbar() {
                 <a
                   onClick={() => setMenuOpen(!menuOpen)}
                   ref={ulRef}
-                  className="block py-2 pl-3 pr-4 text-gray-900 rounded cursor-pointer hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0"
+                  className="block py-2 pl-3 pr-4 font-bold text-gray-900 rounded cursor-pointer hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0"
                 >
                   Settings
                 </a>

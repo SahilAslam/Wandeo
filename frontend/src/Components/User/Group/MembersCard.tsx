@@ -1,5 +1,8 @@
 import React from "react";
 import { ImUsers } from "react-icons/im";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { selectUser } from "../../../Redux/Slice/userSlice";
 
 interface MembersCardProps {
   groupData: any;
@@ -7,6 +10,20 @@ interface MembersCardProps {
 }
 
 const MembersCard: React.FC<MembersCardProps> = ({ groupData, BASE_URL }) => {
+
+  const user = useSelector(selectUser);
+  const id = user?.id ? user?.id : user?.user?._id;
+
+  const navigate = useNavigate();
+
+  const handleClick = (userId: string) => {
+    if(id === userId) {
+      navigate("/profile")
+    } else {
+      navigate(`/DiffProfile/${userId}`)
+    }
+  }
+
   return (
     <div className="w-full sm:w-[320px] bg-white shadow-lg">
       <div className="px-5 pt-3 flex">
@@ -20,14 +37,16 @@ const MembersCard: React.FC<MembersCardProps> = ({ groupData, BASE_URL }) => {
               <div>
                 {member.profileImage ? (
                   <img
-                    src={`${BASE_URL}/${member?.profileImage}`}
+                    src={`${member?.profileImage}`}
                     alt="img"
+                    onClick={() => handleClick(member._id)}
                     className="border rounded-full w-8 h-8"
                   />
                 ) : (
                   <img
                     src={`/profile-picture-placeholder.png`}
                     alt=""
+                    onClick={() => handleClick(member._id)}
                     className="w-8 h-8 object-cover rounded-full opacity-100"
                   />
                 )}

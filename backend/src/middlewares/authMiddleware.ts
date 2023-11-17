@@ -39,12 +39,12 @@ const protect = asyncHandler(
       try {
         const decoded = jwt.verify(token, secretKey) as JwtPayload;
         const userId: string = decoded.user_id;
-        console.log("token is valid", decoded);
+        console.log("token is valid:", decoded);
 
         const user: Document | null = await userModel
           .findById(userId)
           .select("-password");
-
+        console.log(user, "useraaaaaaaaaa")
         if (user) {   
           req.user = user as unknown as customUser;
           next();

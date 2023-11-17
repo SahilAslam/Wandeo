@@ -10,6 +10,7 @@ export interface UserState {
     user: User | null
 }
 
+
 const initialState: UserState = {
     user: localStorage.getItem('userData')
     ? JSON.parse(localStorage.getItem('userData') as string)

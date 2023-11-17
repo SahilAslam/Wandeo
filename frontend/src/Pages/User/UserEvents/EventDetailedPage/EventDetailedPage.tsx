@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import SignupNavbar from "../../../../Components/User/Navbar/Navbar";
 import axiosInstance from "../../../../Axios/Axios";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { format } from "date-fns";
 import { useSelector } from "react-redux";
 import { selectUser } from "../../../../Redux/Slice/userSlice";
@@ -14,10 +14,12 @@ const EventDetailedPage = () => {
   const [updateUI, setUpdateUI] = useState<boolean>(false);
   // const [usersAttending, setUsersAttending] = useState([])
 
+  const navigate = useNavigate();
+
   const id = useParams();
 
   const user = useSelector(selectUser);
-  const userId = user?.user?._id;
+  const userId = user?.id ? user?.id : user?.user?._id;
 
   const baseUrl =
     "https://res.cloudinary.com/dkba47utw/image/upload/v1698223651";
@@ -78,6 +80,15 @@ const EventDetailedPage = () => {
     return false;
   };
 
+  const handleClick = (attenderId: string) => {
+    console.log(userId, "===", attenderId)
+    if(userId === attenderId) {
+      navigate("/profile")
+    } else {
+      navigate(`/DiffProfile/${attenderId}`)
+    }
+  }
+
   return (
     <>
       <ToastContainer/>
@@ -116,6 +127,7 @@ const EventDetailedPage = () => {
                         </div>
                         <div>
                           <h1
+                            onClick={() => handleClick(attender?._id)}
                             className=" text-green-900 hover:text-green-700 hover:underline underline-offset-1 font-semibold cursor-pointer"
                             style={{ fontSize: "17px", lineHeight: "1.1" }}
                           >

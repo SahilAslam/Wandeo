@@ -13,7 +13,8 @@ function HomePage() {
   const [userDetails, setUserDetails] = useState<any>([]);
 
   const user = useSelector(selectUser);
-  const id = user?.user?._id;
+  console.log(user, '..................')
+  const id = user?.id ? user?.id : user?.user?._id;
   console.log(id);
 
   useEffect(() => {
@@ -123,22 +124,22 @@ function HomePage() {
                 </div>
                 <div className="flex flex-col lg:flex-row justify-center items-center gap-4 py-5">
                   <div className="flex justify-center items-center">
-                    <h1 className="capitalize font-medium text-sky-800">
+                    <h1 className="capitalize font-bold text-link-color">
                       Create a Public Trip
                     </h1>
-                    <MdArrowRight className="text-sky-800 text-2xl mt-1 " />
+                    <MdArrowRight className="font-bold text-link-color text-2xl mt-1 " />
                   </div>
                   <div className="flex justify-center items-center">
-                    <h1 className="capitalize font-medium text-sky-800">
+                    <h1 className="capitalize font-bold text-link-color">
                       My Public Trips
                     </h1>
-                    <MdArrowRight className="text-sky-800 text-2xl mt-1 " />
+                    <MdArrowRight className="font-bold text-link-color text-2xl mt-1 " />
                   </div>
                   <div className="flex justify-center items-center">
-                    <h1 className="capitalize font-medium text-sky-800">
+                    <h1 className="capitalize font-bold text-link-color">
                       My Couch Requests
                     </h1>
-                    <MdArrowRight className="text-sky-800 text-2xl mt-1 " />
+                    <MdArrowRight className="font-bold text-link-color text-2xl mt-1 " />
                   </div>
                 </div>
               </div>

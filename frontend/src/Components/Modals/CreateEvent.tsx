@@ -23,6 +23,10 @@ const CreateEvent: React.FC<CreateEventProps> = ({ visible, closeModal, updateUI
   const [cloudnaryUrl, setCloudnaryUrl] = useState("");
   const [error, setError] = useState('');
 
+  const UPLOAD_PRESET = import.meta.env.VITE_UPLOAD_PRESET || ""
+  const CLOUD_NAME = import.meta.env.VITE_CLOUD_NAME || ""
+  const UPLOAD_URL = import.meta.env.VITE_CLOUDINARY_UPLOAD_URL || ""
+
   const scrollContainerRef = useRef(null);
 
   useEffect(() => {
@@ -32,7 +36,7 @@ const CreateEvent: React.FC<CreateEventProps> = ({ visible, closeModal, updateUI
   }, []);
 
   const user = useSelector(selectUser);
-  const id = user?.user?._id;
+  const id = user?.id ? user?.id : user?.user?._id;
   console.log(id);
 
   function handleChange(e: ChangeEvent<HTMLInputElement>) {
@@ -46,10 +50,10 @@ const CreateEvent: React.FC<CreateEventProps> = ({ visible, closeModal, updateUI
       const formData = new FormData();
       if (image) {
         formData.append("file", image);
-        formData.append("upload_preset", "qeulrdc5");
-        formData.append("cloud_name", "dkba47utw");
+        formData.append("upload_preset", UPLOAD_PRESET);
+        formData.append("cloud_name", CLOUD_NAME);
         const response = await axios.post(
-          "https://api.cloudinary.com/v1_1/dkba47utw/image/upload",
+          UPLOAD_URL,
           formData
         );
 

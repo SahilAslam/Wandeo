@@ -1,13 +1,13 @@
 import { Request, Response } from "express";
 import userModel from "../../models/userModel";
+import HostingModel from "../../models/hostingModel";
 
 
 const getUserProfile = async (req: Request, res: Response) => {
     try {
         const userId = req.params.userId
-        console.log(userId);
         
-        const user = await userModel.findById(userId)
+        const user = await userModel.findById(userId).populate("groups");
 
         if(!user) {
             return res.status(404).json({message: "User not found!"})
@@ -17,14 +17,13 @@ const getUserProfile = async (req: Request, res: Response) => {
        
     } catch (error) {
         console.error(error);
-        
+        return res.status(500).json({ message: "Internal server error" });
     }
 }
 
 const editUserProfile = async (req: Request, res: Response) => {
     try {
-        const userId = req.params.userId
-        console.log(userId);
+        const userId = req.params.userId;
         
         const { hostingAvailability, name, dateOfBirth, gender, email, phone, address, occupation, education, about, languagesFluentIn, languagesLearning } = req.body;
 
@@ -48,12 +47,18 @@ const editUserProfile = async (req: Request, res: Response) => {
         user.languagesLearning = languagesLearning;
 
         await user.save();
-    
-        return res.status(200).json({ message: 'Profile updated successfully', user });
+
+        const hosting = await HostingModel.create({
+            userId: userId,
+            hostingAvailability: hostingAvailability
+        })
+        if(hosting) {   
+            return res.status(200).json({ message: 'Profile updated successfully', user });
+        }
 
     } catch (error) {
         console.error(error);
-        res.status(500).json({error: "Server error on editUserProfile"})       
+        return res.status(500).json({ message: "Internal server error" });       
     }
 }
 
@@ -61,7 +66,6 @@ const addProfileImage = async (req: Request, res: Response) => {
     try {
         
         const userId = req.params.userId;
-        console.log(userId);
         
         const {image} = req.body
 
@@ -77,6 +81,7 @@ const addProfileImage = async (req: Request, res: Response) => {
         res.status(200).json({message: "Succefully uploaded Image"})
     } catch (error) {
         console.error(error);
+        return res.status(500).json({ message: "Internal server error" });
         
     }
 }

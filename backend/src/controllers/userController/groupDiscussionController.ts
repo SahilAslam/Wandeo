@@ -1,13 +1,7 @@
 import { Request, Response } from "express";
-import userModel from "../../models/userModel";
 import GroupModel from "../../models/groupModel";
 import DiscussionModel from "../../models/discussionModel";
-import mongoose, { Document, Types } from 'mongoose';
 
-interface DiscussionDocument extends Document {
-    replies: Array<{ userId: Types.ObjectId, replyMessage: string }>;
-    // other fields in your Discussion schema
-}
 
 const createNewDiscussion = async (req: Request, res: Response) => {
   try {

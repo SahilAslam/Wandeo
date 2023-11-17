@@ -2,11 +2,10 @@ import React from "react";
 
 interface ProfileCardProps {
   userDetails: any;
+  updateUI: boolean;
 }
 
-const ProfileCard: React.FC<ProfileCardProps> = ({ userDetails }) => {
-  const baseUrl =
-    "https://res.cloudinary.com/dkba47utw/image/upload/v1698223651";
+const ProfileCard: React.FC<ProfileCardProps> = ({ userDetails, updateUI }) => {
 
   return (
     <>
@@ -15,7 +14,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ userDetails }) => {
           <div className="pt-10 flex items-center justify-center">
             {userDetails?.profileImage ? (
               <img
-                src={`${baseUrl}/${userDetails?.profileImage}`}
+                src={`${userDetails?.profileImage}`}
                 alt="profile img"
                 className="w-56 h-56 object-cover rounded-full"
               />

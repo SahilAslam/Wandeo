@@ -15,13 +15,12 @@ const CreateGroup = () => {
   const [cloudnaryUrl, setCloudnaryUrl] = useState("");
 
   const user = useSelector(selectUser);
-  const id = user?.user?._id;
-
+  const id = user?.id ? user?.id : user?.user?._id;
   const navigate = useNavigate();
 
   const UPLOAD_PRESET = import.meta.env.VITE_UPLOAD_PRESET || ""
   const CLOUD_NAME = import.meta.env.VITE_CLOUD_NAME || ""
-  const BASE_URL = import.meta.env.VITE_CLOUDINARY_BASE_URL || ""
+  const UPLOAD_URL = import.meta.env.VITE_CLOUDINARY_UPLOAD_URL || ""
 
   function handleChange(e: ChangeEvent<HTMLInputElement>) {
     if(e.target.files && e.target.files.length > 0) {
@@ -37,7 +36,7 @@ const CreateGroup = () => {
         formData.append("upload_preset", UPLOAD_PRESET);
         formData.append("cloud_name", CLOUD_NAME);
         const response = await axios.post(
-          "https://api.cloudinary.com/v1_1/dkba47utw/image/upload",
+          UPLOAD_URL,
           formData
         );
         console.log(response.data, "//data//");

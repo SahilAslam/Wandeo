@@ -120,7 +120,7 @@ const FindHosts = () => {
               <div className="w-auto flex">
                 <ImUser className="text-8xl w-16 h-5 mt-0.5 mr-1" />
                 <p className="">
-                  I am muralikrishnan living in a village doing painting job not
+                  I am Mohammed Sharuk living in a village doing painting job not
                   yet married l'm a travel enthusiast not full time traveller.
                   Explore new places, and enjoy different cuisines. make good
                   friendships around the world

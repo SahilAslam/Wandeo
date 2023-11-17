@@ -35,7 +35,6 @@ const userSchema = new Schema<User>({
     },
     username: {
         type: String,
-        required: true,
     },
     email: {
         type: String,
