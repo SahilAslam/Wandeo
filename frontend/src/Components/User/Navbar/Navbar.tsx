@@ -1,34 +1,60 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { logout } from "../../../Redux/Slice/userSlice";
 import { toast } from "react-toastify";
 import { IoMdArrowDropdown } from "react-icons/io";
 import "./Navbar.css";
+import axiosInstance from "../../../Axios/Axios";
 
 function Navbar() {
   const [isNavOpen, setIsNavOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchMenuOpen, setSearchMenuOpen] = useState(false);
-  const [selectedMenu, setSelectedMenu] = useState("Explore")
+  const [selectedMenu, setSelectedMenu] = useState("Explore");
+  const [searchQuery, setSearchQuery] = useState("");
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
-  const toggleNav = () => {
-    setIsNavOpen(!isNavOpen);
-  };
 
   const location = useLocation();
   const isHomePage = location.pathname === "/";
   const isEventsPage = location.pathname === "/events";
   const isProfilePage = location.pathname === "/profile";
   const isGroupPage = location.pathname === "/groups";
+  const isInboxPage = location.pathname === "/inbox";
 
-  const handleLogout = () => {
-    dispatch(logout());
-    navigate("/login");
-    toast.success("Logout Successfull");
+  useEffect(() => {
+    // Set the initial selectedMenu based on the current location
+    if (isHomePage || location.pathname === "/search") {
+      setSelectedMenu("Explore");
+    } else if (isEventsPage || location.pathname === "/findEvents") {
+      setSelectedMenu("Find Events");
+    } else if (isProfilePage || location.pathname === "/findUser") {
+      setSelectedMenu("Find Users"); // Adjust this based on your actual category for the profile page
+    } else if (isGroupPage || location.pathname === "/findGroups") {
+      setSelectedMenu("Find Groups");
+    } else if (isInboxPage) {
+      setSelectedMenu("Explore"); // Adjust this based on your actual category for the inbox page
+    }
+  }, [location.pathname]);
+  
+  
+  const toggleNav = () => {
+    setIsNavOpen(!isNavOpen);
+  };
+
+  const handleLogout = async () => {
+    const response = await axiosInstance.put(`/logout`);
+    if(response.data) {
+      dispatch(logout());
+      navigate("/login");
+      setTimeout(() => {
+        toast.success("Logout Successfull");
+      }, 0)
+    } else {
+      console.log("coudn't update lastLogin")
+    }
   };
 
   const ulRef = useRef<HTMLAnchorElement | null>(null); // Specify the correct type for ulRef
@@ -62,34 +88,62 @@ function Navbar() {
     }
   });
 
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+  };
+
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    // Navigate to the search page with the search query
+    if(selectedMenu === "Explore") {
+      navigate(`/search?q=${encodeURIComponent(searchQuery)}`, { state: { searchQuery } });
+    } else if(selectedMenu === "Find Groups") {
+      navigate(`/findGroups?q=${encodeURIComponent(searchQuery)}`, { state: { searchQuery } });
+    } else if(selectedMenu === "Find Hosts") {
+      navigate(`/findHosts?q=${encodeURIComponent(searchQuery)}`, { state: { searchQuery } });
+    } else if (selectedMenu === "Find Events") {
+      navigate(`/findEvents?q=${encodeURIComponent(searchQuery)}`, { state: { searchQuery } });
+    } else if (selectedMenu === "Find Users") {
+      navigate(`/findUser?q=${encodeURIComponent(searchQuery)}`, { state: { searchQuery } });
+    } else if (selectedMenu === "Find Travelers") {
+      navigate(`/findTravelers?q=${encodeURIComponent(searchQuery)}`, { state: { searchQuery } });
+    }
+  };
+
   return (
     <nav className="bg-white shadow-md navbar">
       <div className="max-w-screen-xl flex flex-row items-center justify-between mx-2 xl:mx-28 py-1 pl-4">
         <div className="flex items-center">
-          <a className="flex items-center">
+          <a className="flex items-center" onClick={() => navigate("/")}>
             <img src="/Wandeo_logo_main.png" className="h-16" alt="Wandeo" />
             <span className="logo self-center text-2xl font-semibold whitespace-nowrap text-green-900"></span>
           </a>
           <div className="flex md:order-1 pl-10">
             <div className="relative">
-            <div
-              onClick={() => setSearchMenuOpen(!searchMenuOpen)}
-              ref={searchUlRef}
-              className="search hidden md:flex w-auto p-2 text-sm text-gray-900 border border-gray-300 rounded-l-lg bg-gray-50 cursor-pointer "
-            >
-              <h1 onClick={() => setSearchMenuOpen(!searchMenuOpen)}
-              ref={searchUlRef} className="">
-                {selectedMenu}
-              </h1>
-              <IoMdArrowDropdown className="mt-1.5 ml-1" />
-            </div>
+              <div
+                onClick={() => setSearchMenuOpen(!searchMenuOpen)}
+                ref={searchUlRef}
+                className="search hidden md:flex w-auto p-2 text-sm text-gray-900 border border-gray-300 rounded-l-lg bg-gray-50 cursor-pointer "
+              >
+                <h1
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSearchMenuOpen(!searchMenuOpen)
+                  }}                   
+                  ref={searchUlRef}
+                  className="flex"
+                >
+                  {selectedMenu}
+                  <IoMdArrowDropdown className={`mt-1.5 ml-1 ${searchMenuOpen && "hidden"}`} />
+                </h1>
+              </div>
               {searchMenuOpen && (
-                <div className="menus bg-white w-40 shadow-xl absolute xl:-left-1 md:-left-24">
+                <div className="menus bg-white w-40 shadow-xl absolute xl:-left-1 md:-left-24 z-50 rounded-xl border">
                   <ul>
                     {SearchMenus.map((menu, index) => (
                       <li
                         key={index}
-                        className="p-2 cursor-pointer hover:bg-blue-100"
+                        className="p-2 cursor-pointer hover:bg-blue-100 rounded-xl text-sm"
                         onClick={() => {
                           setSelectedMenu(menu);
                           setSearchMenuOpen(false);
@@ -101,7 +155,7 @@ function Navbar() {
                   </ul>
                 </div>
               )}
-              </div>
+            </div>
             <div className="search relative hidden md:block">
               <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                 <svg
@@ -120,12 +174,17 @@ function Navbar() {
                   />
                 </svg>
               </div>
-              <input
-                type="text"
-                id="search-navbar"
-                className="block w-full p-2 pl-10 text-sm text-gray-900 border-y border-r border-gray-300 rounded-r-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 "
-                placeholder="Search"
-              />
+              <form onSubmit={handleSearchSubmit}>
+                <input
+                  type="text"
+                  id="search-navbar"
+                  value={searchQuery}
+                  onChange={handleSearchChange}
+                  onClick={(e) => e.stopPropagation()}
+                  className="block w-full p-2 pl-10 text-sm text-gray-900 border-y border-r border-gray-300 rounded-r-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 "
+                  placeholder="Search"
+                />
+              </form>
             </div>
           </div>
         </div>
@@ -251,12 +310,17 @@ function Navbar() {
               </Link>
             </li>
             <li>
-              <a
-                href="#"
-                className="block py-2 pl-3 pr-4 font-bold text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 "
-              >
-                Inbox
-              </a>
+              <Link to="/inbox">
+                <a
+                  className={`block py-2 pl-3 pr-4 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 ${
+                    isInboxPage
+                      ? "text-green-800 font-black underline"
+                      : "font-bold text-gray-900"
+                  }`}
+                >
+                  Inbox
+                </a>
+              </Link>
             </li>
             <li>
               <Link to="/profile">
@@ -281,15 +345,20 @@ function Navbar() {
                   Settings
                 </a>
                 {menuOpen && (
-                  <div className="menus bg-white w-40 shadow-xl absolute xl:-left-1 md:-left-24">
+                  <div className="menus rounded-xl border bg-white w-40 shadow-xl absolute xl:-left-1 md:-left-24 z-50">
                     <ul>
                       {Menus.map((menu, index) => (
                         <li
                           key={index}
-                          className="p-2 cursor-pointer hover:bg-blue-100"
+                          className="p-2 rounded-xl cursor-pointer hover:bg-blue-100"
                         >
                           {menu === "Logout" ? (
-                            <button onClick={handleLogout}>{menu}</button>
+                            <button
+                              className="text-red-500 font-semibold hover:font-bold hover:underline "
+                              onClick={handleLogout}
+                            >
+                              {menu}
+                            </button>
                           ) : (
                             <span>{menu}</span>
                           )}

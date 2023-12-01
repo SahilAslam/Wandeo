@@ -13,8 +13,7 @@ const GroupPage = () => {
   const [group, setGroup] = useState([]);
   const [mostPopularGroup, setMostPopularGroup] = useState<any[]>([]);
 
-  const BASE_URL =
-    "https://res.cloudinary.com/dkba47utw/image/upload/v1698223651";
+  const BASE_URL = import.meta.env.VITE_CLOUDINARY_BASE_URL || ""
 
   const navigate = useNavigate();
 

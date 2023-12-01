@@ -45,6 +45,7 @@ const EditProfile = () => {
 
   const Menus = [
     "Accepting Guests",
+    "Maybe Accepting Guests",
     "Not Accepting Guests",
     "Wants to Meet Up",
   ];
@@ -140,7 +141,7 @@ const EditProfile = () => {
         <div className="py-4 px-4 xl:px-32">
           <div className="flex flex-col gap-4 md:flex-row xl:gap-8 md:gap-4">
             <div>
-              <ProfileCard userDetails={userDatails} />
+              <ProfileCard userDetails={userDatails} updateUI={updateUI} />
             </div>
             <div className="w-full md:auto flex flex-col">
               <div className=" py-2 hidden md:flex md:flex-col justify-center ">

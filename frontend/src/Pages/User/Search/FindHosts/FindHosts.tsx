@@ -1,13 +1,46 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import SignupNavbar from "../../../../Components/User/Navbar/Navbar";
-import "./FindHosts.css"
+import "./FindHosts.css";
 import { RiDoubleQuotesL } from "react-icons/ri";
 import { ImUsers } from "react-icons/im";
 import { FaGlobeAmericas } from "react-icons/fa";
 import { TbHomeCheck } from "react-icons/tb";
 import { ImUser } from "react-icons/im";
+import { useLocation } from "react-router-dom";
+import axiosInstance from "../../../../Axios/Axios";
+import { toast } from "react-toastify";
+import { GoQuestion } from "react-icons/go";
 
 const FindHosts = () => {
+  const [hosts, setHosts] = useState<any[]>([]);
+
+  const location = useLocation();
+  const searchQuery = location.state?.searchQuery || "";
+
+  useEffect(() => {
+    axiosInstance
+      .get("/findHosts")
+      .then((response) => {
+        if (response.data) {
+          setHosts(response.data?.hosts);
+          console.log(hosts, "hosts");
+        }
+        if (response.data.error) {
+          toast.error(response.data.error);
+        }
+      })
+      .catch((err) => console.log(err, "axios listing err"));
+  }, []);
+
+  const filteredhosts = hosts.filter((host) => {
+    return (
+      host?.name?.toLowerCase().includes(searchQuery.toLocaleLowerCase()) ||
+      host?.userId?.address
+        ?.toLowerCase()
+        .includes(searchQuery.toLocaleLowerCase())
+    );
+  });
+
   return (
     <>
       <SignupNavbar />
@@ -75,211 +108,100 @@ const FindHosts = () => {
               </p>
             </div>
           </div>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-2">
-            <div className=" p-2 bg-white shadow-lg w-auto xl:w-[375px]">
-              <div className="card-details pb-2 flex flex-row ">
-                <div className="image">
-                  <img
-                    src=""
-                    alt="profile img"
-                    className="w-[150px] h-[150px] border"
-                  />
-                </div>
-                <div className="px-4 text-slate-700">
-                  <h1 className=" ">Mohammed Sharuk</h1>
-                  <p className="text-gray-400 text-xs pb-1.5">
-                    replies within a day
-                  </p>
-                  <div className="flex pb-2">
-                    <RiDoubleQuotesL className="mr-1 mt-0.5 text-lg" />
-                    <p className="text-sm">
-                      References: <span className="font-semibold">18</span>
-                    </p>
-                  </div>
-                  <div className="flex pb-2">
-                    <ImUsers className="mr-1 mt-0.5" />
-                    <p className="text-sm ">
-                      Friends: <span className="font-semibold">24</span>
-                    </p>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 mb-5">
+            {filteredhosts ? (
+              filteredhosts.map((host, index) => (
+                <div className=" p-2 bg-white shadow-lg w-auto xl:w-[375px]">
+                  <div className="card-details pb-2 flex flex-row ">
+                    <div className="image">
+                      {host?.userId?.profileImage ? (
+                        <img
+                          src={`${host?.userId?.profileImage}`}
+                          alt="profile img"
+                          className="w-[150px] h-[150px] border"
+                        />
+                      ) : (
+                        <img
+                          src={`https://cdn-icons-png.flaticon.com/512/3177/3177440.png`}
+                          alt=""
+                          className="w-[150px] h-[150px] object-cover border opacity-70"
+                        />
+                      )}
+                    </div>
+                    <div className="pl-4 text-slate-700">
+                      <h1 className="font-semibold ">{host?.userId?.name}</h1>
+                      <p className="text-gray-400 text-xs pb-1.5">
+                        replies within a day 
+                      </p>
+                      <div className="flex pb-2">
+                        <RiDoubleQuotesL className="mr-1 mt-0.5 text-md" />
+                        <p className="text-sm">
+                          References: <span className="font-semibold">18</span>
+                        </p>
+                      </div>
+                      <div className="flex pb-2">
+                        <ImUsers className="mr-1 mt-0.5 text-sm" />
+                        <p className="text-sm ">
+                          Friends: <span className="font-semibold">24</span>
+                        </p>
+                      </div>
+                        <div className="w-full flex ">
+                          <div>
+                            <FaGlobeAmericas className="mr-1 mt-0.5 text-sm" />
+                          </div>
+                          {host?.userId?.languagesFluentIn ? (
+                            <p className="text-sm pb-2 max-w-[190px]">
+                              Speaks{" "}
+                              <span className="font-semibold pl-1 text-sm">
+                              {host?.userId?.languagesFluentIn}
+                              </span>
+                            </p>
+                          ) : (
+                            <div>
+                              <p className="text-sm pb-2">Language:{" "}<span className="font-semibold">Unspecified</span></p>
+                            </div>
+                          )}
+                        </div>
+                      {host?.hostingAvailability ? (
+                        host?.hostingAvailability === "Accepting Guests" ? (
+                          <div className="flex">
+                            <TbHomeCheck className="mr-1 mt-0.5 text-green-500 text-sm" />
+                            <p className="text-sm text-green-500">{host?.hostingAvailability}</p>
+                          </div>
+                        ) : (
+                          <div className="flex">
+                            <GoQuestion className="mr-1 mt-0.5 text-sm" />
+                            <p className="text-sm ">{host?.hostingAvailability}</p>
+                          </div>
+                        )
+                      ) : (
+                        <div>
+                          <p className="text-sm ">Hosting Unspecified</p>
+                        </div>
+                      )}
+                    </div>
                   </div>
                   <div className="w-auto flex">
-                    <FaGlobeAmericas className="mr-1 mt-0.5" />
-                    <p className="text-sm pb-2 ">
-                      Speaks{" "}
-                      <span className="font-semibold pl-1">
-                        English,Malayalam
-                      </span>
-                    </p>
-                  </div>
-                  <div className="flex">
-                    <TbHomeCheck className="mr-1 mt-0.5" />
-                    <p className="text-sm ">Accepting Guests</p>
-                  </div>
-                </div>
-              </div>
-              <div className="w-auto flex">
-                <ImUser className="text-8xl w-16 h-5 mt-0.5 mr-1" />
-                <p className="">
-                  I am Mohammed Sharuk living in a village doing painting job not
-                  yet married l'm a travel enthusiast not full time traveller.
-                  Explore new places, and enjoy different cuisines. make good
-                  friendships around the world
-                </p>
-              </div>
-            </div>
-            <div className=" p-2 bg-white shadow-lg w-auto xl:w-[375px]">
-              <div className="card-details pb-2 flex flex-row ">
-                <div className="image">
-                  <img
-                    src=""
-                    alt="profile img"
-                    className="w-[150px] h-[150px] border"
-                  />
-                </div>
-                <div className="px-4 text-slate-700">
-                  <h1 className=" ">Mohammed Sharuk</h1>
-                  <p className="text-gray-400 text-xs pb-1.5">
-                    replies within a day
-                  </p>
-                  <div className="flex pb-2">
-                    <RiDoubleQuotesL className="mr-1 mt-0.5 text-lg" />
-                    <p className="text-sm">
-                      References: <span className="font-semibold">18</span>
-                    </p>
-                  </div>
-                  <div className="flex pb-2">
-                    <ImUsers className="mr-1 mt-0.5" />
-                    <p className="text-sm ">
-                      Friends: <span className="font-semibold">24</span>
-                    </p>
-                  </div>
-                  <div className="flex">
-                    <FaGlobeAmericas className="mr-1 mt-0.5" />
-                    <p className="text-sm pb-2">
-                      Speaks{" "}
-                      <span className="font-semibold pl-1">
-                        English,Malayalam
-                      </span>
-                    </p>
-                  </div>
-                  <div className="flex">
-                    <TbHomeCheck className="mr-1 mt-0.5" />
-                    <p className="text-sm ">Accepting Guests</p>
+                    <div>
+                      <ImUser className="mt-0.5 mr-1 text-sm" />
+                    </div>
+                    {host?.userId?.about ? (
+                      <p className="text-sm">
+                        {host?.userId?.about}
+                      </p>
+                    ) : (
+                      <p className="">
+                        About details not provided
+                      </p>
+                    )}
                   </div>
                 </div>
-              </div>
-              <div className="w-auto flex">
-                <ImUser className="text-8xl w-16 h-5 mt-0.5 mr-1" />
-                <p className="">
-                  I am muralikrishnan living in a village doing painting job not
-                  yet married l'm a travel enthusiast not full time traveller.
-                  Explore new places, and enjoy different cuisines. make good
-                  friendships around the world
-                </p>
-              </div>
-            </div>
-            <div className="p-2 bg-white shadow-lg w-auto xl:w-[375px]">
-              <div className="card-details pb-2 flex flex-row ">
-                <div className="image">
-                  <img
-                    src=""
-                    alt="profile img"
-                    className="w-[150px] h-[150px] border"
-                  />
-                </div>
-                <div className="px-4 text-slate-700">
-                  <h1 className=" ">Mohammed Sharuk</h1>
-                  <p className="text-gray-400 text-xs pb-1.5">
-                    replies within a day
-                  </p>
-                  <div className="flex pb-2">
-                    <RiDoubleQuotesL className="mr-1 mt-0.5 text-lg" />
-                    <p className="text-sm">
-                      References: <span className="font-semibold">18</span>
-                    </p>
-                  </div>
-                  <div className="flex pb-2">
-                    <ImUsers className="mr-1 mt-0.5" />
-                    <p className="text-sm ">
-                      Friends: <span className="font-semibold">24</span>
-                    </p>
-                  </div>
-                  <div className="flex">
-                    <FaGlobeAmericas className="mr-1 mt-0.5" />
-                    <p className="text-sm pb-2">
-                      Speaks{" "}
-                      <span className="font-semibold pl-1">
-                        English,Malayalam
-                      </span>
-                    </p>
-                  </div>
-                  <div className="flex">
-                    <TbHomeCheck className="mr-1 mt-0.5" />
-                    <p className="text-sm ">Accepting Guests</p>
-                  </div>
-                </div>
-              </div>
-              <div className="w-auto flex">
-                <ImUser className="text-8xl w-16 h-5 mt-0.5 mr-1" />
-                <p className="">
-                  I am muralikrishnan living in a village doing painting job not
-                  yet married l'm a travel enthusiast not full time traveller.
-                  Explore new places, and enjoy different cuisines. make good
-                  friendships around the world
-                </p>
-              </div>
-            </div>
-            <div className=" p-2 bg-white shadow-lg w-auto xl:w-[375px]">
-              <div className="card-details pb-2 flex flex-row ">
-                <div className="image">
-                  <img
-                    src=""
-                    alt="profile img"
-                    className="w-[150px] h-[150px] border"
-                  />
-                </div>
-                <div className=" px-4 text-slate-700">
-                  <h1 className=" ">Mohammed Sharuk</h1>
-                  <p className="text-gray-400 text-xs pb-1.5">
-                    replies within a day
-                  </p>
-                  <div className="flex pb-2">
-                    <RiDoubleQuotesL className="mr-1 mt-0.5 text-lg" />
-                    <p className="text-sm">
-                      References: <span className="font-semibold">18</span>
-                    </p>
-                  </div>
-                  <div className="flex pb-2">
-                    <ImUsers className="mr-1 mt-0.5" />
-                    <p className="text-sm ">
-                      Friends: <span className="font-semibold">24</span>
-                    </p>
-                  </div>
-                  <div className="flex">
-                    <FaGlobeAmericas className="mr-1 mt-0.5" />
-                    <p className="text-sm pb-2">
-                      Speaks{" "}
-                      <span className="font-semibold pl-1">
-                        English,Malayalam
-                      </span>
-                    </p>
-                  </div>
-                  <div className="flex">
-                    <TbHomeCheck className="mr-1 mt-0.5" />
-                    <p className="text-sm ">Accepting Guests</p>
-                  </div>
-                </div>
-              </div>
-              <div className="w-auto flex">
-                <ImUser className="text-8xl w-16 h-5 mt-0.5 mr-1" />
-                <p className="">
-                  I am muralikrishnan living in a village doing painting job not
-                  yet married l'm a travel enthusiast not full time traveller.
-                  Explore new places, and enjoy different cuisines. make good
-                  friendships around the world
-                </p>
-              </div>
-            </div>
+              ))
+            ) : (
+              <p className="px-5 py-5 text-center">
+                No groups available at the moment.
+              </p>
+            )}
           </div>
         </div>
         <div className="order-1 md:order-2 flex flex-col gap-2">
@@ -292,7 +214,7 @@ const FindHosts = () => {
               <h1>Advice from Kochi Locals</h1>
             </div>
           </div>
-          <div className="w-full md:w-[310px] text-center px-5 pt-6 pb-10 bg-gradient-to-r from-slate-200 to-slate-300 shadow-lg">          
+          <div className="w-full md:w-[310px] text-center px-5 pt-6 pb-10 bg-gradient-to-r from-slate-200 to-slate-300 shadow-lg">
             <h1 className="text-xl">
               Enter your travel dates to filter out busy hosts
             </h1>

@@ -19,9 +19,14 @@ interface User extends Document {
     languagesLearning: string,
     countriesLivedIn: string[],
     countriesVisited: string[],
+    hostingId: mongoose.Schema.Types.ObjectId,
     hostingAvailability: string,
+    publicTrips: mongoose.Schema.Types.ObjectId[],
     eventsAttending: mongoose.Schema.Types.ObjectId[],
     groups: mongoose.Schema.Types.ObjectId[],
+    references: mongoose.Schema.Types.ObjectId[],
+    isLoggin: string,
+    lastLogin: Date,
     createdAt: Date,
     updatedAt: Date,
     isBlocked: boolean,
@@ -87,9 +92,19 @@ const userSchema = new Schema<User>({
             type: String
         }
     ],
+    hostingId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Hosting'
+    },
     hostingAvailability: {
         type: String,
     },
+    publicTrips: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'PublicTrip',
+        }
+    ],
     eventsAttending: [
         {
             type: mongoose.Schema.Types.ObjectId,
@@ -102,6 +117,19 @@ const userSchema = new Schema<User>({
             ref: "Group",
         },
     ],
+    references: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "UserReference"
+        },
+    ],
+    isLoggin: {
+        type: String,
+    },
+    lastLogin: {
+        type: Date,
+        default: Date.now,
+    },
     createdAt: {
         type: Date,
         required: true,

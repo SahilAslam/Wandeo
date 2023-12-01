@@ -2,6 +2,8 @@ import { NextFunction, Request, Response } from "express";
 import userModel from "../../models/userModel";
 import generateToken from "../../utils/generateToken";
 import jwt, { JwtPayload } from "jsonwebtoken";
+import bcrypt from "bcrypt";
+import { sendMail } from "../../middlewares/nodeMailer";
 
 const userSignup = async (req: Request, res: Response) => {
   try {
@@ -55,6 +57,10 @@ const userLogin = async (req: Request, res: Response) => {
     }
 
     if (user && (await user.matchPassword(password))) {
+      user.isLoggin = "Active Now"
+      user.markModified('isLoggin');
+      await user.save();
+
       const token = generateToken(user._id);
       return res.status(201).json({ user, token });
     } else {
@@ -125,6 +131,10 @@ const googleLogin = async (req: Request, res: Response , next: NextFunction) => 
           if (user.isBlocked) {
               return res.status(401).json({ error: 'Account is blocked' });
           }
+          user.isLoggin = "Active Now"
+          user.markModified('isLoggin');
+          await user.save();
+
           const usertoken = jwt.sign({user_id: user._id, email: user.email} , process.env.JWT_SECRET as string, {expiresIn: '30d'});
           res.status(200).json({message : 'Login Successfull' ,  usertoken, 
               userData : { 
@@ -142,5 +152,107 @@ const googleLogin = async (req: Request, res: Response , next: NextFunction) => 
   }
 }
 
+const forgetData = {
+  otp: null as null | number,
+};
+const sendPasswordLink = async (req: Request, res: Response) => {
+  try {
+    const { email } = req.body;
+    console.log(email);
 
-export { userSignup, userLogin, googleSignup, googleLogin};
+    if (!email) {
+      res.status(401).json({ message: "Enter Your Email" });
+    }
+
+    const user = await userModel.findOne({email})
+
+    if(user) {
+      const otp = sendMail(email, res);
+      forgetData.otp = otp;
+    } else {
+      return res.status(400).json({ message: "no user " });
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+const verifyForgetPassword = async (req: Request, res: Response) => {
+  try {
+    const { otp } = req.body;
+    if (otp == forgetData.otp) {
+      return res.status(200).json({ message: "success" });
+    } else {
+      return res.status(400).json({ message: "please correct passowrd" });
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const newPassword = async (req: Request, res: Response) => {
+  try {
+    const { email, password } = req.body;
+    userModel.findOne({ email: email }).then((user) => {
+      const saltRounds = 10; // You can adjust the number of salt rounds as needed
+      bcrypt.hash(password, saltRounds, (err, hash) => {
+        if (err) {
+          res.status(500).send({
+            message:
+              err.message || "Some error occurred while hashing the password",
+          });
+        } else {
+          userModel
+            .findOneAndUpdate(
+              { email: email },
+              { password: hash }
+            )
+            .then((data) => {
+              if (!data) {
+                res.status(404).send({
+                  message: `Cannot update user with ID: ${email}. User not found.`,
+                });
+              } else {
+                res.status(200).send({
+                  message: "Successfully updated password",
+                });
+              }
+            })
+            .catch((err) => {
+              res
+                .status(500)
+                .send({ message: "Error updating user information" });
+            });
+        }
+      });
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({ message: "An error occurred" });
+  }
+};
+
+const userLogout = async (req: Request, res: Response) => {
+  try {
+    const userId = req.user?.id;
+    if(!userId) {
+      return res.status(404).json({message: "userId not found!"})
+    }
+
+    const userData = await userModel.findById(userId);
+    if(userData) {
+      userData.isLoggin = ""   
+      userData.lastLogin = new Date();
+      userData.markModified('lastLogin', 'isLoggin'); // Notifying Mongoose that lastLogin has been modified
+      await userData.save();
+
+      return res.status(201).json({message: "Successfully updated lastLogin"})
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({ message: "Internal server error" });
+  }
+}
+
+
+export { userSignup, userLogin, googleSignup, googleLogin, sendPasswordLink, verifyForgetPassword, newPassword, userLogout };

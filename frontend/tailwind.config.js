@@ -15,6 +15,9 @@ module.exports = {
       colors: {
         'link-color': '#287FB8',
         'link-dark': '#2371A3',
+        'button-hover': '#3E99D5',
+        "dark-purple": "#081A51",
+        "light-white": "rgba(255,255,255,0.17)",
       },
       textShadow: {
         sm: '0 1px 2px var(--tw-shadow-color)',

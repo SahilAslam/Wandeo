@@ -8,11 +8,13 @@ import { useSelector } from "react-redux";
 import { selectUser } from "../../../../Redux/Slice/userSlice";
 import { ToastContainer, toast } from "react-toastify";
 import CreateDiscussion from "../../../../Components/Modals/UserModals/CreateDiscussion";
+import DeleteGroupModal from "../../../../Components/Modals/UserModals/DeleteGroupModal";
 
 const GroupDetailedPage = () => {
   const [groupData, setGroupData] = useState("");
   const [updateUI, setUpdateUI] = useState<boolean>(false);
   const [discussionModal, setDiscussionModal] = useState<boolean>(false);
+  const [modal, setModal] = useState<boolean>(false)
 
   const { id } = useParams();
 
@@ -21,8 +23,7 @@ const GroupDetailedPage = () => {
 
   const navigate = useNavigate();
 
-  const BASE_URL =
-    "https://res.cloudinary.com/dkba47utw/image/upload/v1698223651";
+  const BASE_URL = import.meta.env.VITE_CLOUDINARY_BASE_URL || ""
 
   const openModal = () => {
     setDiscussionModal(true);
@@ -31,6 +32,14 @@ const GroupDetailedPage = () => {
   const closeModal = () => {
     setDiscussionModal(false);
   };
+
+  const openDeleteGroupModal = () => {
+    setModal(true);
+  }
+
+  const closeDeleteModal = () => {
+    setModal(false);
+  }
 
   const getGroupDetails = async (id: string) => {
     // eslint-disable-next-line no-useless-catch
@@ -87,14 +96,13 @@ const GroupDetailedPage = () => {
 
   const deleteGroup = async (groupId: string) => {
     try {
-      const response = await axiosInstance.delete(`/deleteGroup/${groupId}`);
+      await axiosInstance.delete(`/deleteGroup/${groupId}`);
 
-      if(response.data.message) {
-        setTimeout(() => {
-          toast.success(response.data.message)
-        }, 0)
-        navigate('/groups')
-      }
+      setTimeout(() => {
+        toast.success("Group Deleted")
+      }, 0)
+      navigate('/groups')
+  
     } catch (error) {
       console.error("Error while leaving the group:", error);
     }
@@ -163,7 +171,7 @@ const GroupDetailedPage = () => {
               {isCreaterUser() ? (
                 <div className="flex justify-end">
                   <button
-                      onClick={() => deleteGroup(groupData?._id)}
+                      onClick={openDeleteGroupModal}
                       className="border border-sky-700 rounded text-sky-700 px-3 py-1.5 transition duration-500 hover:transition hover:duration-300 hover:bg-sky-700 hover:text-white "
                     >
                       Delete Group
@@ -215,7 +223,7 @@ const GroupDetailedPage = () => {
                       
                       {discussion?.userId?.profileImage ? (
                         <img
-                          src={`${BASE_URL}/${discussion?.userId.profileImage}`}
+                          src={`${discussion?.userId.profileImage}`}
                           alt="img"
                           className="border rounded-full w-8 h-8"
                         />
@@ -261,6 +269,7 @@ const GroupDetailedPage = () => {
         closeModal={closeModal}
         setUpdateUI={setUpdateUI}
       />
+      <DeleteGroupModal visible={modal} closeModal={closeDeleteModal} deleteGroup={() => deleteGroup(groupData?._id)} />
     </>
   );
 };

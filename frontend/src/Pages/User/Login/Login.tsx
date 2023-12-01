@@ -8,10 +8,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { selectUser, login } from "../../../Redux/Slice/userSlice";
 import { GoogleLogin, GoogleOAuthProvider } from "@react-oauth/google";
 import axiosInstance from "../../../Axios/Axios";
+import { FaExclamationCircle } from "react-icons/fa";
+import SignupNavbar from "../../../Components/User/SignupNavbar/SignupNavbar";
+
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [errMessage, setErrMessage] = useState("");
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -29,7 +33,11 @@ function Login() {
     const trimmedPassword = password.trim();
 
     if (trimmedEmail === "" || trimmedPassword === "") {
-      toast.error("Please fill in all fields!");
+      setErrMessage("Please fill in all fields!");
+
+      setTimeout(() => {
+        setErrMessage("");
+      }, 3000);
       return;
     }
 
@@ -50,10 +58,7 @@ function Login() {
 
         dispatch(login(response.data));
 
-        setTimeout(() => {
-          navigate("/");
-        }, 2000);
-        toast.success("Logged In successfull");
+        navigate("/");    
       }
     } catch (error) {
       if (
@@ -61,7 +66,10 @@ function Login() {
         error.response.status === 401 &&
         error.response.data.message === "User is blocked"
       ) {
-        toast.error("Your account is blocked. Please contact support.");
+        setErrMessage("Your account is blocked. Please contact support.");
+        setTimeout(() => {
+          setErrMessage("");
+        }, 3000)
       } else {
         toast.error(error.response.data.message);
       }
@@ -70,24 +78,33 @@ function Login() {
 
   return (
     <>
+    <SignupNavbar />
       <ToastContainer />
       <GoogleOAuthProvider clientId="307319234489-tjsu09c3qicatftagifvbbugpv9cnr3o.apps.googleusercontent.com">
-        <div className="login flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8 items-center h-screen">
-          <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-            <div className="bg-white p-7 pl-12 pr-12 shadow-xl rounded-lg">
-              <div>
-                <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
+        <div className="login flex min-h-full flex-1 flex-col justify-center px-4 sm:px-6 py-12 lg:px-8 items-center h-screen">
+          <div className="w-full max-w-sm sm:w-full sm:max-w-sm">
+            <div className="bg-white shadow-xl rounded-lg">
+              <div className="pt-7">
+                <h2 className="mt-2 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
                   Log in to your account
                 </h2>
               </div>
-              <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm ">
+              {errMessage && (
+                <div className="bg-gradient-to-r from-red-500  to-red-600 flex items-center justify-center px-2 py-4 mt-5">
+                  <FaExclamationCircle className="text-white mr-1.5 text-2xl min-w-fit" />
+                  <p className="text-white text-base font-semibold ">
+                    {errMessage}
+                  </p>
+                </div>
+              )}
+              <div className="p-7 px-6 sm:px-12 sm:mx-auto sm:w-full sm:max-w-sm ">
                 <form className="space-y-6" onSubmit={(e) => handleSubmit(e)}>
                   <div className="">
                     <label
                       htmlFor="email"
                       className="block text-sm font-medium leading-6 text-gray-900"
                     >
-                      Email
+                      Email *
                     </label>
                     <div className="mt-2">
                       <input
@@ -95,8 +112,8 @@ function Login() {
                         name="email"
                         type="email"
                         autoComplete="email"
-                        placeholder="Email"
-                        className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 p-2 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                        placeholder="mail@sample"
+                        className="block w-full rounded-xl border py-3 text-gray-900 shadow-sm  placeholder:text-gray-400 p-2 sm:text-sm sm:leading-6"
                         onChange={(e) => setEmail(e.target.value)}
                       />
                     </div>
@@ -108,12 +125,12 @@ function Login() {
                         htmlFor="password"
                         className="block text-sm font-medium leading-6 text-gray-900"
                       >
-                        Password
+                        Password *
                       </label>
                       <div className="text-sm">
                         <a
-                          href="#"
-                          className="font-semibold text-indigo-600 hover:text-indigo-500 "
+                          onClick={() => navigate('/forget_password')}
+                          className="font-semibold text-blue-500 hover:text-blue-600 cursor-pointer"
                         >
                           Forgot password?
                         </a>
@@ -125,17 +142,16 @@ function Login() {
                         name="password"
                         type="password"
                         autoComplete="current-password"
-                        placeholder="Password"
-                        className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 p-2 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                        placeholder="Min. 8 characters"
+                        className="block w-full rounded-xl border py-3 text-gray-900 shadow-sm placeholder:text-gray-400 p-2 sm:text-sm sm:leading-6"
                         onChange={(e) => setPassword(e.target.value)}
                       />
                     </div>
                   </div>
-
                   <div>
                     <button
                       type="submit"
-                      className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 mb-4 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                      className="flex w-full justify-center rounded-xl bg-blue-500 px-3 py-3 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-blue-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                     >
                       Log In
                     </button>
@@ -188,12 +204,12 @@ function Login() {
                   </div>
                 </div>
 
-                <p className="mt-10 text-center text-sm text-gray-500 mb-10">
+                <p className="mt-8 text-center text-sm text-gray-500 mb-3">
                   Dont have an account?{" "}
                   <Link to="/signup">
                     <a
                       href="#"
-                      className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
+                      className="font-semibold leading-6 text-blue-500 hover:text-blue-600"
                     >
                       Register now
                     </a>

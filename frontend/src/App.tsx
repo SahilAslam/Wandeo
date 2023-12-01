@@ -20,6 +20,22 @@ import GroupDetailedPage from './Pages/User/UserGroup/GroupDetailedPage/GroupDet
 import GroupDiscussionPage from './Pages/User/UserGroup/GroupDiscussionPage'
 import AllGroups from './Pages/User/UserGroup/AllGroups'
 import DiffUserProfile from './Pages/User/Profile/DiffUserProfile'
+import OtpPassword from './Components/User/ForgotPassword/OtpPassword'
+import NewPassword from './Components/User/ForgotPassword/NewPassword'
+import ForgotPassword from './Components/User/ForgotPassword/ForgotPassword'
+import InboxPage from './Pages/User/InboxPage/InboxPage'
+import MessageDetailedPage from './Pages/User/InboxPage/MessageDetailedPage'
+import CreatePublicTrip from './Pages/User/Trips/CreatePublicTrip'
+import PublicTrips from './Pages/User/Trips/PublicTrips'
+import SearchPage from './Pages/User/Search/SearchPage'
+import FindGroups from './Pages/User/Search/FindGroups/FindGroups'
+import FindEvents from './Pages/User/Search/FindEvents/FindEvents'
+import FindUsers from './Pages/User/Search/FindUsers/FindUsers'
+import FindTravelers from './Pages/User/Search/FindTravelers/FindTravelers'
+import CreateReference from './Pages/User/ReferencePage/CreateReference'
+import AdminGroups from './Pages/Admin/AdminGroups/AdminGroups'
+import AdminEventPage from './Pages/Admin/AdminEvents/AdminEventPage'
+import AdminHosts from './Pages/Admin/AdminHosts/AdminHosts'
 
 function App() {
   
@@ -30,6 +46,9 @@ function App() {
         <Route path='*' element={<h1>Page not Found</h1>} />
         <Route path='/login' element={<Login/>} />
         <Route path='/signup' element={<Signup/>} />
+        <Route path="/forget_password" element={<ForgotPassword />} />
+        <Route path="/user_forget_otp" element={<OtpPassword />} />
+        <Route path="/new_password" element={<NewPassword />} />
 
         {/*User's protected routes */}
         <Route element={<PrivateRoutes/>}>
@@ -41,10 +60,22 @@ function App() {
           <Route path='/groups' element={<GroupPage/>} />
           <Route path='/createGroup' element={<CreateGroup/>} />
           <Route path='/groupDetailedPage/:id' element={<GroupDetailedPage/>} />
-          <Route path='/findHosts' element={<FindHosts/>} />
           <Route path='/discussionPage/:id' element={<GroupDiscussionPage />} />
           <Route path='/DiffProfile/:id' element={<DiffUserProfile />} />
           <Route path='/allGroups' element={<AllGroups />} />
+          <Route path='/inbox' element={<InboxPage />} />
+          <Route path='/messageDetailedPage' element={<MessageDetailedPage />} />
+          <Route path='/createPublicTrip' element={<CreatePublicTrip />} />
+          <Route path='/publictrips' element={<PublicTrips />} />
+          <Route path='/createReference/:id' element={<CreateReference />} />
+
+          {/* search */}
+          <Route path="/search" element={<SearchPage />} />
+          <Route path='/findHosts' element={<FindHosts/>} />
+          <Route path='/findGroups' element={<FindGroups />} />
+          <Route path='/findEvents' element={<FindEvents />} />
+          <Route path='/findUser' element={<FindUsers />} />
+          <Route path='/findTravelers' element={<FindTravelers />} />
         </Route>
 
 
@@ -55,6 +86,9 @@ function App() {
         <Route element={<AdminPrivateRoutes/>}>
           <Route path='/admin/dashboard' element={<AdminDashboard/>} />
           <Route path='/admin/usersList' element={<UsersList/>} />
+          <Route path='/admin/groups' element={<AdminGroups />} />
+          <Route path='/admin/events' element={<AdminEventPage />} />
+          <Route path='/admin/hosts' element={<AdminHosts />} />
         </Route>     
       </Routes>
     </Router>

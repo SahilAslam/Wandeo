@@ -44,7 +44,7 @@ const protect = asyncHandler(
         const user: Document | null = await userModel
           .findById(userId)
           .select("-password");
-        console.log(user, "useraaaaaaaaaa")
+
         if (user) {   
           req.user = user as unknown as customUser;
           next();

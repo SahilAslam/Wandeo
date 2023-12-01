@@ -8,9 +8,7 @@ const adminProtect = async (
 ) => {
     try {
         const authorizationHeader = req.headers["authorization"];
-        console.log(req.headers, '////////');
         
-
         if(!authorizationHeader) {
             throw new Error("Authorization header is missing!");          
         }
@@ -28,7 +26,7 @@ const adminProtect = async (
 
         req.body.userId = decodedToken.user_id;
 
-        const adminId = "ObjectId(6502229c761cead53ce1099u)"
+        const adminId = "6502229c761cead53ce1099u"
         if(adminId !== req.body.userId) {
             throw new Error("User not found!")
         } else {

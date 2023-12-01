@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Navbar from "../../../Components/User/Navbar/Navbar";
 import axiosInstance from "../../../Axios/Axios";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 
 const GroupDiscussionPage = () => {
@@ -11,8 +11,9 @@ const GroupDiscussionPage = () => {
 
   const { id } = useParams();
 
-  const BASE_URL =
-    "https://res.cloudinary.com/dkba47utw/image/upload/v1698223651";
+  const navigate = useNavigate();
+
+  const BASE_URL = import.meta.env.VITE_CLOUDINARY_BASE_URL || ""
 
   const getDiscussion = async (id: string) => {
     // eslint-disable-next-line no-useless-catch
@@ -82,6 +83,14 @@ const GroupDiscussionPage = () => {
     } ago`;
   };
 
+  const handleClick = (userId: string) => {
+    if(id === userId) {
+      navigate("/profile")
+    } else {
+      navigate(`/DiffProfile/${userId}`)
+    }
+  }
+
   return (
     <div className="pb-10">
       <Navbar />
@@ -107,9 +116,10 @@ const GroupDiscussionPage = () => {
               <div>
                 {discussion?.userId?.profileImage ? (
                   <img
-                    src={`${BASE_URL}/${discussion?.userId?.profileImage}`}
+                    src={`${discussion?.userId?.profileImage}`}
                     alt="img"
                     className="border rounded-full w-8 h-8"
+                    onClick={() => handleClick(member._id)}
                   />
                 ) : (
                   <img

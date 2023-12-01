@@ -14,8 +14,7 @@ const AllGroups = () => {
 
   const navigate = useNavigate();
 
-  const BASE_URL =
-    "https://res.cloudinary.com/dkba47utw/image/upload/v1698223651";
+  const BASE_URL = import.meta.env.VITE_CLOUDINARY_BASE_URL || ""
 
   const indexOfLastRecord = currentPage * recordsPerPage;
   const indexOfFirstRecord = indexOfLastRecord - recordsPerPage;

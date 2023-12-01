@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import SignupNavbar from "../../../Components/User/Navbar/Navbar";
 import CreateEvent from "../../../Components/Modals/CreateEvent";
 import { useNavigate } from "react-router-dom";
-import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { selectUser } from "../../../Redux/Slice/userSlice";
 import axiosInstance from "../../../Axios/Axios";
@@ -18,7 +17,7 @@ function UserEvents() {
   const [attendingEvents, setAttendingEvents] = useState([]);
   const [updateUI, setUpdateUI] = useState<boolean>(false)
 
-  const baseUrl = "https://res.cloudinary.com/dkba47utw/image/upload/v1698223651";
+  const baseUrl = import.meta.env.VITE_CLOUDINARY_BASE_URL || ""
 
   const user = useSelector(selectUser);
   const id = user?.id ? user?.id : user?.user?._id;

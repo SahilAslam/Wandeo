@@ -1,22 +1,23 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import SignupNavbar from "../../../Components/User/Navbar/Navbar";
 import ProfileCard from "../../../Components/User/Profile/ProfileCard";
 import axiosInstance from "../../../Axios/Axios";
 import { useSelector } from "react-redux";
 import { selectUser } from "../../../Redux/Slice/userSlice";
 import { useNavigate, useParams } from "react-router-dom";
-import { IoMdAdd } from "react-icons/io";
-import AddImage from "../../../Components/Modals/AddImage";
 import { ToastContainer } from "react-toastify";
+import { FaBed } from "react-icons/fa";
+import moment from 'moment';
 
 const DiffUserProfile = () => {
   const [userDatails, setUserDetails] = useState<any>([]);
-  const [selectedMenuItem, setSelectedMenuItem] = useState("About");
-  const [imageModal, setImageModal] = useState<boolean>(false);
+  const [selectedMenuItem, setSelectedMenuItem] = useState<string>("About");
+  const [updateUI, setUpdateUI] = useState<boolean>(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const navigate = useNavigate();
 
-  const {id} = useParams();
+  const { id } = useParams();
 
   const user = useSelector(selectUser);
   const userId = user?.id ? user?.id : user?.user?._id;
@@ -37,22 +38,9 @@ const DiffUserProfile = () => {
       .catch((error) => console.log(error, "user profile error"));
   }, [id]);
 
-  const openModal = () => {
-    setImageModal(true);
-  };
-
-  const closeModal = () => {
-    setImageModal(false);
-  };
-
   const handleMenuItemClick = (menuItem: string) => {
     setSelectedMenuItem(menuItem);
   };
-
-
-
-  const baseUrl =
-    "https://res.cloudinary.com/dkba47utw/image/upload/v1698223651";
 
   const calculateAge = (birthdate: Date) => {
     const today = new Date();
@@ -76,29 +64,123 @@ const DiffUserProfile = () => {
   // Calculate the age
   const age = dateOfBirth ? calculateAge(new Date(dateOfBirth)) : undefined;
 
+  const UlRef = useRef<HTMLAnchorElement | null>(null); // Specify the correct type for ulRef
+  const MenuRef = useRef<HTMLLIElement | null>(null); // Specify the correct type for menuRef
+
+  const Menus = ["Friend Request", "Write Reference"];
+
+  window.addEventListener("click", (e) => {
+    if (e.target !== MenuRef.current && e.target !== UlRef.current) {
+      setMenuOpen(false);
+    }
+  });
+
+  const calculateTimeDifference = (lastLogin: Date | undefined) => {
+    if (!lastLogin) {
+      return 'N/A'; // or some default value
+    }
+
+    const now = moment();
+    const loginTime = moment(lastLogin);
+    const diffMinutes = now.diff(loginTime, 'minutes');
+    const diffHours = now.diff(loginTime, 'hours');
+  
+    if (diffMinutes < 1) {
+      return 'just now';
+    } else if (diffMinutes === 1) {
+      return '1 minute ago';
+    } else {
+      return `${diffMinutes < 60 ? `${diffMinutes} minutes ago` : `${diffHours} hours ago`}`;
+    }
+  };
+
+  const lastLogin = userDatails?.lastLogin;
+  const timeDifference = calculateTimeDifference(lastLogin);
+
   return (
     <>
       <SignupNavbar />
-      <ToastContainer/>
+      <ToastContainer />
       <div className="w-full ">
         <div className="pt-2 px-4 lg:px-32">
           <div className="flex flex-col md:flex-row gap-2">
             <div>
-              <ProfileCard userDetails={userDatails} />
+              <ProfileCard userDetails={userDatails} updateUI={updateUI} />
             </div>
             <div className="w-full flex flex-col gap-2">
               <div className="grid grid-cols-1 sm:grid-cols-2 bg-white">
                 <div className="flex flex-col py-5 px-5">
-                  <h1 className="text-red-600 text-2xl font-semibold">
-                  {userDatails?.hostingAvailability
-                          ? userDatails.hostingAvailability
-                          : "Details not specified"}
+                  <h1
+                    className={`text-2xl font-semibold ${
+                      userDatails?.hostingAvailability === "Accepting Guests"
+                        ? "text-green-500"
+                        : userDatails?.hostingAvailability ===
+                          "Not Accepting Guests"
+                        ? "text-red-600"
+                        : "text-slate-700"
+                    }`}
+                  >
+                    {userDatails?.hostingAvailability
+                      ? userDatails.hostingAvailability
+                      : "Details not specified"}
                   </h1>
-                  <p className="text-sm pt-4 text-gray-400">
-                    Last login 7 minutes ago
-                  </p>
+                  {userDatails?.isLoggin ? (
+                    <p className="text-sm pt-4 text-green-500">{userDatails?.isLoggin}</p>
+                  ) : (
+                    <p className="text-sm pt-4 text-gray-400">
+                      Last login{" "}{timeDifference}
+                    </p>
+                  )}
                 </div>
-                
+                <div className="flex items-center justify-end gap-2 px-5 pb-5 sm:pt-0 sm:py-0">
+                  <div>
+                    <button className="bg-green-700 hover:bg-green-800 text-white font-semibold px-4 py-2 rounded flex items-center gap-2">
+                      <FaBed className="text-xl" />
+                      Send Request
+                    </button>
+                  </div>
+                  <div className="relative">
+                    <button
+                      className="bg-green-700 hover:bg-green-800 text-white font-semibold px-4 py-2 rounded relative"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setMenuOpen(!menuOpen);
+                      }}
+                      ref={UlRef}
+                    >
+                      More
+                    </button>
+                    {menuOpen && (
+                      <div className="menus bg-white w-60 -right-4 shadow-xl absolute z-50 border">
+                        <ul>
+                          {Menus.map((menu, index) => (
+                            <li
+                              key={index}
+                              className="px-2 py-3 cursor-pointer hover:bg-blue-100 text-center border text-link-color font-semibold hover:text-green-700 hover:underline"
+                              onClick={() => {
+                                setMenuOpen(false);
+                              }}
+                            >
+                              {menu === "Write Reference" ? (
+                                <button
+                                  onClick={() =>
+                                    navigate(
+                                      `/createReference/${userDatails?._id}`
+                                    )
+                                  }
+                                >
+                                  {menu}
+                                </button>
+                              ) : (
+                                <button>{menu}</button>
+                              )}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
               <div className="bg-white xl:h-[70px]">
                 <ul className="flex flex-row flex-wrap gap-x-14 gap-y-2 px-5 py-5 text-green-800 font-semibold">
@@ -184,9 +266,17 @@ const DiffUserProfile = () => {
                           : "Occupation not specified"}
                       </p>
                       <p className="pb-3 text-slate-600">
-                        {userDatails?.languagesFluentIn &&
+                        {userDatails?.languagesFluentIn ||
                         userDatails?.languagesLearning
-                          ? `Fluent in ${userDatails.languagesFluentIn} learning ${userDatails.languagesLearning}`
+                          ? `Fluent in ${
+                              userDatails.languagesFluentIn
+                                ? userDatails.languagesFluentIn
+                                : "Undefined"
+                            }; learning ${
+                              userDatails.languagesLearning
+                                ? userDatails.languagesLearning
+                                : "Undefined"
+                            }`
                           : "No languages Listed"}
                       </p>
                       <p className="pb-3 text-slate-600">
@@ -217,7 +307,7 @@ const DiffUserProfile = () => {
                       </h1>
                     </div>
                     <div className="px-5 min-h-[50px] flex items-center">
-                      <p className="pb -3 text-slate-600">
+                      <p className="py-3 text-slate-600">
                         {userDatails?.about ? userDatails.about : ""}
                       </p>
                     </div>
@@ -225,11 +315,143 @@ const DiffUserProfile = () => {
                 </div>
               )}
               {selectedMenuItem === "Hosting" && (
-                <div>
-                  <div className="two bg-slate-400">Hosting Content</div>
+                <div className="bg-white shadow-md mb-5">
+                  <div className="px-5 py-5">
+                    <h1 className="font-semibold text-slate-800">MY HOME</h1>
+                  </div>
+                  {userDatails?.hostingId ? (
+                    <div>
+                      <div>
+                        <div className="px-5 py-3 bg-gradient-to-l from-slate-200 to-slate-100">
+                          <h1 className="text-slate-700 font-semibold text-sm text-clip">
+                            MY PREFERENCES
+                          </h1>
+                        </div>
+                        <div className="p-5">
+                          <p className="text-slate-700 font-semibold pb-3">
+                            Max Number of Guests:{" "}
+                            <span className="text-slate-700 font-normal">
+                              {userDatails?.hostingId?.noOfGuests
+                                ? userDatails?.hostingId?.noOfGuests
+                                : "Unspecified"}
+                            </span>
+                          </p>
+                          <p className="text-slate-700 font-semibold pb-3">
+                            Preferred Gender to Host:{" "}
+                            <span className="text-slate-700 font-normal">
+                              {userDatails?.hostingId?.preferredGender
+                                ? userDatails?.hostingId?.preferredGender
+                                : "Unspecified"}
+                            </span>
+                          </p>
+                          <p className="text-slate-700 font-semibold pb-3">
+                            Kid Friendly:{" "}
+                            <span className="text-slate-700 font-normal">
+                              {userDatails?.hostingId?.kidFriendly
+                                ? userDatails?.hostingId?.kidFriendly
+                                : "Unspecified"}
+                            </span>
+                          </p>
+                          <p className="text-slate-700 font-semibold pb-3">
+                            Pet Friendly:{" "}
+                            <span className="text-slate-700 font-normal">
+                              {userDatails?.hostingId?.petFriendly
+                                ? userDatails?.hostingId?.petFriendly
+                                : "Unspecified"}
+                            </span>
+                          </p>
+                          <p className="text-slate-700 font-semibold">
+                            Smoking Allowed:{" "}
+                            <span className="text-slate-700 font-normal">
+                              {userDatails?.hostingId?.smoking
+                                ? userDatails?.hostingId?.smoking
+                                : "Unspecified"}
+                            </span>
+                          </p>
+                        </div>
+                      </div>
+                      {userDatails?.hostingId?.sleepingArrangement ||
+                      userDatails?.hostingId?.sleepingArrangementDescription ? (
+                        <div>
+                          <div className="px-5 py-3 bg-gradient-to-l from-slate-200 to-slate-100">
+                            <h1 className="text-slate-700 font-semibold text-sm text-clip">
+                              SLEEPING ARRANGEMENTS
+                            </h1>
+                          </div>
+                          <div className="p-5">
+                            {userDatails?.hostingId?.sleepingArrangement && (
+                              <p className="text-slate-700 font-semibold pb-3">
+                                {userDatails?.hostingId?.sleepingArrangement}
+                              </p>
+                            )}
+                            {userDatails?.hostingId
+                              ?.sleepingArrangementDescription && (
+                              <p>
+                                {
+                                  userDatails?.hostingId
+                                    ?.sleepingArrangementDescription
+                                }
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      ) : null}
+                      {userDatails?.hostingId?.transportationAccess ||
+                      userDatails?.hostingId?.whatCanIShare ||
+                      userDatails?.hostingId?.additionalInformation ? (
+                        <div>
+                          <div className="px-5 py-3 bg-gradient-to-l from-slate-200 to-slate-100">
+                            <h1 className="text-slate-700 font-semibold text-sm text-clip">
+                              MORE DETAILS
+                            </h1>
+                          </div>
+                          <div className="p-5">
+                            {userDatails?.hostingId?.whatCanIShare && (
+                              <div>
+                                <h1 className="text-slate-700 font-semibold pb-2">
+                                  What I Can Share with Guests
+                                </h1>
+                                <p className="text-slate-700 pb-5">
+                                  {userDatails?.hostingId?.whatCanIShare}
+                                </p>
+                              </div>
+                            )}
+                            {userDatails?.hostingId?.transportationAccess && (
+                              <div>
+                                <h1 className="text-slate-700 font-semibold pb-2">
+                                  Public Transportation Access
+                                </h1>
+                                <p className="text-slate-700 pb-5">
+                                  {userDatails?.hostingId?.transportationAccess}
+                                </p>
+                              </div>
+                            )}
+                            {userDatails?.hostingId?.additionalInformation && (
+                              <div>
+                                <h1 className="text-slate-700 font-semibold pb-2">
+                                  Additional Informations
+                                </h1>
+                                <p className="text-slate-700 pb-5">
+                                  {
+                                    userDatails?.hostingId
+                                      ?.additionalInformation
+                                  }
+                                </p>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      ) : null}
+                    </div>
+                  ) : (
+                    <div className="px-10 py-5 bg-slate-100">
+                      <p className="text-center text-slate-400">
+                        {userDatails?.name}{" "}hasn't updated the profile
+                      </p>
+                    </div>
+                  )}
                 </div>
               )}
-
               {selectedMenuItem === "Photos" && (
                 <div className="flex flex-col bg-white">
                   <div className="p-4">
@@ -246,17 +468,11 @@ const DiffUserProfile = () => {
                     <div className="px-4 py-6 flex justify-start items-center">
                       {userDatails?.profileImage && (
                         <img
-                          src={`${baseUrl}/${userDatails?.profileImage}`}
+                          src={`${userDatails?.profileImage}`}
                           alt="profile img"
                           className="w-56 h-56 object-cover rounded mr-4"
                         />
                       )}
-                      <button
-                        onClick={openModal}
-                        className="px-12 py-2 flex justify-center rounded-sm capitalize bg-sky-600 text-white"
-                      >
-                        <IoMdAdd size={25} className="" /> add photo
-                      </button>
                     </div>
                   </div>
                   <div className="flex flex-col">
@@ -265,22 +481,102 @@ const DiffUserProfile = () => {
                         photos of my property
                       </h1>
                     </div>
-                    <div className="px-4 py-6 flex justify-start items-center">
-                      <button className="px-12 py-2 flex justify-center rounded-sm capitalize bg-sky-600 text-white">
-                        <IoMdAdd size={25} className="" /> add photo
-                      </button>
-                    </div>
+                    <div className="px-4 py-6 flex justify-start items-center"></div>
                   </div>
                 </div>
               )}
-              {selectedMenuItem === "References" && <div></div>}
+              {selectedMenuItem === "References" && (
+                <div className="bg-white">
+                  <div className="p-5 border-b">
+                    <h1 className="text-slate-800 font-semibold">REFERENCES</h1>
+                  </div>
+                  {userDatails?.references.length > 0 ? (
+                    userDatails?.references.map((reference) => (
+                      <div className="flex flex-col sm:flex-row pb-5 pt-2">
+                        <div className="p-5">
+                          {reference?.userId?.profileImage ? (
+                            <img
+                              src={`${reference?.userId?.profileImage}`}
+                              alt="profile img"
+                              className="w-14 h-14 object-cover rounded-full"
+                            />
+                          ) : (
+                            <img
+                              src={`https://cdn-icons-png.flaticon.com/512/3177/3177440.png`}
+                              alt=""
+                              className="w-16 h-16 object-cover rounded-full opacity-70"
+                            />
+                          )}
+                        </div>
+                        <div className="flex flex-col py-5">
+                          <div className="flex flex-col">
+                            <h1 className="font-semibold text-slate-800 pb-1">
+                              {reference?.userId?.name}
+                            </h1>
+                            <p className="text-sm text-slate-800">
+                              {reference?.userId?.address
+                                ? reference?.userId?.address
+                                : "Unspecified"}
+                            </p>
+                            <p className="text-xs text-slate-400">
+                              {reference?.userId?.references
+                                ? reference?.userId?.references?.length
+                                : 0}{" "}
+                              references
+                            </p>
+                          </div>
+                          {reference?.recommendYes ? (
+                            <div className="pt-4">
+                              <h1 className="text-green-500">
+                                {reference?.recommendYes}s {userDatails?.name}
+                              </h1>
+                            </div>
+                          ) : (
+                            <div className="pt-4">
+                              <h1 className="text-red-500">
+                                Not {reference?.recommendNo}ing{" "}
+                                {userDatails?.name}
+                              </h1>
+                            </div>
+                          )}
+                          <div className="pt-4 pr-2">
+                            <p>{reference?.referenceMessage.split("\n")
+                                .map((line, index) => (
+                                  <span key={index}>
+                                    {line}
+                                    <br />
+                                  </span>
+                                ))}</p>
+                          </div>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="p-5 bg-gradient-to-b from-slate-100 to-slate-200">
+                      <p className="text-slate-800">
+                        There are no reference for {userDatails?.name} to show.
+                        If you have any memories about {userDatails?.name}{" "}
+                        <span
+                          className="text-slate-800 font-semibold hover:underline cursor-pointer"
+                          onClick={() =>
+                            navigate(`/createReference/${userDatails?._id}`)
+                          }
+                        >
+                          share it
+                        </span>
+                        . It will help other users as well to find out the
+                        common interests
+                      </p>
+                    </div>
+                  )}
+                </div>
+              )}
               {selectedMenuItem === "Friends" && <div></div>}
               {selectedMenuItem === "Favorites" && <div></div>}
             </div>
           </div>
         </div>
       </div>
-      <AddImage closeModal={closeModal} visible={imageModal} />
     </>
   );
 };

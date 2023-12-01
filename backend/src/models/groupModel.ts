@@ -8,6 +8,7 @@ interface Group extends Document {
     members: mongoose.Schema.Types.ObjectId[];
     image: string
     createdBy: mongoose.Schema.Types.ObjectId;
+    isBlocked: boolean;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -44,6 +45,11 @@ const groupSchema = new Schema<Group> ({
             ref: "Discussion",
         },
     ],
+    isBlocked: {
+        type: Boolean,
+        required: true,
+        default: false,
+    },
     
 }, { timestamps: true })
 

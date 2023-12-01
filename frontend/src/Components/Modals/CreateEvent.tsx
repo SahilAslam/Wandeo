@@ -20,7 +20,6 @@ const CreateEvent: React.FC<CreateEventProps> = ({ visible, closeModal, updateUI
   const [attendeesLimit, setAttendeesLimit] = useState("");
   const [description, setDescription] = useState("");
   const [image, setImage] = useState("");
-  const [cloudnaryUrl, setCloudnaryUrl] = useState("");
   const [error, setError] = useState('');
 
   const UPLOAD_PRESET = import.meta.env.VITE_UPLOAD_PRESET || ""
@@ -56,14 +55,14 @@ const CreateEvent: React.FC<CreateEventProps> = ({ visible, closeModal, updateUI
           UPLOAD_URL,
           formData
         );
-
-        console.log(response.data, "llllll");
-        setCloudnaryUrl(response.data.public_id);
+        return response.data.public_id;
       } else {
-        return toast.error("no images please upload");
+        toast.error("no images please upload");
+        return null;
       }
     } catch (error) {
       console.error("Error while uploading the image:", error);
+      return null;
     }
   };
 
@@ -75,9 +74,9 @@ const CreateEvent: React.FC<CreateEventProps> = ({ visible, closeModal, updateUI
       return;
     }
 
-    await handleImageUpload();
+    const uploadedUrl = await handleImageUpload();
 
-    if (!cloudnaryUrl) {
+    if (!uploadedUrl) {
       toast.error("Error while uploading the image");
       return;
     }
@@ -89,7 +88,7 @@ const CreateEvent: React.FC<CreateEventProps> = ({ visible, closeModal, updateUI
         startDate: startDate,
         endDate: endDate,
         attendeesLimit: attendeesLimit,
-        image: cloudnaryUrl,
+        image: uploadedUrl,
         description: description,
       })
       .then((res) => {
@@ -296,7 +295,7 @@ const CreateEvent: React.FC<CreateEventProps> = ({ visible, closeModal, updateUI
                           value={description}
                           onChange={(e) => setDescription(e.target.value)}
                           className="w-full bg-secondary rounded border 
-                            border-[#66666690] outline-none text-sm text-ascent-1 px-4 py-3 placeholder:text=[#666]"
+                            border-[#66666690] outline-none text-sm text-ascent-1 px-4 py-3 placeholder:text-[#666]"
                         ></textarea>
                       </div>
                       <button

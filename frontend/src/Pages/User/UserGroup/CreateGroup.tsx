@@ -6,13 +6,14 @@ import { selectUser } from "../../../Redux/Slice/userSlice";
 import { toast, ToastContainer } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { HiOutlineExclamation } from "react-icons/hi";
 
 const CreateGroup = () => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [location, setLocation] = useState("");
   const [image, setImage] = useState("");
-  const [cloudnaryUrl, setCloudnaryUrl] = useState("");
+  const [err, setErr] = useState("");
 
   const user = useSelector(selectUser);
   const id = user?.id ? user?.id : user?.user?._id;
@@ -24,7 +25,18 @@ const CreateGroup = () => {
 
   function handleChange(e: ChangeEvent<HTMLInputElement>) {
     if(e.target.files && e.target.files.length > 0) {
-      setImage(e.target.files[0]);
+      const selectedFile = e.target.files?.[0];
+
+      if (selectedFile) {
+        const allowedFormats = ["image/jpeg", "image/png", "image/gif"];
+  
+        if (allowedFormats.includes(selectedFile.type)) {
+          setImage(selectedFile);
+          setErr("")
+        } else {
+          setErr("Only image formats (JPEG, PNG, GIF) are allowed");
+        }
+      }
     }
   }
 
@@ -40,7 +52,7 @@ const CreateGroup = () => {
           formData
         );
         console.log(response.data, "//data//");
-        setCloudnaryUrl(response.data.public_id);
+        return response.data.public_id;
       } else {
         return toast.error("no images please upload");
       }
@@ -54,9 +66,13 @@ const CreateGroup = () => {
   ) => {
     e.preventDefault();
 
-    await handleImageUpload();
+    if(err) {
+      return toast.error(err)
+    }
 
-    if (!cloudnaryUrl) {
+    const uploadUrl = await handleImageUpload();
+
+    if (!uploadUrl) {
       toast.error("Error while uploading the image");
       return;
     }
@@ -65,7 +81,7 @@ const CreateGroup = () => {
       name: name,
       description: description,
       location: location,
-      image: cloudnaryUrl,
+      image: uploadUrl,
     };
 
     axiosInstance
@@ -87,7 +103,7 @@ const CreateGroup = () => {
     <>
       <SignupNavbar />
       <ToastContainer />
-      <div className="p-4 md:px-10 lg:px-32">
+      <div className="p-4 md:px-10 lg:px-52">
         <div className="flex flex-col px-4 md:w-[830px] bg-white shadow-md">
           <form encType="multipart/form-data" onSubmit={handleSubmit}>
             <div className="border-b">
@@ -95,6 +111,14 @@ const CreateGroup = () => {
                 Create Group
               </h1>
             </div>
+            {err && (
+              <div className=" pt-5">
+                <p className="bg-red-200 flex justify-center items-center text-[#3E1214] font-semibold py-4 px-2">
+                  <HiOutlineExclamation className="mr-1 text-xl" />
+                  {err}
+                </p>
+              </div>
+            )}
             <div className="border-b flex flex-col md:flex-row py-4">
               <label
                 htmlFor="name"
@@ -156,7 +180,18 @@ const CreateGroup = () => {
                 className="py-1 w-full"
               />
             </div>
-            <div className="py-5">
+            {!err && (
+              <div className="flex justify-start py-5">
+                {image && (
+                  <img
+                    src={URL.createObjectURL(image)}
+                    alt="Event"
+                    className="w-[150px] h-[150px] rounded"
+                  />
+                )}
+              </div>
+            )}
+            <div className="py-5 border-t">
               <button
                 type="submit"
                 className="px-2 py-1.5 text-white bg-sky-700 hover:bg-sky-600 rounded"

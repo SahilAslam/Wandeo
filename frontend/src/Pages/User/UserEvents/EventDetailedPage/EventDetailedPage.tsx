@@ -21,8 +21,7 @@ const EventDetailedPage = () => {
   const user = useSelector(selectUser);
   const userId = user?.id ? user?.id : user?.user?._id;
 
-  const baseUrl =
-    "https://res.cloudinary.com/dkba47utw/image/upload/v1698223651";
+  const baseUrl = import.meta.env.VITE_CLOUDINARY_BASE_URL || ""
 
   const getEventId = async (id: any) => {
     // eslint-disable-next-line no-useless-catch
@@ -120,8 +119,8 @@ const EventDetailedPage = () => {
                       <div className="flex flex-row gap-4">
                         <div>
                           <img
-                            className="h-[60px] w-auto rounded-full"
-                            src={`${baseUrl}/${attender?.profileImage}`}
+                            className="h-[60px] w-[60px] rounded-full"
+                            src={`${attender?.profileImage}`}
                             alt={attender?.name}
                           />
                         </div>

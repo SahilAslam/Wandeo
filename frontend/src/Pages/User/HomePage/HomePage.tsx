@@ -8,14 +8,22 @@ import UserGroupCard from "../../../Components/User/Cards/Home/UserGroupCard";
 import { MdVerified, MdOutlineTour, MdArrowRight } from "react-icons/md";
 import { LuListTodo } from "react-icons/lu";
 import { FaPlaneDeparture } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+import moment from "moment";
+import { ImHome3 } from "react-icons/im";
+import { IoCalendarSharp } from "react-icons/io5";
+import { FaArrowRight } from "react-icons/fa6";
+import { ImUser } from "react-icons/im";
 
 function HomePage() {
   const [userDetails, setUserDetails] = useState<any>([]);
+  const [publicTrips, setPublicTrips] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const user = useSelector(selectUser);
-  console.log(user, '..................')
   const id = user?.id ? user?.id : user?.user?._id;
-  console.log(id);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     axiosInstance
@@ -31,6 +39,30 @@ function HomePage() {
       })
       .catch((error) => console.log(error, "user profile error"));
   }, [id]);
+
+  useEffect(() => {
+    axiosInstance
+      .get('/getPublicTrips')
+      .then((response) => {
+        if(response.data.publicTrips) {
+          setPublicTrips(response.data.publicTrips)
+        } else {
+          console.log("Public trips not found")
+        }
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+  }, [])
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+
+    navigate(`/search?q=${encodeURIComponent(searchQuery)}`, {
+      state: { searchQuery },
+    });
+  };
+
 
   return (
     <>
@@ -76,41 +108,59 @@ function HomePage() {
                 </div>
               </div>
               <div className="bg-white shadow-lg">
-                <div className="px-5 py-4 border-b flex items-center">
-                  <MdOutlineTour className="text-xl text-slate-700 mr-2" />
-                  <h1 className="text-lg font-semibold text-slate-700 uppercase">
-                  HIT THE WORLD'S BEST BEACHES WITH WANDEO...
-                  </h1>
-                </div>
-                <div className="flex flex-col">
-                  <div className="px-4 flex flex-wrap justify-center gap-3 md:flex-row py-5">
-                    <div className="w-full sm:w-[295px] h-[225px]">
-                      <img src="/istockphoto-1011241694-612x612.jpg" alt="" className="w-full sm:w-[295px] h-[225px]" />
-                    </div>
-                    <div className="w-full sm:w-[295px] sm:h-[225px]">
-                    <img src="/shutterstock_294262202.webp" alt="" className="w-full sm:w-[295px] h-[225px]" />
-                    </div>
-                    <div className="w-full sm:w-[295px] sm:h-[225px]">
-                    <img src="/367325293acff4760c9456fcc1d6c3eb.jpg" alt="" className="w-full sm:w-[295px] h-[225px]" />
-                    </div>
+                <form
+                  onSubmit={handleSearch}
+                >
+                  <div className="px-5 py-4 border-b flex items-center">
+                    <MdOutlineTour className="text-xl text-slate-700 mr-2" />
+                    <h1 className="text-lg font-semibold text-slate-700 uppercase">
+                      HIT THE WORLD'S BEST BEACHES WITH WANDEO...
+                    </h1>
                   </div>
-                  <div className="flex item-center justify-center">
-                    <div className="pb-5">
-                      <div className="flex justify-center">
-                        <h1 className="mb-2 text-slate-700 font-semibold">
-                          Find hosts wherever I'm going:
-                        </h1>
+                  <div className="flex flex-col">
+                    <div className="px-4 flex flex-wrap justify-center gap-3 md:flex-row py-5">
+                      <div className="w-full sm:w-[295px] h-[225px]">
+                        <img
+                          src="/istockphoto-1011241694-612x612.jpg"
+                          alt=""
+                          className="w-full sm:w-[295px] h-[225px]"
+                        />
                       </div>
-                      <div className="flex justify-center">
-                        <input
-                          type="text"
-                          placeholder="Where are you going?"
-                          className="border-2 rounded-3xl px-4 py-1.5 w-auto sm:w-96"
+                      <div className="w-full sm:w-[295px] sm:h-[225px]">
+                        <img
+                          src="/shutterstock_294262202.webp"
+                          alt=""
+                          className="w-full sm:w-[295px] h-[225px]"
+                        />
+                      </div>
+                      <div className="w-full sm:w-[295px] sm:h-[225px]">
+                        <img
+                          src="/367325293acff4760c9456fcc1d6c3eb.jpg"
+                          alt=""
+                          className="w-full sm:w-[295px] h-[225px]"
                         />
                       </div>
                     </div>
+                    <div className="flex item-center justify-center">
+                      <div className="pb-5">
+                        <div className="flex justify-center">
+                          <h1 className="mb-2 text-slate-700 font-semibold">
+                            Find hosts wherever I'm going:
+                          </h1>
+                        </div>
+                        <div className="flex justify-center">
+                          <input
+                            type="text"
+                            placeholder="Where are you going?"
+                            className="border-2 rounded-3xl px-4 py-1.5 w-auto sm:w-96"
+                            onClick={(e) => e.stopPropagation()}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                          />
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                </div>
+                </form>
               </div>
               <div className="bg-white shadow-lg mb-10">
                 <div className="px-5 py-4 border-b flex items-center">
@@ -119,28 +169,57 @@ function HomePage() {
                     MY TRAVEL PLANS
                   </h1>
                 </div>
-                <div className="flex items-center justify-center bg-slate-100">
-                  <p className="py-8">You have no upcoming trips.</p>
-                </div>
+                {publicTrips && publicTrips.length > 0 ? (
+                  publicTrips.map((trip) => (
+                    <div className="px-5 pt-5 border-b">
+                      <p className="text-slate-800 pb-4">visiting:{" "}<span className="font-semibold">{trip?.destination}</span></p>
+                      <div className="flex flex-wrap gap-2 text-slate-700 pb-4">
+                        <div className="flex items-center">
+                          <ImHome3 className="mr-1" />
+                          <p>{moment(trip.departureDate).diff(trip.arrivalDate, "days") === 1 ? `${moment(trip.departureDate).diff(trip.arrivalDate, "days")} night` : `${moment(trip.departureDate).diff(trip.arrivalDate, "days")} nights`}</p>
+                        </div>
+                        <div className="flex items-center">
+                          <IoCalendarSharp className="mr-1" />
+                          <p>{moment(trip?.arrivalDate).format("ddd MMM D")}</p>
+                        </div>
+                        <div className="flex items-center">
+                          <FaArrowRight className="mr-1" />
+                          <p>{moment(trip?.departureDate).format("ddd MMM D")}</p>
+                        </div>
+                        <div className="flex items-center">
+                          <ImUser className="mr-1" />
+                          <p>{trip?.noOfTravelers}{" "}Traveler</p>
+                        </div>
+                      </div>
+                      <p className="pb-4">{trip?.description}</p>
+                    </div>
+                  ))
+                ) : (
+                  <div className="flex items-center justify-center bg-slate-100">
+                    <p className="py-8">You have no upcoming trips.</p>
+                  </div>
+                )}
                 <div className="flex flex-col lg:flex-row justify-center items-center gap-4 py-5">
-                  <div className="flex justify-center items-center">
-                    <h1 className="capitalize font-bold text-link-color">
-                      Create a Public Trip
-                    </h1>
-                    <MdArrowRight className="font-bold text-link-color text-2xl mt-1 " />
-                  </div>
-                  <div className="flex justify-center items-center">
-                    <h1 className="capitalize font-bold text-link-color">
-                      My Public Trips
-                    </h1>
-                    <MdArrowRight className="font-bold text-link-color text-2xl mt-1 " />
-                  </div>
-                  <div className="flex justify-center items-center">
-                    <h1 className="capitalize font-bold text-link-color">
-                      My Couch Requests
-                    </h1>
-                    <MdArrowRight className="font-bold text-link-color text-2xl mt-1 " />
-                  </div>
+                  <h1
+                    className="flex justify-center items-center cursor-pointer capitalize font-bold text-link-color hover:text-sky-700 hover:text-shadow shadow-sky-700/20"
+                    onClick={() => navigate(`/createPublicTrip`)}
+                  >
+                    Create a Public Trip
+                    <MdArrowRight className="font-bold  text-2xl mt-1 " />
+                  </h1>
+
+                  <h1
+                    className="flex justify-center items-center cursor-pointer capitalize font-bold text-link-color hover:text-link-dark hover:text-shadow shadow-sky-700/20"
+                    onClick={() => navigate("/publictrips")}
+                  >
+                    My Public Trips
+                    <MdArrowRight className="font-bold text-2xl mt-1 " />
+                  </h1>
+
+                  <h1 className="flex justify-center items-center cursor-pointer text-link-color hover:text-link-dark capitalize font-bold hover:text-shadow shadow-sky-700/20">
+                    My Couch Requests
+                    <MdArrowRight className="font-bold text-2xl mt-1 " />
+                  </h1>
                 </div>
               </div>
             </div>

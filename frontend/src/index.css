@@ -12,16 +12,12 @@ body {
 }
 
 .signup{
-    background-image: url(./assets/fAEbUH.webp);
+    background-color: #F1EFEA;
     background-size: cover;
 }
 
 .login{
-    background-image: url(./assets/fAEbUH.webp);
+    background-color: #F1EFEA;
     background-size: cover;
 }
 
-.adminLogin {
-    --tw-bg-opacity: 1;
-    background-color: black;
-}

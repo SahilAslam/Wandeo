@@ -1,8 +1,12 @@
 import React from 'react'
+import Navbar from '../../../../Components/User/Navbar/Navbar'
 
 const FindEvents = () => {
   return (
-    <div>FindEvents</div>
+    <>
+      <Navbar />
+      <div>FindEvents</div>
+    </>
   )
 }
 

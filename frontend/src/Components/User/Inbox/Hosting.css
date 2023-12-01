@@ -1,0 +1,31 @@
+.message-bubble {
+    position: relative;
+    width: 300px;
+    height: 150px;
+    background-color: white;
+    border: 1px solid black;
+    padding: 10px;
+  }
+  
+  .pointer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 20px;
+    height: 20px;
+    background-color: #ccc;
+  }
+  
+  .arrow {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    width: 10px;
+    height: 10px;
+    border: 1px solid black;
+    transform: rotate(45deg);
+  }
+  
+  .message {
+    margin-top: 20px;
+  }

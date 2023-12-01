@@ -2,11 +2,15 @@ import mongoose, { Schema, Document, model, Model} from "mongoose";
 
 interface Hosting extends Document {
     userId: mongoose.Schema.Types.ObjectId;
-    hostingAvailability: string[];
+    hostingAvailability: string;
     availableNights: string;
     noOfGuests: string;
     preferredGender: string;
+    kidFriendly: string;
+    petFriendly: string;
+    smoking: string
     sleepingArrangement: string;
+    sleepingArrangementDescription: string;
     transportationAccess: string;
     whatCanIShare: string;
     additionalInformation: string;
@@ -18,7 +22,7 @@ const hostingSchema = new Schema<Hosting> ({
         ref: "userCollection"
     },
     hostingAvailability: {
-        type: [String],
+        type: String,
     },
     availableNights: {
         type: String
@@ -29,8 +33,20 @@ const hostingSchema = new Schema<Hosting> ({
     preferredGender: {
         type: String
     },
+    kidFriendly: {
+        type: String
+    },
+    petFriendly: {
+        type: String
+    },
+    smoking: {
+        type: String
+    },
     sleepingArrangement: {
         type: String,
+    },
+    sleepingArrangementDescription: {
+        type: String
     },
     transportationAccess: {
         type: String,
