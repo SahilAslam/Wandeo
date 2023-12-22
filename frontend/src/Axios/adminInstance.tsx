@@ -2,7 +2,7 @@ import axios from "axios";
 
 const adminInstance = axios.create({
     // baseURL: "http://localhost:5000/admin",
-    baseURL: "http://wandeo.website",
+    baseURL: "https://wandeo.website",
 });
 
 adminInstance.interceptors.request.use(
