@@ -8,7 +8,8 @@ import paymentRouter from './routes/paymentRoutes/paymentRoutes';
 dotenv.config()
 import { Server as SocketIoServer } from 'socket.io';
 import http from 'http';
-import path from 'path';
+import path from 'path'
+
 
 const port = 5000;
 const app = express();
@@ -31,6 +32,13 @@ app.use('/', userRouter);
 app.use('/admin', adminRouter);
 
 app.use('/payment', paymentRouter);
+
+app.use(express.static(path.join(__dirname,"../../frontend/dist")));
+
+app.get("*", function (req, res) {
+  res.sendFile(path.join(__dirname,"../../frontend/dist/index.html"));
+});
+
 
 io.on('connection', (socket) => {
     console.log('connected to socket.io');
