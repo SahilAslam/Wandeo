@@ -60,7 +60,6 @@ export const getUsers = async (req: Request, res: Response) => {
 }
 
 export const blockUser = async(req: Request, res: Response) => {
-    console.log('/////////////////////')
     try {
         const userId = req.params.id;
 

@@ -9,8 +9,30 @@ import { BiTimeFive } from "react-icons/bi";
 import { MdLocationOn } from "react-icons/md";
 import { toast, ToastContainer } from "react-toastify";
 
-const EventDetailedPage = () => {
-  const [event, setEvent] = useState("");
+interface Attender {
+  _id: string;
+  name: string;
+  profileImage: string;
+  address?: string;
+}
+
+interface Event {
+  _id: string;
+  attendees: Attender[];
+  attendeesLimit: number;
+  eventName: string;
+  image: string;
+  startDate: Date;
+  endDate: Date;
+  location: string;
+  organizedBy: {
+    name: string;
+  };
+  description: string;
+}
+
+const EventDetailedPage: React.FC = () => {
+  const [event, setEvent] = useState<Event | null>(null);
   const [updateUI, setUpdateUI] = useState<boolean>(false);
   // const [usersAttending, setUsersAttending] = useState([])
 
@@ -18,7 +40,7 @@ const EventDetailedPage = () => {
 
   const id = useParams();
 
-  const user = useSelector(selectUser);
+  const user = useSelector(selectUser) as any;
   const userId = user?.id ? user?.id : user?.user?._id;
 
   const baseUrl = import.meta.env.VITE_CLOUDINARY_BASE_URL || ""
@@ -42,7 +64,7 @@ const EventDetailedPage = () => {
     getEventId(id);
   }, [updateUI, id]);
 
-  const handleJoin = async (eventId: string) => {
+  const handleJoin = async (eventId: any) => {
     try {
       
       const response = await axiosInstance.get(`/joinEvent/${eventId}`);
@@ -57,9 +79,9 @@ const EventDetailedPage = () => {
     }
   };
 
-  const leaveEvent = async (eventId: string) => {
+  const leaveEvent = async (eventId: any) => {
     try {
-      const response = axiosInstance.get(`/leaveEvent/${eventId}`)
+      const response = await axiosInstance.get(`/leaveEvent/${eventId}`)
 
       setUpdateUI((prev) => ! prev)
       console.log('successfully leaved:', response.data);     
@@ -99,19 +121,20 @@ const EventDetailedPage = () => {
               <div className="px-3 w-full sm:w-full md:w-80 lg:w-80 flex justify-between border-b">
                 <div className="py-1">
                   <h1 className="font-semibold text-slate-800 text-lg">
-                    {event.attendees ? event.attendees?.length : 0} Going
+                    {event?.attendees ? event.attendees?.length : 0} Going
                   </h1>
                 </div>
                 <div>
                   <h1 className="bg-red-500 px-2 rounded-b text-white">
-                    {event?.attendeesLimit - event?.attendees?.length} Slots
-                    left
+                    {event && (
+                      `${event.attendeesLimit - event?.attendees?.length} Slots left`
+                    )}
                   </h1>
                 </div>
               </div>
               <div className=" w-full sm:w-full md:w-80 lg:w-80">
-                {event?.attendees?.length > 0 ? (
-                  event?.attendees?.map((attender, index) => (
+                {event && event.attendees?.length > 0 ? (
+                  event?.attendees?.map((attender) => (
                     <div
                       key={attender?._id}                      
                       className="w-auto px-4 py-2"

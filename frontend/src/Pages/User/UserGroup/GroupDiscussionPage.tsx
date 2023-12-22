@@ -1,21 +1,19 @@
 import React, { useEffect, useState } from "react";
 import Navbar from "../../../Components/User/Navbar/Navbar";
 import axiosInstance from "../../../Axios/Axios";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 
 const GroupDiscussionPage = () => {
-  const [discussion, setDiscussion] = useState("");
+  const [discussion, setDiscussion] = useState<any>({});
   const [updateUI, setUpdateUI] = useState<boolean>(false);
   const [reply, setReply] = useState("");
 
   const { id } = useParams();
 
-  const navigate = useNavigate();
-
   const BASE_URL = import.meta.env.VITE_CLOUDINARY_BASE_URL || ""
 
-  const getDiscussion = async (id: string) => {
+  const getDiscussion = async () => {
     // eslint-disable-next-line no-useless-catch
     try {
       const response = await axiosInstance.get(`/getDiscussion/${id}`);
@@ -29,7 +27,7 @@ const GroupDiscussionPage = () => {
   };
 
   useEffect(() => {
-    getDiscussion(id);
+    getDiscussion();
   }, [updateUI,id]);
 
   const handleSubmit = async (
@@ -83,14 +81,6 @@ const GroupDiscussionPage = () => {
     } ago`;
   };
 
-  const handleClick = (userId: string) => {
-    if(id === userId) {
-      navigate("/profile")
-    } else {
-      navigate(`/DiffProfile/${userId}`)
-    }
-  }
-
   return (
     <div className="pb-10">
       <Navbar />
@@ -119,7 +109,6 @@ const GroupDiscussionPage = () => {
                     src={`${discussion?.userId?.profileImage}`}
                     alt="img"
                     className="border rounded-full w-8 h-8"
-                    onClick={() => handleClick(member._id)}
                   />
                 ) : (
                   <img
@@ -148,7 +137,7 @@ const GroupDiscussionPage = () => {
 
           <div className=" border-b-4 border-slate-300">
             {discussion?.replies?.length > 0 ? (
-              discussion.replies.map((reply) => (
+              discussion.replies.map((reply: any) => (
                 <div className="flex gap-3 border-b py-5">
                   <div>
                     <img
@@ -182,7 +171,7 @@ const GroupDiscussionPage = () => {
               <textarea
                 name=""
                 id=""
-                rows="6"
+                rows={6}
                 placeholder="write a reply..."
                 value={reply}
                 onChange={(e) => setReply(e.target.value)}

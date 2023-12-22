@@ -5,7 +5,9 @@
   "main": "dist/server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon src/server.ts",
+    "dev": "nodemon src/server.ts",
+    "start": "node src/server.js",
+    "build": "tsc",
     "lint": "eslint . --ext .ts"
   },
   "keywords": [],
@@ -25,6 +27,7 @@
     "typescript": "^5.2.2"
   },
   "dependencies": {
+    "@stripe/stripe-js": "^2.2.0",
     "bcrypt": "^5.1.1",
     "cloudinary": "^1.41.0",
     "cors": "^2.8.5",
@@ -34,6 +37,8 @@
     "google-auth-library": "^9.2.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^7.5.2",
-    "nodemailer": "^6.9.7"
+    "nodemailer": "^6.9.7",
+    "socket.io": "^4.7.2",
+    "stripe": "^14.7.0"
   }
 }

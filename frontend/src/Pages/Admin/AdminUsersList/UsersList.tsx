@@ -2,12 +2,10 @@ import { useState } from "react";
 import AdminNavbar from "../../../Components/Admin/AdminNavbar/AdminNavbar";
 import Sidebar from "../../../Components/Admin/Sidebar/Sidebar";
 import UserTable from "../../../Components/Admin/UserTable/UserTable";
-import { useNavigate } from "react-router-dom";
 
 function UsersList() {
   const [open, setOpen] = useState(true);
 
-  const navigate = useNavigate();
 
   return (
     <>

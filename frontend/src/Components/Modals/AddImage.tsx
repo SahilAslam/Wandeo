@@ -10,7 +10,7 @@ import { HiOutlineExclamation } from "react-icons/hi";
 interface CreateEventProps {
   closeModal: () => any;
   visible: boolean;
-  setUpdateUI: (data: boolean) => void;
+  setUpdateUI: (data: any) => void;
 }
 
 const AddImage: React.FC<CreateEventProps> = ({
@@ -18,16 +18,15 @@ const AddImage: React.FC<CreateEventProps> = ({
   closeModal,
   setUpdateUI,
 }) => {
-  const [image, setImage] = useState("");
+  const [image, setImage] = useState<File | null>(null);
   const [err, setErr] = useState("");
 
   const UPLOAD_PRESET = import.meta.env.VITE_UPLOAD_PRESET || "";
   const CLOUD_NAME = import.meta.env.VITE_CLOUD_NAME || "";
   const UPLOAD_URL = import.meta.env.VITE_CLOUDINARY_UPLOAD_URL || "";
 
-  const user = useSelector(selectUser);
+  const user = useSelector(selectUser) as any;
   const id = user?.id ? user?.id : user?.user?._id;
-  console.log(id);
 
   function handleChange(e: ChangeEvent<HTMLInputElement>) {
     const selectedFile = e.target.files?.[0];
@@ -53,7 +52,7 @@ const AddImage: React.FC<CreateEventProps> = ({
         formData.append("cloud_name", CLOUD_NAME);
         const response = await axios.post(UPLOAD_URL, formData);
 
-        setUpdateUI((state: boolean) => !state);
+        setUpdateUI((prev: boolean) => !prev);
 
         return response.data.secure_url;
 

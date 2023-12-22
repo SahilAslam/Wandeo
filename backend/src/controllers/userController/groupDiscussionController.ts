@@ -2,7 +2,6 @@ import { Request, Response } from "express";
 import GroupModel from "../../models/groupModel";
 import DiscussionModel from "../../models/discussionModel";
 
-
 const createNewDiscussion = async (req: Request, res: Response) => {
   try {
     const { groupId } = req.params;
@@ -54,7 +53,7 @@ const getSingleDiscussion = async (req: Request, res: Response) => {
       })
       .populate({
         path: "replies.userId",
-        select: "name profileImage address"
+        select: "name profileImage address",
       });
 
     if (discussion) {
@@ -69,24 +68,22 @@ const getSingleDiscussion = async (req: Request, res: Response) => {
   }
 };
 
-
 const postDiscussionReply = async (req: Request, res: Response) => {
   try {
-    
     const { discussionId } = req.params;
     const userId = req.user?.id;
     const { replyMessage } = req.body;
 
     if (!userId) {
-        return res.status(404).json({ message: "UserId not found!" });
+      return res.status(404).json({ message: "UserId not found!" });
     }
 
     if (!replyMessage) {
-        return res.status(400).json({ message: "Reply message is required!" });
+      return res.status(400).json({ message: "Reply message is required!" });
     }
 
     const discussion = await DiscussionModel.findOneAndUpdate(
-      { _id: discussionId }, 
+      { _id: discussionId },
       {
         $push: {
           replies: {
@@ -95,17 +92,18 @@ const postDiscussionReply = async (req: Request, res: Response) => {
           },
         },
       },
-    { new: true });
+      { new: true }
+    );
 
     if (!discussion) {
       return res.status(400).json({ message: "Discussion not found!" });
     }
 
     return res.status(201).json({ message: "Successfully posted reply" });
-} catch (error) {
+  } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Internal server error" });
-}
+  }
 };
 
 export { createNewDiscussion, getSingleDiscussion, postDiscussionReply };

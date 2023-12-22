@@ -12,10 +12,10 @@ const CreateGroup = () => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [location, setLocation] = useState("");
-  const [image, setImage] = useState("");
+  const [image, setImage] = useState<File | null>(null);
   const [err, setErr] = useState("");
 
-  const user = useSelector(selectUser);
+  const user = useSelector(selectUser) as any;
   const id = user?.id ? user?.id : user?.user?._id;
   const navigate = useNavigate();
 
@@ -143,7 +143,7 @@ const CreateGroup = () => {
               <textarea
                 name="description"
                 id=""
-                rows="5"
+                rows={5}
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 className="border rounded px-2 py-1 w-full"

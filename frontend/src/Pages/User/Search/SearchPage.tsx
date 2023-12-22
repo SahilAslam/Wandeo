@@ -4,7 +4,7 @@ import { useLocation } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import axiosInstance from "../../../Axios/Axios";
 
-const SearchPage = () => {
+const SearchPage: React.FC = () => {
   const [groups, setGroups] = useState<any[]>([]);
   const location = useLocation();
   const searchQuery = location.state?.searchQuery || "";

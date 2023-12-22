@@ -9,7 +9,7 @@ import axios from "axios";
 interface CreateEventProps {
   closeModal: () => void;
   visible: boolean;
-  updateUI: (data: boolean) => void;
+  updateUI: (data: any) => void;
 }
 
 const CreateEvent: React.FC<CreateEventProps> = ({ visible, closeModal, updateUI }) => {
@@ -19,7 +19,7 @@ const CreateEvent: React.FC<CreateEventProps> = ({ visible, closeModal, updateUI
   const [endDate, setEndDate] = useState("");
   const [attendeesLimit, setAttendeesLimit] = useState("");
   const [description, setDescription] = useState("");
-  const [image, setImage] = useState("");
+  const [image, setImage] = useState<File | null>(null);
   const [error, setError] = useState('');
 
   const UPLOAD_PRESET = import.meta.env.VITE_UPLOAD_PRESET || ""
@@ -30,11 +30,11 @@ const CreateEvent: React.FC<CreateEventProps> = ({ visible, closeModal, updateUI
 
   useEffect(() => {
     if (scrollContainerRef.current) {
-      scrollContainerRef.current.classList.add("hide-scrollbar");
+      (scrollContainerRef.current as HTMLElement).classList.add("hide-scrollbar");
     }
   }, []);
 
-  const user = useSelector(selectUser);
+  const user = useSelector(selectUser) as any;
   const id = user?.id ? user?.id : user?.user?._id;
   console.log(id);
 
@@ -103,8 +103,8 @@ const CreateEvent: React.FC<CreateEventProps> = ({ visible, closeModal, updateUI
 
   const today = new Date().toISOString().split('T')[0];
 
-  const handleStartDateChange = (e) => {
-    const newStartDate = e.target.value;
+  const handleStartDateChange = (e: React.FormEvent<HTMLInputElement>) => {
+    const newStartDate = e.currentTarget.value;
     setStartDate(newStartDate);
 
     // Check if the end date is less than the start date
@@ -115,10 +115,10 @@ const CreateEvent: React.FC<CreateEventProps> = ({ visible, closeModal, updateUI
     }
   };
 
-  const handleEndDateChange = (e) => {
-    const newEndDate = e.target.value;
+  const handleEndDateChange = (e: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const newEndDate = e.currentTarget.value;
     setEndDate(newEndDate);
-
+  
     // Check if the end date is less than the start date
     if (newEndDate < startDate) {
       setError('End date cannot be before the start date');
@@ -291,7 +291,7 @@ const CreateEvent: React.FC<CreateEventProps> = ({ visible, closeModal, updateUI
                         <textarea
                           name=""
                           id=""
-                          rows="6"
+                          rows={6}
                           value={description}
                           onChange={(e) => setDescription(e.target.value)}
                           className="w-full bg-secondary rounded border 

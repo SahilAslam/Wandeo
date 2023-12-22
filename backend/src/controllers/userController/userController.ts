@@ -42,11 +42,45 @@ const userSignup = async (req: Request, res: Response) => {
   }
 };
 
+const createUserInfo = async (req: Request, res: Response) => {
+  try {
+      const {userId} = req.params;
+
+      const {
+          dateOfBirth,
+          gender,
+          address,
+      } = req.body;
+
+      const user = await userModel.findById(userId);
+
+      if (!user) {
+          return res.status(404).json({ message: "Not found" });
+      }
+
+      user.dateOfBirth = dateOfBirth;
+      user.gender = gender;
+      user.address = address;
+
+      await user.save();
+
+      return res
+          .status(200)
+          .json({ message: "Profile created successfully", user });
+
+  } catch (error) {
+      console.error(error);
+      return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
 const userLogin = async (req: Request, res: Response) => {
   try {
-    const { email, password } = req.body;
+    const { emailOrUsername, password } = req.body;
 
-    const user = await userModel.findOne({ email });
+    const user = await userModel.findOne({
+      $or: [{ email: emailOrUsername }, { username: emailOrUsername }],
+    });
 
     if (!user) {
       return res.status(401).json({ message: "User not Found" });
@@ -102,7 +136,7 @@ const googleSignup = async (req: Request, res: Response, next: NextFunction) => 
 
     await newUser.save();
 
-    res.status(201).json({ message: 'user saved successfully' });
+    res.status(201).json({ message: 'user saved successfully', newUser });
   } catch (error) {
     next(error);
   }
@@ -255,4 +289,4 @@ const userLogout = async (req: Request, res: Response) => {
 }
 
 
-export { userSignup, userLogin, googleSignup, googleLogin, sendPasswordLink, verifyForgetPassword, newPassword, userLogout };
+export { userSignup, userLogin, googleSignup, googleLogin, sendPasswordLink, verifyForgetPassword, newPassword, userLogout, createUserInfo };

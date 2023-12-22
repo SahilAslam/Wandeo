@@ -6,7 +6,7 @@ import Pagination from "../../Pagination/Pagination";
 import { useNavigate } from "react-router-dom";
 
 function UserTable() {
-  const [userDetails, setUserDetails] = useState([]);
+  const [userDetails, setUserDetails] = useState<any[]>([]);
   const [searchInput, setSearchInput] = useState("");
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -45,7 +45,7 @@ function UserTable() {
           toast.error(error.message);
         }
       });
-  }, []);
+  }, [searchInput]);
 
   const blockUser = (userId: string) => {
     adminInstance
@@ -95,7 +95,7 @@ function UserTable() {
       .catch((err) => console.log(err, "verify user block axios err"));
   };
 
-  const handleSearch = async (e) => {
+  const handleSearch = async (e: React.FormEvent<HTMLFormElement | HTMLTextAreaElement>) => {
     e.preventDefault();
   
     const response = await adminInstance.get("/usersList");

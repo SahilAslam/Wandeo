@@ -1,5 +1,6 @@
 import express from "express";
 import {
+  createUserInfo,
   googleLogin,
   googleSignup,
   newPassword,
@@ -11,18 +12,23 @@ import {
 } from "../../controllers/userController/userController";
 import { createUserEvent, eventUsersAttending, getEventDetailedPage, getUserEvent, joinUserEvent, leaveUserEvent,  } from "../../controllers/userController/eventController";
 import { protect } from "../../middlewares/authMiddleware";
-import { addProfileImage, editUserProfile, getUserProfile } from "../../controllers/userController/profileController";
+import { addProfileImage, editUserProfile, getUserProfile, propertyImage } from "../../controllers/userController/profileController";
 import { createUserGroup, deleteUserGroup, getGroupDetailedPage, getPopularGroup, getUserGroup, joinUserGroup, leaveUserGroup, userJoinedGroup } from "../../controllers/userController/groupController";
 import { createNewDiscussion, getSingleDiscussion, postDiscussionReply } from "../../controllers/userController/groupDiscussionController";
-import { createHostingFacility, getHostingFacility } from "../../controllers/userController/hostingController";
-import { createPublicTrip, getPublicTrips } from "../../controllers/userController/tripController";
-import { getSearchedUsers, listGroups, listHostingUsers } from "../../controllers/userController/searchController";
+import { createHostingFacility, findExistingHostingChat, getHostingFacility, hostAUser, requestForHosting, sendSimpleMessage } from "../../controllers/userController/hostingController";
+import { createPublicTrip, getOtherUserTrips, getPublicTrips } from "../../controllers/userController/tripController";
+import { fetchTavelers, getSearchedUsers, listGroups, listHostingUsers } from "../../controllers/userController/searchController";
 import { createReference } from "../../controllers/userController/referenceController";
+import { accessChat, fetchChat, sendMessage, showAllMessages } from "../../controllers/chatController/chatController";
+import { addFriend } from "../../controllers/userController/friendsController";
+import { createDirectMessage, findExistingChat, getDirectMessages, getHostingMessage, getSingleDirectMessage, getSingleHostingMessage, sendDirectMessage, sendResponse } from "../../controllers/userController/inboxController";
 const userRouter = express.Router();
 
 userRouter.post("/signup", userSignup);
 
 userRouter.post("/login", userLogin);
+
+userRouter.post("/createuserinfo/:userId", createUserInfo);
 
 userRouter.post("/auth/google", googleSignup);
 
@@ -60,6 +66,8 @@ userRouter.post("/hostingform/:userId", protect, createHostingFacility);
 
 userRouter.get("/getHostingPref/:userId", protect, getHostingFacility);
 
+userRouter.post("/addpropimg", protect, propertyImage);
+
 // User Groups
 userRouter.post("/createGroup/:id", protect, createUserGroup);
 
@@ -88,6 +96,8 @@ userRouter.post("/createPublicTrip/:userId", protect, createPublicTrip);
 
 userRouter.get("/getPublicTrips", protect, getPublicTrips);
 
+userRouter.get("/getotherstrips/:id", protect, getOtherUserTrips)
+
 // search
 userRouter.get("/searchGroup", protect, listGroups);
 
@@ -95,8 +105,50 @@ userRouter.get("/findHosts", protect, listHostingUsers);
 
 userRouter.get("/findUser", protect, getSearchedUsers);
 
+userRouter.get("/findTravelers", protect, fetchTavelers);
+
 // userReference
 userRouter.post("/addReference/:targettedUserId", protect, createReference);
+
+// friends
+userRouter.post("/addFriend", protect, addFriend);
+
+userRouter.get("/getFriends", protect, )
+
+// hosting and traveling
+userRouter.post("/hostuser/:targettedUserId", protect, hostAUser );
+
+userRouter.post("/requestauser/:targettedUserId", protect, requestForHosting);
+
+userRouter.post("/sendSimpleMessage/:chatId", protect, sendSimpleMessage);
+
+userRouter.get('/findexhostingchat/:id', protect, findExistingHostingChat);
+
+// inbox
+userRouter.get("/gethostingmessages", protect, getHostingMessage);
+
+userRouter.get("/singlehostingmessage/:chatId", protect, getSingleHostingMessage);
+
+userRouter.post("/sendresponse/:chatId", protect, sendResponse);
+
+userRouter.post("/createmessage/:targettedUserId", protect, createDirectMessage);
+
+userRouter.get("/getdirectmessage", protect, getDirectMessages)
+
+userRouter.get('/messagedetailedpage/:chatId', protect, getSingleDirectMessage);
+
+userRouter.put("/sendmessage/:chatId", protect, sendDirectMessage)
+
+userRouter.get('/findexistingchat/:id', protect, findExistingChat);
+
+// chat
+userRouter.post("/chat", protect, accessChat);
+
+userRouter.get("/getChat", protect, fetchChat);
+
+userRouter.post('/chatSend', protect, sendMessage);
+
+userRouter.get('/viewMessages/:chatId', protect, showAllMessages);
 
 
 export default userRouter;

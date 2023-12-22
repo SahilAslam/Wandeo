@@ -5,37 +5,92 @@ import axiosInstance from "../../../Axios/Axios";
 import { useSelector } from "react-redux";
 import { selectUser } from "../../../Redux/Slice/userSlice";
 import { useNavigate, useParams } from "react-router-dom";
-import { ToastContainer } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
 import { FaBed } from "react-icons/fa";
-import moment from 'moment';
+import moment from "moment";
+import UsersTrips from "../../../Components/User/Trips/UsersTrips";
+import CreateHostingModal from "../../../Components/Modals/UserModals/CreateHostingModal";
+import CreateMessage from "../../../Components/Modals/UserModals/CreateMessage";
 
 const DiffUserProfile = () => {
   const [userDatails, setUserDetails] = useState<any>([]);
+  const [publicTrips, setPublicTrips] = useState([]);
   const [selectedMenuItem, setSelectedMenuItem] = useState<string>("About");
-  const [updateUI, setUpdateUI] = useState<boolean>(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [messageModal, setMessageModal] = useState(false);
+  const [chatExists, setChatExists] = useState<any>();
+  const [hostingExists, setHostingExists] = useState<any>();
+  const [hostingModal, setHostingModal] = useState(false);
 
   const navigate = useNavigate();
 
   const { id } = useParams();
 
-  const user = useSelector(selectUser);
+  const user = useSelector(selectUser) as any;
   const userId = user?.id ? user?.id : user?.user?._id;
-  console.log(userId);
 
   useEffect(() => {
     axiosInstance
       .get(`/profile/${id}`)
       .then((res) => {
         if (res.data.user) {
-          console.log(res.data.user);
-
           setUserDetails(res.data.user);
         } else {
           console.error("Invalid data received from the API:", res.data.user);
         }
       })
       .catch((error) => console.log(error, "user profile error"));
+  }, [id]);
+
+  useEffect(() => {
+    axiosInstance
+      .get(`/getotherstrips/${id}`)
+      .then((response) => {
+        if (response.data.publicTrips) {
+          setPublicTrips(response.data.publicTrips);
+        } else {
+          console.log("Public trips not found");
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, [id]);
+
+  const findExistingChat = async () => {
+    await axiosInstance
+      .get(`/findexistingchat/${id}`)
+      .then((res) => {
+        if (res.data?.chat) {
+          setChatExists(res.data?.chat);
+          console.log(res.data.chat);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  useEffect(() => {
+    findExistingChat();
+  }, [id]);
+
+  const findExHostingChat = async () => {
+    await axiosInstance
+      .get(`/findexhostingchat/${id}`)
+      .then((res) => {
+        if (res.data?.chat) {
+          setHostingExists(res.data?.chat);
+          console.log(res.data?.chat?._id, "///////////")
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  useEffect(() => {
+    findExHostingChat();
   }, [id]);
 
   const handleMenuItemClick = (menuItem: string) => {
@@ -64,8 +119,8 @@ const DiffUserProfile = () => {
   // Calculate the age
   const age = dateOfBirth ? calculateAge(new Date(dateOfBirth)) : undefined;
 
-  const UlRef = useRef<HTMLAnchorElement | null>(null); // Specify the correct type for ulRef
-  const MenuRef = useRef<HTMLLIElement | null>(null); // Specify the correct type for menuRef
+  const UlRef = useRef(null); 
+  const MenuRef = useRef<HTMLLIElement | null>(null); 
 
   const Menus = ["Friend Request", "Write Reference"];
 
@@ -75,27 +130,39 @@ const DiffUserProfile = () => {
     }
   });
 
-  const calculateTimeDifference = (lastLogin: Date | undefined) => {
-    if (!lastLogin) {
-      return 'N/A'; // or some default value
-    }
-
-    const now = moment();
-    const loginTime = moment(lastLogin);
-    const diffMinutes = now.diff(loginTime, 'minutes');
-    const diffHours = now.diff(loginTime, 'hours');
-  
-    if (diffMinutes < 1) {
-      return 'just now';
-    } else if (diffMinutes === 1) {
-      return '1 minute ago';
-    } else {
-      return `${diffMinutes < 60 ? `${diffMinutes} minutes ago` : `${diffHours} hours ago`}`;
+  const addFriend = async (targettedUserId: string) => {
+    const response = await axiosInstance.post("/addFriend", {
+      targettedUserId,
+      userId,
+    });
+    if (response?.data?.message) {
+      toast.success("Added friend successfully");
     }
   };
 
-  const lastLogin = userDatails?.lastLogin;
-  const timeDifference = calculateTimeDifference(lastLogin);
+  const openModal = () => {
+    setMessageModal(true);
+  };
+
+  const closeModal = () => {
+    setMessageModal(false);
+  };
+
+  const openHostingModal = () => {
+    setHostingModal(true);
+  };
+
+  const closeHostingModal = () => {
+    setHostingModal(false);
+  };
+
+  const handleClick = (messageId: string) => {
+    navigate(`/directmessagedetailed/${messageId}`);
+  };
+
+  const handleNav = (chatId: string) => {
+    navigate(`/messageDetailedPage/${chatId}`);
+  }
 
   return (
     <>
@@ -105,7 +172,10 @@ const DiffUserProfile = () => {
         <div className="pt-2 px-4 lg:px-32">
           <div className="flex flex-col md:flex-row gap-2">
             <div>
-              <ProfileCard userDetails={userDatails} updateUI={updateUI} />
+              <ProfileCard
+                userDetails={userDatails}
+                id={userId}
+              />
             </div>
             <div className="w-full flex flex-col gap-2">
               <div className="grid grid-cols-1 sm:grid-cols-2 bg-white">
@@ -125,20 +195,59 @@ const DiffUserProfile = () => {
                       : "Details not specified"}
                   </h1>
                   {userDatails?.isLoggin ? (
-                    <p className="text-sm pt-4 text-green-500">{userDatails?.isLoggin}</p>
+                    <p className="text-sm pt-4 text-green-500">
+                      {userDatails?.isLoggin}
+                    </p>
                   ) : (
                     <p className="text-sm pt-4 text-gray-400">
-                      Last login{" "}{timeDifference}
+                      Last login {moment(userDatails.lastLogin).fromNow()}
                     </p>
                   )}
                 </div>
                 <div className="flex items-center justify-end gap-2 px-5 pb-5 sm:pt-0 sm:py-0">
-                  <div>
-                    <button className="bg-green-700 hover:bg-green-800 text-white font-semibold px-4 py-2 rounded flex items-center gap-2">
-                      <FaBed className="text-xl" />
-                      Send Request
-                    </button>
-                  </div>
+                  {(userDatails?.hostingAvailability === "Accepting Guests" ||
+                    userDatails?.hostingAvailability ===
+                      "Maybe Accepting Guests") &&
+                    (hostingExists ? (
+                      <div>
+                        <button
+                          className="bg-green-700 hover:bg-green-800 text-white font-semibold px-4 py-2 rounded flex items-center gap-2"
+                          onClick={() => handleNav(hostingExists?._id)}
+                        >
+                          <FaBed className="text-xl" />
+                          View
+                        </button>
+                      </div>
+                    ) : (
+                      <div>
+                        <button
+                          className="bg-green-700 hover:bg-green-800 text-white font-semibold px-4 py-2 rounded flex items-center gap-2"
+                          onClick={openHostingModal}
+                        >
+                          <FaBed className="text-xl" />
+                          Send Request
+                        </button>
+                      </div>
+                    ))}
+                  {chatExists ? (
+                    <div>
+                      <button
+                        onClick={() => handleClick(chatExists?._id)}
+                        className="bg-green-700 hover:bg-green-800 text-white font-semibold px-4 py-2 rounded flex items-center gap-2"
+                      >
+                        Show Message
+                      </button>
+                    </div>
+                  ) : (
+                    <div>
+                      <button
+                        onClick={openModal}
+                        className="bg-green-700 hover:bg-green-800 text-white font-semibold px-4 py-2 rounded flex items-center gap-2"
+                      >
+                        Message
+                      </button>
+                    </div>
+                  )}
                   <div className="relative">
                     <button
                       className="bg-green-700 hover:bg-green-800 text-white font-semibold px-4 py-2 rounded relative"
@@ -168,6 +277,12 @@ const DiffUserProfile = () => {
                                       `/createReference/${userDatails?._id}`
                                     )
                                   }
+                                >
+                                  {menu}
+                                </button>
+                              ) : menu === "Friend Request" ? (
+                                <button
+                                  onClick={() => addFriend(userDatails._id)}
                                 >
                                   {menu}
                                 </button>
@@ -234,21 +349,24 @@ const DiffUserProfile = () => {
                   >
                     Friends
                   </li>
-                  <li
-                    className={
-                      selectedMenuItem === "Favorites"
-                        ? "text-blue-700 hover:underline cursor-pointer"
-                        : "hover:text-blue-700 cursor-pointer"
-                    }
-                    onClick={() => handleMenuItemClick("Favorites")}
-                  >
-                    Favorites
-                  </li>
                 </ul>
               </div>
               {selectedMenuItem === "About" && (
-                <div className="flex flex-col gap-2">
+                <div className="flex flex-col gap-2 pb-10">
                   {/* Content for About */}
+                  <div className="bg-white">
+                    <div className="px-5 py-4 border-b">
+                      <h1 className="text-lg text-slate-800 font-semibold">
+                        PUBLIC TRIPS
+                      </h1>
+                    </div>
+                    <div>
+                      <UsersTrips
+                        publicTrips={publicTrips}
+                        hostingExists={hostingExists}
+                      />
+                    </div>
+                  </div>
                   <div className="bg-white h-auto flex flex-col border-b">
                     {/* ... About content */}
                     <div className="border-b h-[65px] flex items-center">
@@ -446,7 +564,7 @@ const DiffUserProfile = () => {
                   ) : (
                     <div className="px-10 py-5 bg-slate-100">
                       <p className="text-center text-slate-400">
-                        {userDatails?.name}{" "}hasn't updated the profile
+                        {userDatails?.name} hasn't updated the profile
                       </p>
                     </div>
                   )}
@@ -491,7 +609,7 @@ const DiffUserProfile = () => {
                     <h1 className="text-slate-800 font-semibold">REFERENCES</h1>
                   </div>
                   {userDatails?.references.length > 0 ? (
-                    userDatails?.references.map((reference) => (
+                    userDatails?.references.map((reference: any) => (
                       <div className="flex flex-col sm:flex-row pb-5 pt-2">
                         <div className="p-5">
                           {reference?.userId?.profileImage ? (
@@ -540,13 +658,16 @@ const DiffUserProfile = () => {
                             </div>
                           )}
                           <div className="pt-4 pr-2">
-                            <p>{reference?.referenceMessage.split("\n")
-                                .map((line, index) => (
+                            <p>
+                              {reference?.referenceMessage
+                                .split("\n")
+                                .map((line: any, index: any) => (
                                   <span key={index}>
                                     {line}
                                     <br />
                                   </span>
-                                ))}</p>
+                                ))}
+                            </p>
                           </div>
                         </div>
                       </div>
@@ -571,12 +692,59 @@ const DiffUserProfile = () => {
                   )}
                 </div>
               )}
-              {selectedMenuItem === "Friends" && <div></div>}
-              {selectedMenuItem === "Favorites" && <div></div>}
+              {selectedMenuItem === "Friends" && (
+                <div className="text-slate-700 bg-white">
+                  <div className="px-5 py-5 border-b">
+                    <h1 className="uppercase font-semibold">Friends</h1>
+                  </div>
+                  <div className="px-5 py-3 bg-slate-100 border-b">
+                    <h1 className="uppercase font-semibold">My Friends</h1>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5 px-5 py-5">
+                    {userDatails && userDatails.friends ? (
+                      userDatails.friends.map((friend: any) => (
+                        <div className="flex flex-col md:flex-row gap-2 text-slate-700">
+                          <div>
+                            {friend.profileImage ? (
+                              <img
+                                src={`${friend?.profileImage}`}
+                                alt="img"
+                                // onClick={() => handleClick(user._id)}
+                                className="border rounded-full w-14 h-14 cursor-pointer"
+                              />
+                            ) : (
+                              <img
+                                src={`/profile-picture-placeholder.png`}
+                                alt=""
+                                // onClick={() => handleClick(user._id)}
+                                className="w-14 h-14 object-cover rounded-full opacity-100 cursor-pointer"
+                              />
+                            )}
+                          </div>
+                          <div>
+                            <h1 className="font-semibold">{friend.name}</h1>
+                            <h1>
+                              {friend.address ? friend.address : "No Location"}
+                            </h1>
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <div></div>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
       </div>
+      <CreateMessage visible={messageModal} closeModal={closeModal} id={id} />
+      <CreateHostingModal
+        visible={hostingModal}
+        closeModal={closeHostingModal}
+        id={id}
+      />
     </>
   );
 };

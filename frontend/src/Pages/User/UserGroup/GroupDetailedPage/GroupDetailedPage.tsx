@@ -9,16 +9,18 @@ import { selectUser } from "../../../../Redux/Slice/userSlice";
 import { ToastContainer, toast } from "react-toastify";
 import CreateDiscussion from "../../../../Components/Modals/UserModals/CreateDiscussion";
 import DeleteGroupModal from "../../../../Components/Modals/UserModals/DeleteGroupModal";
+import LeaveGroup from "../../../../Components/Modals/UserModals/LeaveGroup";
 
-const GroupDetailedPage = () => {
-  const [groupData, setGroupData] = useState("");
+const GroupDetailedPage: React.FC = () => {
+  const [groupData, setGroupData] = useState<any>("");
   const [updateUI, setUpdateUI] = useState<boolean>(false);
   const [discussionModal, setDiscussionModal] = useState<boolean>(false);
   const [modal, setModal] = useState<boolean>(false)
+  const [LeaveModal, setLeaveModal] = useState<boolean>(false);
 
   const { id } = useParams();
 
-  const user = useSelector(selectUser);
+  const user = useSelector(selectUser) as any;
   const userId = user?.id ? user?.id : user?.user?._id;
 
   const navigate = useNavigate();
@@ -41,7 +43,15 @@ const GroupDetailedPage = () => {
     setModal(false);
   }
 
-  const getGroupDetails = async (id: string) => {
+  const openLeaveModal = () => {
+    setLeaveModal(true);
+  }
+
+  const closeLeaveModal = () => {
+    setLeaveModal(false);
+  }
+
+  const getGroupDetails = async () => {
     // eslint-disable-next-line no-useless-catch
     try {
       const response = await axiosInstance.get(`/groupDetailedPage/${id}`);
@@ -55,11 +65,11 @@ const GroupDetailedPage = () => {
   };
 
   useEffect(() => {
-    getGroupDetails(id);
+    getGroupDetails();
   }, [updateUI, id]);
 
   const userIsMember = () => {
-    return groupData.members?.some((member) => member._id === userId);
+    return groupData.members?.some((member: any) => member._id === userId);
   };
 
   const isCreaterUser = () => {
@@ -151,7 +161,7 @@ const GroupDetailedPage = () => {
       <div className="w-full p-4 xl:px-52">
         <div className="flex flex-col md:flex-row gap-4">
           <div className="">
-            <MembersCard groupData={groupData} BASE_URL={BASE_URL} />
+            <MembersCard groupData={groupData} />
           </div>
           <div className="flex flex-col gap-4 xl:w-[660px]">
             <div className="px-4 py-4 bg-white shadow-lg">
@@ -181,7 +191,7 @@ const GroupDetailedPage = () => {
                 <div className="flex justify-end">
                   {userIsMember() ? (
                     <button
-                      onClick={() => leaveGroup(groupData?._id)}
+                      onClick={openLeaveModal}
                       className="border border-sky-700 rounded text-sky-700 px-3 py-1.5 transition duration-500 hover:transition hover:duration-300 hover:bg-sky-700 hover:text-white "
                     >
                       Leave Group
@@ -217,7 +227,7 @@ const GroupDetailedPage = () => {
                 </div>
               </div>
               {groupData.discussions?.length > 0 ? (
-                groupData.discussions.map((discussion) => (
+                groupData.discussions.map((discussion: any) => (
                   <div className="px-4 py-4 flex justify-between ">
                     <div className="flex gap-4">
                       
@@ -270,6 +280,7 @@ const GroupDetailedPage = () => {
         setUpdateUI={setUpdateUI}
       />
       <DeleteGroupModal visible={modal} closeModal={closeDeleteModal} deleteGroup={() => deleteGroup(groupData?._id)} />
+      <LeaveGroup visible={LeaveModal} closeModal={closeLeaveModal} LeaveGroup={() => leaveGroup(groupData?._id)} />
     </>
   );
 };

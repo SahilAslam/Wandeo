@@ -4,8 +4,8 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 import { UserBaseUrl } from "../../../Api";
-import { useDispatch, useSelector } from "react-redux";
-import { selectUser, login } from "../../../Redux/Slice/userSlice";
+import { useDispatch } from "react-redux";
+import { login } from "../../../Redux/Slice/userSlice";
 import { GoogleLogin, GoogleOAuthProvider } from "@react-oauth/google";
 import axiosInstance from "../../../Axios/Axios";
 import { FaExclamationCircle } from "react-icons/fa";
@@ -13,7 +13,7 @@ import SignupNavbar from "../../../Components/User/SignupNavbar/SignupNavbar";
 
 
 function Login() {
-  const [email, setEmail] = useState("");
+  const [emailOrUsername, setEmailOrUsername] = useState("");
   const [password, setPassword] = useState("");
   const [errMessage, setErrMessage] = useState("");
 
@@ -29,10 +29,10 @@ function Login() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const trimmedEmail = email.trim();
+    const trimmedEmailOrUsername = emailOrUsername.trim();
     const trimmedPassword = password.trim();
 
-    if (trimmedEmail === "" || trimmedPassword === "") {
+    if (trimmedEmailOrUsername === "" || trimmedPassword === "") {
       setErrMessage("Please fill in all fields!");
 
       setTimeout(() => {
@@ -43,7 +43,7 @@ function Login() {
 
     try {
       const response = await axios.post(`${UserBaseUrl}/login`, {
-        email: trimmedEmail,
+        emailOrUsername: trimmedEmailOrUsername,
         password: trimmedPassword,
       });
 
@@ -60,7 +60,7 @@ function Login() {
 
         navigate("/");    
       }
-    } catch (error) {
+    } catch (error: any) {
       if (
         error.response &&
         error.response.status === 401 &&
@@ -110,11 +110,11 @@ function Login() {
                       <input
                         id="email"
                         name="email"
-                        type="email"
+                        type="text"
                         autoComplete="email"
                         placeholder="mail@sample"
                         className="block w-full rounded-xl border py-3 text-gray-900 shadow-sm  placeholder:text-gray-400 p-2 sm:text-sm sm:leading-6"
-                        onChange={(e) => setEmail(e.target.value)}
+                        onChange={(e) => setEmailOrUsername(e.target.value)}
                       />
                     </div>
                   </div>
@@ -170,9 +170,7 @@ function Login() {
                         axiosInstance
                           .post("/googleLogin", credRes)
                           .then((res) => {
-                            console.log("//////////////////");
                             if (res?.data?.message) {
-                              console.log(res.data.message, "response.....");
                               dispatch(login(res.data.userData));
                               localStorage.setItem(
                                 "token",

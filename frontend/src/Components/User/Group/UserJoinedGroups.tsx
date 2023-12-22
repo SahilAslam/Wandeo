@@ -6,10 +6,23 @@ import { selectUser } from "../../../Redux/Slice/userSlice";
 import axiosInstance from "../../../Axios/Axios";
 import { useNavigate } from "react-router-dom";
 
-const UserJoinedGroups = () => {
-  const [userData, setUserData] = useState([]);
+interface Group {
+  _id: string;
+  name: string;
+  image: string;
+  members?: any[];
+  discussions?: any[];
+  updatedAt: string;
+}
 
-  const user = useSelector(selectUser);
+interface UserData {
+  groups: Group[];
+}
+
+const UserJoinedGroups: React.FC = () => {
+  const [userData, setUserData] = useState<UserData>({ groups: [] });
+
+  const user = useSelector(selectUser) as any;
   const userId = user?.id ? user?.id : user?.user?._id;
 
   const navigate = useNavigate();

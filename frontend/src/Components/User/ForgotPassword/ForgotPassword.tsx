@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
-  const [message, setMessage] = useState(false);
+  // const [message, setMessage] = useState(false);
 
   const navigate = useNavigate();
 
@@ -89,13 +89,13 @@ const ForgotPassword = () => {
                 Forgot Password?
               </h2>
             </div>
-            {message ? (
+            {/* {message ? (
               <p style={{ color: "#dc2626", fontWeight: "bold" }}>
                 Password Reset Link send successfully in your mail
               </p>
             ) : (
               ""
-            )}
+            )} */}
             <div className="sm:mx-auto sm:w-full">
               <form className="" onSubmit={(e) => handleSubmit(e)}>
                 <div className="px-5 pt-5 pb-4 flex flex-col ">

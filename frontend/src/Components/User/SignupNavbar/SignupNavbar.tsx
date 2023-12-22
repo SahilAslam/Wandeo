@@ -1,6 +1,6 @@
 import React from 'react'
 
-const SignupNavbar = () => {
+const SignupNavbar: React.FC = () => {
   return (
     <nav className='fixed hidden lg:flex justify-center '>
         <div className='px-14 py-5'>

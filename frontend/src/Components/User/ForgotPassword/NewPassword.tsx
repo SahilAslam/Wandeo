@@ -11,7 +11,6 @@ const NewPassword = () => {
   const navigate = useNavigate();
 
   const userEmail = localStorage.getItem("useremail");
-  console.log(userEmail, "ll");
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

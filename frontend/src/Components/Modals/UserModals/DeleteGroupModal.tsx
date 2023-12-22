@@ -1,6 +1,6 @@
 import React from 'react'
-import { ToastContainer } from 'react-toastify';
-import { TiWarning } from "react-icons/ti";
+import { FaExclamationCircle } from "react-icons/fa";
+import { IoMdClose } from "react-icons/io";
 
 interface DeleteGroupProps {
     visible: boolean;
@@ -14,6 +14,11 @@ const DeleteGroupModal: React.FC<DeleteGroupProps> = ({
     deleteGroup,
   }) => {
 
+    const handleClick = () => {
+      deleteGroup();
+      closeModal();
+    }
+
   return (
     <>
       {visible && (
@@ -22,15 +27,19 @@ const DeleteGroupModal: React.FC<DeleteGroupProps> = ({
           id="wrapper"
         >
           <div className="rounded-lg bg-white h-fit w-full sm:max-w-sm">
-            <div className='flex justify-center pt-10'>
-                <TiWarning className="text-red-600 text-6xl" />  
+            <div className='flex justify-between items-center py-5 px-5 rounded-t-lg bg-slate-100'>
+                <div className='flex items-center gap-1'>
+                  <FaExclamationCircle className="text-slate-700 text-xl " />
+                  <h1 className='text-slate-700 text-xl font-semibold'>Delete Group</h1>
+                </div>
+                <IoMdClose className="text-slate-700 text-2xl" onClick={closeModal} />
             </div>
-            <div className='px-5 pt-5 pb-10'>
+            <div className='px-5 py-10'>
                 <p className='text-center'>Are you sure you want to delete this group, once deleted you can't take it back</p>
             </div>
-            <div className='flex gap-4 justify-center pb-10'>
+            <div className='flex gap-2 justify-end px-5 py-5 bg-slate-100 rounded-b-lg'>
                 <button onClick={closeModal} className='bg-link-color rounded px-6 py-2 text-white'>Cancel</button>
-                <button onClick={deleteGroup} className='bg-red-600 rounded px-2 py-2 text-white'>Delete Group</button>
+                <button onClick={handleClick} className='bg-red-600 rounded px-2 py-2 text-white'>Delete Group</button>
             </div>
           </div>
         </div>

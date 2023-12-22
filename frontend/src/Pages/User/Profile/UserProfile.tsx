@@ -8,33 +8,39 @@ import { useNavigate } from "react-router-dom";
 import { IoMdAdd } from "react-icons/io";
 import AddImage from "../../../Components/Modals/AddImage";
 import { ToastContainer } from "react-toastify";
-import moment from 'moment';
+import moment from "moment";
+import PropertyImageModal from "../../../Components/Modals/UserModals/PropertyImageModal";
 
 const UserProfile = () => {
   const [userDatails, setUserDetails] = useState<any>([]);
   const [selectedMenuItem, setSelectedMenuItem] = useState<string>("About");
   const [imageModal, setImageModal] = useState<boolean>(false);
+  const [propImgModal, setPropImgModal] = useState<boolean>(false);
   const [updateUI, setUpdateUI] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const navigate = useNavigate();
 
-  const user = useSelector(selectUser);
+  const user = useSelector(selectUser) as any;
   const id = user?.id ? user?.id : user?.user?._id;
   console.log(id);
 
   useEffect(() => {
+    setIsLoading(true);
     axiosInstance
       .get(`/profile/${id}`)
       .then((res) => {
         if (res.data.user) {
-          console.log(res.data.user);
-
           setUserDetails(res.data.user);
+          setIsLoading(false);
         } else {
           console.error("Invalid data received from the API:", res.data.user);
         }
       })
-      .catch((error) => console.log(error, "user profile error"));
+      .catch((error) => console.log(error, "user profile error"))
+      .finally(() => {
+        setIsLoading(false);
+      });
   }, [id, updateUI]);
 
   const openModal = () => {
@@ -45,6 +51,14 @@ const UserProfile = () => {
     setImageModal(false);
   };
 
+  const openPropImgModal = () => {
+    setPropImgModal(true);
+  };
+
+  const closePropImgModal = () => {
+    setPropImgModal(false);
+  };
+
   const handleMenuItemClick = (menuItem: string) => {
     setSelectedMenuItem(menuItem);
   };
@@ -52,28 +66,6 @@ const UserProfile = () => {
   const handleButton = async () => {
     navigate(`/editProfile/${id}`);
   };
-
-  const calculateTimeDifference = (lastLogin: Date | undefined) => {
-    if (!lastLogin) {
-      return 'N/A'; // or some default value
-    }
-
-    const now = moment();
-    const loginTime = moment(lastLogin);
-    const diffMinutes = now.diff(loginTime, 'minutes');
-    const diffHours = now.diff(loginTime, 'hours');
-  
-    if (diffMinutes < 1) {
-      return 'just now';
-    } else if (diffMinutes === 1) {
-      return '1 minute ago';
-    } else {
-      return `${diffMinutes < 60 ? `${diffMinutes} minutes ago` : `${diffHours} hours ago`}`;
-    }
-  };
-
-  const lastLogin = userDatails?.lastLogin;
-  const timeDifference = calculateTimeDifference(lastLogin);
 
   const calculateAge = (birthdate: Date) => {
     const today = new Date();
@@ -105,7 +97,10 @@ const UserProfile = () => {
         <div className="pt-2 px-4 lg:px-32">
           <div className="flex flex-col md:flex-row gap-2">
             <div>
-              <ProfileCard userDetails={userDatails} updateUI={updateUI} />
+              <ProfileCard
+                userDetails={userDatails}
+                id={id}
+              />
             </div>
             <div className="w-full flex flex-col gap-2">
               <div className="grid grid-cols-1 sm:grid-cols-2 bg-white shadow-md">
@@ -125,10 +120,12 @@ const UserProfile = () => {
                       : "Details not specified"}
                   </h1>
                   {userDatails?.isLoggin ? (
-                    <p className="text-sm pt-4 text-green-500">{userDatails?.isLoggin}</p>
+                    <p className="text-sm pt-4 text-green-500">
+                      {userDatails?.isLoggin}
+                    </p>
                   ) : (
                     <p className="text-sm pt-4 text-gray-400">
-                      Last login{" "}{timeDifference}
+                      Last login {moment(userDatails?.lastLogin).fromNow()}
                     </p>
                   )}
                 </div>
@@ -192,16 +189,6 @@ const UserProfile = () => {
                     onClick={() => handleMenuItemClick("Friends")}
                   >
                     Friends
-                  </li>
-                  <li
-                    className={
-                      selectedMenuItem === "Favorites"
-                        ? "text-blue-700 hover:underline cursor-pointer"
-                        : "hover:text-blue-700 cursor-pointer"
-                    }
-                    onClick={() => handleMenuItemClick("Favorites")}
-                  >
-                    Favorites
                   </li>
                 </ul>
               </div>
@@ -420,7 +407,7 @@ const UserProfile = () => {
                 </div>
               )}
               {selectedMenuItem === "Photos" && (
-                <div className="flex flex-col bg-white">
+                <div className="flex flex-col bg-white mb-5">
                   <div className="p-4">
                     <h1 className="text-lg font-semibold text-slate-700 uppercase">
                       Photos
@@ -432,21 +419,32 @@ const UserProfile = () => {
                         profile photos
                       </h1>
                     </div>
-                    <div className="px-4 py-6 flex flex-col sm:flex-row justify-start items-center">
-                      {userDatails?.profileImage && (
-                        <img
-                          src={`${userDatails?.profileImage}`}
-                          alt="profile img"
-                          className="w-56 h-56 object-cover rounded mr-4"
-                        />
-                      )}
-                      <button
-                        onClick={openModal}
-                        className="px-12 py-2 mt-3 sm:mt-0 flex justify-center rounded-sm capitalize bg-sky-600 text-white"
+                    {isLoading ? (
+                      <div
+                        className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
+                        role="status"
                       >
-                        <IoMdAdd size={25} className="" /> add photo
-                      </button>
-                    </div>
+                        <span className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">
+                          Loading...
+                        </span>
+                      </div>
+                    ) : (
+                      <div className="px-4 py-6 flex flex-col sm:flex-row justify-start items-center">
+                        {userDatails?.profileImage && (
+                          <img
+                            src={`${userDatails?.profileImage}`}
+                            alt="profile img"
+                            className="w-56 h-56 object-cover rounded mr-4"
+                          />
+                        )}
+                        <button
+                          onClick={openModal}
+                          className="px-12 py-2 mt-3 sm:mt-0 flex justify-center rounded-sm capitalize bg-sky-600 text-white"
+                        >
+                          <IoMdAdd size={25} className="" /> add photo
+                        </button>
+                      </div>
+                    )}
                   </div>
                   <div className="flex flex-col">
                     <div className="px-4 py-2 bg-slate-300">
@@ -454,8 +452,19 @@ const UserProfile = () => {
                         photos of my property
                       </h1>
                     </div>
-                    <div className="px-4 py-6 flex justify-start items-center">
-                      <button className="px-12 py-2 flex justify-center rounded-sm capitalize bg-sky-600 text-white">
+                    <div className="px-4 py-6 flex flex-wrap gap-4 justify-start items-center">
+                      {userDatails?.propImages &&
+                        userDatails?.propImages?.map((img: any) => (
+                          <img
+                            src={`${img}`}
+                            alt="profile img"
+                            className="w-52 h-52 object-cover rounded"
+                          />
+                        ))}
+                      <button
+                        className="px-12 py-2 flex justify-center rounded-sm capitalize bg-sky-600 text-white"
+                        onClick={openPropImgModal}
+                      >
                         <IoMdAdd size={25} className="" /> add photo
                       </button>
                     </div>
@@ -468,7 +477,7 @@ const UserProfile = () => {
                     <h1 className="text-slate-800 font-semibold">REFERENCES</h1>
                   </div>
                   {userDatails?.references.length > 0 ? (
-                    userDatails?.references.map((reference) => (
+                    userDatails?.references.map((reference: any) => (
                       <div className="flex flex-col sm:flex-row pb-5 pt-2">
                         <div className="p-5">
                           {reference?.userId?.profileImage ? (
@@ -495,11 +504,17 @@ const UserProfile = () => {
                                 ? reference?.userId?.address
                                 : "Unspecified"}
                             </p>
-                            <p className="text-xs text-slate-400">
-                              {reference?.userId?.references
-                                ? reference?.userId?.references?.length
-                                : 0}{" "}
-                              references
+                            <p className="text-sm text-slate-400">
+                              {reference?.userId?.references ? (
+                                <span>
+                                  {reference?.userId?.references.length}{" "}
+                                  {reference?.userId?.references.length > 1
+                                    ? "references"
+                                    : "reference"}
+                                </span>
+                              ) : (
+                                <span>0 friends</span>
+                              )}
                             </p>
                           </div>
                           {reference?.recommendYes ? (
@@ -520,7 +535,7 @@ const UserProfile = () => {
                             <p>
                               {reference?.referenceMessage
                                 .split("\n")
-                                .map((line, index) => (
+                                .map((line: any, index: any) => (
                                   <span key={index}>
                                     {line}
                                     <br />
@@ -540,8 +555,49 @@ const UserProfile = () => {
                   )}
                 </div>
               )}
-              {selectedMenuItem === "Friends" && <div></div>}
-              {selectedMenuItem === "Favorites" && <div></div>}
+              {selectedMenuItem === "Friends" && (
+                <div className="text-slate-700 bg-white">
+                  <div className="px-5 py-5 border-b">
+                    <h1 className="uppercase font-semibold">Friends</h1>
+                  </div>
+                  <div className="px-5 py-3 bg-slate-100 border-b">
+                    <h1 className="uppercase font-semibold">My Friends</h1>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5 px-5 py-5">
+                    {userDatails && userDatails.friends ? (
+                      userDatails.friends.map((friend: any) => (
+                        <div className="flex flex-col md:flex-row gap-2 text-slate-700">
+                          <div>
+                            {friend.profileImage ? (
+                              <img
+                                src={`${friend?.profileImage}`}
+                                alt="img"
+                                // onClick={() => handleClick(user._id)}
+                                className="border rounded-full w-14 h-14 cursor-pointer"
+                              />
+                            ) : (
+                              <img
+                                src={`/profile-picture-placeholder.png`}
+                                alt=""
+                                // onClick={() => handleClick(user._id)}
+                                className="w-14 h-14 object-cover rounded-full opacity-100 cursor-pointer"
+                              />
+                            )}
+                          </div>
+                          <div>
+                            <h1 className="font-semibold">{friend.name}</h1>
+                            <h1>
+                              {friend.address ? friend.address : "No Location"}
+                            </h1>
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <div></div>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -549,6 +605,11 @@ const UserProfile = () => {
       <AddImage
         closeModal={closeModal}
         visible={imageModal}
+        setUpdateUI={setUpdateUI}
+      />
+      <PropertyImageModal
+        closeModal={closePropImgModal}
+        visible={propImgModal}
         setUpdateUI={setUpdateUI}
       />
     </>

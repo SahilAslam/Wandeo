@@ -15,6 +15,7 @@ interface User extends Document {
     profileImage: string,
     password: string,
     about: string,
+    propImages: string[],
     languagesFluentIn: string,
     languagesLearning: string,
     countriesLivedIn: string[],
@@ -24,7 +25,9 @@ interface User extends Document {
     publicTrips: mongoose.Schema.Types.ObjectId[],
     eventsAttending: mongoose.Schema.Types.ObjectId[],
     groups: mongoose.Schema.Types.ObjectId[],
+    friends: mongoose.Schema.Types.ObjectId[],
     references: mongoose.Schema.Types.ObjectId[],
+    verified: boolean,
     isLoggin: string,
     lastLogin: Date,
     createdAt: Date,
@@ -76,6 +79,11 @@ const userSchema = new Schema<User>({
     about: {
         type: String
     },
+    propImages: [
+        {
+            type: String,
+        }
+    ],
     languagesFluentIn: {
         type: String
     },
@@ -98,6 +106,7 @@ const userSchema = new Schema<User>({
     },
     hostingAvailability: {
         type: String,
+        default: "Maybe Accepting Guests"
     },
     publicTrips: [
         {
@@ -117,12 +126,22 @@ const userSchema = new Schema<User>({
             ref: "Group",
         },
     ],
+    friends: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "userCollection"
+        }
+    ],
     references: [
         {
             type: mongoose.Schema.Types.ObjectId,
             ref: "UserReference"
         },
     ],
+    verified: {
+        type: Boolean,
+        default: false,
+    },
     isLoggin: {
         type: String,
     },

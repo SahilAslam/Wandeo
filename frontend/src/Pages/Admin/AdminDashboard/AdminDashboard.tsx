@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import AdminNavbar from "../../../Components/Admin/AdminNavbar/AdminNavbar";
-import { FaUsers, FaRegCalendarMinus } from "react-icons/fa";
+import { FaUsers } from "react-icons/fa";
 import adminInstance from "../../../Axios/adminInstance";
 import LineChart from "../../../Components/Admin/Charts/LineChart";
 import Sidebar from "../../../Components/Admin/Sidebar/Sidebar";

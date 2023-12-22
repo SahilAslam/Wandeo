@@ -9,7 +9,7 @@ import { HiUserGroup } from "react-icons/hi2";
 import { ImUsers } from "react-icons/im";
 import { FaComments } from "react-icons/fa";
 
-const FindGroups = () => {
+const FindGroups: React.FC = () => {
   const [groups, setGroups] = useState<any[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [recordsPerPage] = useState(10);
@@ -96,7 +96,7 @@ const FindGroups = () => {
               </div>
               <div className="w-full border-b">
                 {currentRecords ? (
-                  currentRecords.map((group, index) => (
+                  currentRecords.map((group) => (
                     <div
                       key={group?._id}
                       className="w-auto event-card border-t"

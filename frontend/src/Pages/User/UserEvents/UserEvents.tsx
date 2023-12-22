@@ -8,18 +8,16 @@ import axiosInstance from "../../../Axios/Axios";
 import { format } from "date-fns";
 import "./UserEvents.css";
 
-
 function UserEvents() {
   const navigate = useNavigate();
-  const [isBlocked, setIsBlocked] = useState<boolean>(false);
   const [eventModal, setEventModal] = useState<boolean>(false);
-  const [userEvents, setUserEvents] = useState([]);
-  const [attendingEvents, setAttendingEvents] = useState([]);
+  const [userEvents, setUserEvents] = useState<any[]>([]);
+  const [attendingEvents, setAttendingEvents] = useState<any>([]);
   const [updateUI, setUpdateUI] = useState<boolean>(false)
 
   const baseUrl = import.meta.env.VITE_CLOUDINARY_BASE_URL || ""
 
-  const user = useSelector(selectUser);
+  const user = useSelector(selectUser) as any;
   const id = user?.id ? user?.id : user?.user?._id;
 
   useEffect(() => {
@@ -81,10 +79,10 @@ function UserEvents() {
     }
   };
 
-  const isAttendingEvent = (eventId) => {
+  const isAttendingEvent = (eventId: string) => {
     // Check if the event is in the attendingEvents array
     return attendingEvents?.eventsAttending?.some(
-      (event) => event?._id === eventId
+      (event: any) => event?._id === eventId
     );
   };
 
@@ -122,7 +120,7 @@ function UserEvents() {
               </div>
               <div className=" w-full sm:w-full md:w-80 lg:w-80">
                 {attendingEvents?.eventsAttending?.length > 0 ? (
-                  attendingEvents?.eventsAttending?.map((event, index) => (
+                  attendingEvents?.eventsAttending?.map((event: any) => (
                     <div
                       key={event?._id}
                       className="w-auto event-card border-t"
@@ -173,7 +171,7 @@ function UserEvents() {
               </div>
               <div className="w-full bg-white">
                 {Array.isArray(userEvents) ? (
-                  userEvents.map((event, index) => (
+                  userEvents.map((event) => (
                     <div
                       key={event?._id}
                       className="w-auto event-card border-t"

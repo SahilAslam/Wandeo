@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import adminInstance from "../../../Axios/adminInstance";
 import { login, selectAdmin } from "../../../Redux/Slice/adminSlice";
-import { toast, ToastContainer } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import { FaExclamationCircle } from "react-icons/fa";
 import 'react-toastify/dist/ReactToastify.css';
 

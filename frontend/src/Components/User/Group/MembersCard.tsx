@@ -6,12 +6,11 @@ import { selectUser } from "../../../Redux/Slice/userSlice";
 
 interface MembersCardProps {
   groupData: any;
-  BASE_URL: any;
 }
 
-const MembersCard: React.FC<MembersCardProps> = ({ groupData, BASE_URL }) => {
+const MembersCard: React.FC<MembersCardProps> = ({ groupData }) => {
 
-  const user = useSelector(selectUser);
+  const user = useSelector(selectUser) as any;
   const id = user?.id ? user?.id : user?.user?._id;
 
   const navigate = useNavigate();

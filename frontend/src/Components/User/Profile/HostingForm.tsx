@@ -16,8 +16,7 @@ const HostingForm = () => {
   const [sleepingMenuOpen, setSleepingMenuOpen] = useState(false);
   const [selectedSleepingMenu, setSelectedSleepingMenu] = useState("");
   const [sleepingArrangement, setSleepingArrangement] = useState("");
-  const [sleepingArrangementDescription, setSleepingArrangementDescription] =
-    useState("");
+  const [sleepingArrangementDescription, setSleepingArrangementDescription] = useState("");
   const [transportationAccess, setTransportationAccess] = useState("");
   const [whatCanIShare, setWhatCanIShare] = useState("");
   const [additionalInformation, setAdditionalInformation] = useState("");
@@ -27,19 +26,10 @@ const HostingForm = () => {
   const [kidFriendly, setKidFriendly] = useState("");
   const [petFriendly, setPetFriendly] = useState("");
   const [smoking, setSmoking] = useState("");
-  const [availability, setAvailability] = useState({
-    Monday: false,
-    Tuesday: false,
-    Wednesday: false,
-    Thursday: false,
-    Friday: false,
-    Saturday: false,
-    Sunday: false,
-  });
 
   const navigate = useNavigate();
 
-  const user = useSelector(selectUser);
+  const user = useSelector(selectUser) as any;
   const id = user?.id ? user?.id : user?.user?._id;
 
   useEffect(() => {
@@ -72,7 +62,7 @@ const HostingForm = () => {
       .catch((error) => console.log(error));
   }, [id]);
 
-  const guestUlRef = useRef<HTMLAnchorElement | null>(null); // Specify the correct type for ulRef
+  const guestUlRef = useRef(null); // Specify the correct type for ulRef
   const guestMenuRef = useRef<HTMLLIElement | null>(null); // Specify the correct type for menuRef
 
   const GuestMenus = ["Any", 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
@@ -97,7 +87,7 @@ const HostingForm = () => {
     }
   });
 
-  const sleepingUlRef = useRef<HTMLAnchorElement | null>(null); // Specify the correct type for ulRef
+  const sleepingUlRef = useRef(null); // Specify the correct type for ulRef
   const sleepingMenuRef = useRef<HTMLLIElement | null>(null); // Specify the correct type for menuRef
 
   const sleepingMenus = [
@@ -231,8 +221,8 @@ const HostingForm = () => {
                         key={index}
                         className="px-2 py-0.5 cursor-pointer hover:bg-blue-100"
                         onClick={() => {
-                          setSelectedGuestMenu(menu);
-                          setNoOfGuests(menu);
+                          setSelectedGuestMenu(String(menu));
+                          setNoOfGuests(String(menu));
                           setGuestMenuOpen(false);
                         }}
                       >
@@ -341,7 +331,7 @@ const HostingForm = () => {
               <textarea
                 name=""
                 id=""
-                rows="7"
+                rows={7}
                 value={sleepingArrangementDescription}
                 onChange={(e) =>
                   setSleepingArrangementDescription(e.target.value)
@@ -360,7 +350,7 @@ const HostingForm = () => {
               <textarea
                 name=""
                 id=""
-                rows="7"
+                rows={7}
                 value={transportationAccess}
                 onChange={(e) => setTransportationAccess(e.target.value)}
                 className="block w-full rounded-md border-0 py-0.5 px-2 mt-2 md:mt-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:ring-gray-400 placeholder:text-gray-400 focus:ring-slate-800 sm:text-sm sm:leading-6"
@@ -377,7 +367,7 @@ const HostingForm = () => {
               <textarea
                 name=""
                 id=""
-                rows="7"
+                rows={7}
                 value={whatCanIShare}
                 onChange={(e) => setWhatCanIShare(e.target.value)}
                 className="block w-full rounded-md border-0 py-0.5 px-2 mt-2 md:mt-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:ring-gray-400 placeholder:text-gray-400 focus:ring-slate-800 sm:text-sm sm:leading-6"
@@ -394,7 +384,7 @@ const HostingForm = () => {
               <textarea
                 name=""
                 id=""
-                rows="7"
+                rows={7}
                 value={additionalInformation}
                 onChange={(e) => setAdditionalInformation(e.target.value)}
                 className="block w-full rounded-md border-0 py-0.5 px-2 mt-2 md:mt-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:ring-gray-400 placeholder:text-gray-400 focus:ring-slate-800 sm:text-sm sm:leading-6"

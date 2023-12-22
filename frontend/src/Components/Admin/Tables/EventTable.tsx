@@ -2,9 +2,21 @@ import React, { useEffect, useState } from "react";
 import adminInstance from "../../../Axios/adminInstance";
 import Pagination from "../../Pagination/Pagination";
 import { ToastContainer } from "react-toastify";
+import moment from "moment";
 
-const EventTable = () => {
-  const [events, setEvents] = useState([]);
+interface Event {
+  _id: string;
+  eventName: string;
+  description: string;
+  location: string;
+  startDate: Date;
+  endDate: Date;
+  attendees: Array<any>;
+  attendeesLimit: number;
+}
+
+const EventTable: React.FC = () => {
+  const [events, setEvents] = useState<Event[]>([]);
   const [searchInput, setSearchInput] = useState("");
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -21,7 +33,26 @@ const EventTable = () => {
       .catch((error) => {
         console.log(error);
       });
-  }, []);
+  }, [searchInput]);
+
+  const handleSearch = async (
+    e: React.FormEvent<HTMLFormElement | HTMLTextAreaElement>
+  ) => {
+    e.preventDefault();
+
+    const response = await adminInstance.get("/getEvents");
+    if (response.data?.events) {
+      setEvents(response.data?.events);
+
+      const filteredEvents = events.filter((event) => {
+        return event?.eventName?.toLowerCase().includes(searchInput.toLowerCase());
+      });
+
+      setEvents(filteredEvents);
+    } else {
+      console.error("No users found");
+    }
+  };
 
   const indexOfLastRecord = currentPage * recordsPerPage;
   const indexOfFirstRecord = indexOfLastRecord - recordsPerPage;
@@ -30,7 +61,7 @@ const EventTable = () => {
 
   const nPages = Math.ceil(events.length / recordsPerPage);
 
-  const toggleDescriptionExpansion = (index) => {
+  const toggleDescriptionExpansion = (index: any) => {
     setExpandedDescriptionIndex(
       (prevIndex) => (prevIndex === index ? -1 : index)
     );
@@ -40,7 +71,7 @@ const EventTable = () => {
     <>
       <ToastContainer />
       <div className="py-2">
-        <form>
+        <form onSubmit={handleSearch}>
           <input
             type="text"
             className="border rounded-xl px-2 py-1"
@@ -123,9 +154,9 @@ const EventTable = () => {
                     </td>
                     <td className="px-6 py-4">{event?.location}</td>
                     <td className="px-6 py-4 bg-gray-50 ">
-                      {event?.startDate}
+                    {moment(event?.startDate).format('DD-MMM-Y')}
                     </td>
-                    <td className="px-6 py-4">{event?.endDate}</td>
+                    <td className="px-6 py-4">{moment(event?.endDate).format('DD-MMM-Y')}</td>
                     <td className="px-6 py-4 bg-gray-50">
                       {event?.attendees?.length > 0
                         ? event?.attendees.length

@@ -3,7 +3,7 @@ import Sidebar from '../../../Components/Admin/Sidebar/Sidebar';
 import AdminNavbar from '../../../Components/Admin/AdminNavbar/AdminNavbar';
 import EventTable from '../../../Components/Admin/Tables/EventTable';
 
-const AdminEventPage = () => {
+const AdminEventPage: React.FC = () => {
     const [open, setOpen] = useState(true);
 
   return (

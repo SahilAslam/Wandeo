@@ -96,8 +96,8 @@ const CreateDiscussion: React.FC<CreateDiscussionProps> = ({
                   <textarea
                     name="content"
                     id="content"
-                    cols="45"
-                    rows="8"
+                    cols={45}
+                    rows={8}
                     value={content}
                     onChange={(e) => setContent(e.target.value)}
                     className="border border-slate-300 hover:border-sky-700 rounded px-2 py-2"

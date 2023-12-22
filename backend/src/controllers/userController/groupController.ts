@@ -26,7 +26,7 @@ const createUserGroup = async (req: Request, res: Response) => {
       console.log(group);
 
       user.groups.push(group._id);
-      user.save();
+      await user.save();
 
       return res.status(201).json({ message: "Group created successfully" });
     }

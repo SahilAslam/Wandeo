@@ -5,8 +5,13 @@ import axiosInstance from "../../../Axios/Axios";
 import { useNavigate, useParams } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 
-const CreateReference = () => {
-  const [userDetails, setUserDetails] = useState({});
+interface User {
+  _id: string;
+  name: string;
+}
+
+const CreateReference: React.FC = () => {
+  const [userDetails, setUserDetails] = useState<User>();
   const [checkedOne, setCheckedOne] = useState(false);
   const [checkedTwo, setCheckedTwo] = useState(false);
   const [err, setErr] = useState("")
@@ -49,7 +54,7 @@ const CreateReference = () => {
     });
   };
 
-  const handleSubmit = async (targettedUserId: string) => {
+  const handleSubmit = async (targettedUserId: any) => {
     const createData = {
         recommendYes: recommendYes,
         recommendNo: recommendNo,
@@ -116,7 +121,7 @@ const CreateReference = () => {
                   </span>
                 </p>
                 <textarea
-                  rows="5"
+                  rows={5}
                   className={`${err === "Required this field" && "border-2 border-red-500"} w-full border rounded px-2 py-1`}
                   placeholder={`Write your experience about ${userDetails?.name}?`}
                   value={reference}

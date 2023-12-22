@@ -3,8 +3,17 @@ import Pagination from '../../Pagination/Pagination'
 import { ToastContainer } from 'react-toastify'
 import adminInstance from '../../../Axios/adminInstance';
 
-const HostsTable = () => {
-    const [hosts, setHosts] = useState([]);
+interface Host {
+  userId: {
+    name: string;
+    address: string;
+  };
+  hostingAvailability: string; 
+  isBlocked: boolean;
+}
+
+const HostsTable: React.FC = () => {
+    const [hosts, setHosts] = useState<Host[]>([]);
   const [searchInput, setSearchInput] = useState("");
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -19,7 +28,26 @@ const HostsTable = () => {
       .catch((error) => {
         console.log(error);
       });
-  }, []);
+  }, [searchInput]);
+
+  const handleSearch = async (
+    e: React.FormEvent<HTMLFormElement | HTMLTextAreaElement>
+  ) => {
+    e.preventDefault();
+
+    const response = await adminInstance.get("/gethost");
+    if (response.data?.hosts) {
+      setHosts(response.data?.hosts);
+
+      const filteredHosts = hosts.filter((host) => {
+        return host?.userId?.name?.toLowerCase().includes(searchInput.toLowerCase());
+      });
+
+      setHosts(filteredHosts);
+    } else {
+      console.error("No users found");
+    }
+  };
 
   const indexOfLastRecord = currentPage * recordsPerPage;
   const indexOfFirstRecord = indexOfLastRecord - recordsPerPage;
@@ -33,7 +61,7 @@ const HostsTable = () => {
     <>
       <ToastContainer />
       <div className="py-2">
-        <form>
+        <form onSubmit={handleSearch}>
           <input
             type="text"
             className="border rounded-xl px-2 py-1"

@@ -5,7 +5,7 @@ import userModel from "../../models/userModel";
 const createPublicTrip = async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
-    console.log("userId:", userId);
+
     if (!userId) {
       return res.status(404).json({ message: "UserId not found!" });
     }
@@ -54,9 +54,12 @@ const createPublicTrip = async (req: Request, res: Response) => {
 const getPublicTrips = async (req: Request, res: Response) => {
   try {
     const userId = req.user?.id;
+    const today = new Date();
     
-    const publicTrips = await PublicTripModel.find({userId: userId})
-    console.log(publicTrips);
+    const publicTrips = await PublicTripModel.find({
+      userId: userId,
+      arrivalDate: { $gte: today },
+    })
 
     if(publicTrips) {
       return res.status(201).json({message: "Success", publicTrips});
@@ -69,4 +72,25 @@ const getPublicTrips = async (req: Request, res: Response) => {
   }
 }
 
-export { createPublicTrip, getPublicTrips };
+const getOtherUserTrips = async (req: Request, res: Response) => {
+  try {
+    const {id} = req.params;
+    const today = new Date();
+    
+    const publicTrips = await PublicTripModel.find({
+      userId: id,
+      arrivalDate: { $gte: today },
+    })
+
+    if(publicTrips) {
+      return res.status(201).json({message: "Success", publicTrips});
+    } else {
+      return res.status(404).json({message: "Coudn't find publicTrips"});
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({message: "Internal Server Error"})
+  }
+}
+
+export { createPublicTrip, getPublicTrips, getOtherUserTrips };

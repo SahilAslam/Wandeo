@@ -3,7 +3,7 @@ import Sidebar from '../../../Components/Admin/Sidebar/Sidebar'
 import AdminNavbar from '../../../Components/Admin/AdminNavbar/AdminNavbar';
 import GroupTable from '../../../Components/Admin/Tables/GroupTable';
 
-const AdminGroups = () => {
+const AdminGroups: React.FC = () => {
     const [open, setOpen] = useState(true);
   return (
     <>

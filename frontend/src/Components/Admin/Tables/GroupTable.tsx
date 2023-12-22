@@ -1,25 +1,34 @@
-import React, { useEffect, useState } from 'react'
-import Pagination from '../../Pagination/Pagination'
-import { ToastContainer, toast } from 'react-toastify'
-import adminInstance from '../../../Axios/adminInstance';
+import React, { useEffect, useState } from "react";
+import Pagination from "../../Pagination/Pagination";
+import { ToastContainer, toast } from "react-toastify";
+import adminInstance from "../../../Axios/adminInstance";
 
-const GroupTable = () => {
-    const [groups, setGroups] = useState([]);
-    const [searchInput, setSearchInput] = useState("");
+interface Group {
+  _id: string;
+  name: string;
+  description: string;
+  members: Array<any>; // You might want to replace 'any' with the actual type of members
+  isBlocked: boolean;
+  // Add other properties if needed
+}
+
+const GroupTable: React.FC = () => {
+  const [groups, setGroups] = useState<Group[]>([]);
+  const [searchInput, setSearchInput] = useState("");
 
   const [currentPage, setCurrentPage] = useState(1);
   const [recordsPerPage] = useState(10);
 
-    useEffect(() => {
-        adminInstance
-            .get('/getGroups')
-            .then((response) => {
-                setGroups(response.data?.groups)
-            })
-            .catch((error) => {
-                console.log(error)
-            })
-    }, [])
+  useEffect(() => {
+    adminInstance
+      .get("/getGroups")
+      .then((response) => {
+        setGroups(response.data?.groups);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, [searchInput]);
 
   const blockGroup = (groupId: string) => {
     adminInstance
@@ -69,32 +78,29 @@ const GroupTable = () => {
       .catch((err) => console.log(err, "verify user block axios err"));
   };
 
-  const handleSearch = async (e) => {
+  const handleSearch = async (
+    e: React.FormEvent<HTMLFormElement | HTMLTextAreaElement>
+  ) => {
     e.preventDefault();
-  
-    const response = await adminInstance.get("/usersList");
-    if (response.data.users) {
-      setGroups(response.data.users);
-      
+
+    const response = await adminInstance.get("/getGroups");
+    if (response.data?.groups) {
+      setGroups(response.data?.groups);
+
       const filteredGroups = groups.filter((group) => {
-        return group?.name?.toLowerCase().includes(searchInput.toLowerCase())
+        return group?.name?.toLowerCase().includes(searchInput.toLowerCase());
       });
-    
+
       setGroups(filteredGroups);
-      
     } else {
       console.error("No users found");
     }
-  
   };
 
   const indexOfLastRecord = currentPage * recordsPerPage;
   const indexOfFirstRecord = indexOfLastRecord - recordsPerPage;
 
-  const currentRecords = groups.slice(
-    indexOfFirstRecord,
-    indexOfLastRecord
-  );
+  const currentRecords = groups.slice(indexOfFirstRecord, indexOfLastRecord);
 
   const nPages = Math.ceil(groups.length / recordsPerPage);
 
@@ -102,7 +108,7 @@ const GroupTable = () => {
     <>
       <ToastContainer />
       <div className="py-2">
-      <form onSubmit={handleSearch}>
+        <form onSubmit={handleSearch}>
           <input
             type="text"
             className="border rounded-xl px-2 py-1"
@@ -144,8 +150,12 @@ const GroupTable = () => {
                       {index + 1}
                     </th>
                     <td className="px-6 py-4">{group?.name}</td>
-                    <td className="px-6 py-4  bg-gray-50 ">{group?.description}</td>
-                    <td className="px-6 py-4">{group.members.length > 0 ? group.members.length : 0}</td>
+                    <td className="px-6 py-4  bg-gray-50 ">
+                      {group?.description}
+                    </td>
+                    <td className="px-6 py-4">
+                      {group.members.length > 0 ? group.members.length : 0}
+                    </td>
                     <td className="px-6 py-4  bg-gray-50 ">
                       {!group?.isBlocked ? (
                         <button
@@ -181,7 +191,7 @@ const GroupTable = () => {
         />
       </div>
     </>
-  )
-}
+  );
+};
 
-export default GroupTable
+export default GroupTable;

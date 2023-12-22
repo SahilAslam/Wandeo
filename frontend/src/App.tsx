@@ -24,7 +24,6 @@ import OtpPassword from './Components/User/ForgotPassword/OtpPassword'
 import NewPassword from './Components/User/ForgotPassword/NewPassword'
 import ForgotPassword from './Components/User/ForgotPassword/ForgotPassword'
 import InboxPage from './Pages/User/InboxPage/InboxPage'
-import MessageDetailedPage from './Pages/User/InboxPage/MessageDetailedPage'
 import CreatePublicTrip from './Pages/User/Trips/CreatePublicTrip'
 import PublicTrips from './Pages/User/Trips/PublicTrips'
 import SearchPage from './Pages/User/Search/SearchPage'
@@ -36,6 +35,12 @@ import CreateReference from './Pages/User/ReferencePage/CreateReference'
 import AdminGroups from './Pages/Admin/AdminGroups/AdminGroups'
 import AdminEventPage from './Pages/Admin/AdminEvents/AdminEventPage'
 import AdminHosts from './Pages/Admin/AdminHosts/AdminHosts'
+import PaymentPage from './Pages/User/PaymentPage/PaymentPage'
+import PaymentSuccess from './Pages/User/PaymentPage/PaymentSuccess'
+import HostUser from './Pages/User/TravelingAndHosting/HostUser'
+import TravelingAndHostingDetailed from './Pages/User/InboxPage/TravelingAndHostingDetailed'
+import MessageDetailedPage from './Pages/User/InboxPage/MessageDetailedPage'
+import CreateUserInfoPage from './Pages/User/Signup/CreateUserInfoPage'
 
 function App() {
   
@@ -46,6 +51,7 @@ function App() {
         <Route path='*' element={<h1>Page not Found</h1>} />
         <Route path='/login' element={<Login/>} />
         <Route path='/signup' element={<Signup/>} />
+        <Route path='/createuserinfo/:id' element={<CreateUserInfoPage />} />
         <Route path="/forget_password" element={<ForgotPassword />} />
         <Route path="/user_forget_otp" element={<OtpPassword />} />
         <Route path="/new_password" element={<NewPassword />} />
@@ -64,10 +70,15 @@ function App() {
           <Route path='/DiffProfile/:id' element={<DiffUserProfile />} />
           <Route path='/allGroups' element={<AllGroups />} />
           <Route path='/inbox' element={<InboxPage />} />
-          <Route path='/messageDetailedPage' element={<MessageDetailedPage />} />
+          <Route path='/messageDetailedPage/:id' element={<TravelingAndHostingDetailed />} />
+          <Route path='/directmessagedetailed/:id' element={<MessageDetailedPage />} />
           <Route path='/createPublicTrip' element={<CreatePublicTrip />} />
           <Route path='/publictrips' element={<PublicTrips />} />
           <Route path='/createReference/:id' element={<CreateReference />} />
+          <Route path='/hostuser/:id' element={<HostUser />} />
+
+          <Route path='/payment' element={<PaymentPage />} />
+          <Route path='/paymentSuccess' element={<PaymentSuccess />} />
 
           {/* search */}
           <Route path="/search" element={<SearchPage />} />

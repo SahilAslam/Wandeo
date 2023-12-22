@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -8,22 +8,30 @@ import { logout, selectAdmin } from "../../../Redux/Slice/adminSlice";
 import { MdOutlineKeyboardArrowDown } from "react-icons/md";
 import { RiAdminLine } from "react-icons/ri";
 
+interface Admin {
+  username?: string;
+  adminCred?: {
+    username?: string;
+    // Add other properties of adminCred if needed
+  };
+}
+
 function AdminNavbar() {
-  const [isNavOpen, setIsNavOpen] = useState(false);
+  // const [isNavOpen, setIsNavOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
-  const admin = useSelector(selectAdmin);
+  const admin = useSelector(selectAdmin) as Admin;
   const adminUsername = admin?.username
     ? admin.username
     : admin.adminCred?.username;
 
-  const toggleNav = () => {
-    setIsNavOpen(!isNavOpen);
-  };
+  // const toggleNav = () => {
+  //   setIsNavOpen(!isNavOpen);
+  // };
 
-  const location = useLocation();
-  const isDashboard = location.pathname === "/admin/dashboard";
-  const isUsers = location.pathname === "/admin/usersList";
+  // const location = useLocation();
+  // const isDashboard = location.pathname === "/admin/dashboard";
+  // const isUsers = location.pathname === "/admin/usersList";
 
   const dispatch = useDispatch();
   const navigate = useNavigate();

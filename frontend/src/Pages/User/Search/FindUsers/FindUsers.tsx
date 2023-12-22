@@ -8,8 +8,9 @@ import Pagination from "../../../../Components/Pagination/Pagination";
 import { RiDoubleQuotesL } from "react-icons/ri";
 import { ImUsers } from "react-icons/im";
 import { FaGlobeAmericas } from "react-icons/fa";
+import moment from "moment";
 
-const FindUsers = () => {
+const FindUsers: React.FC = () => {
   const [users, setUsers] = useState<any[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [recordsPerPage] = useState(10);
@@ -19,7 +20,7 @@ const FindUsers = () => {
   const location = useLocation();
   const searchQuery = location.state?.searchQuery || "";
 
-  const user = useSelector(selectUser);
+  const user = useSelector(selectUser) as any;
   const id = user?.id ? user?.id : user?.user?._id;
 
   const filteredUsers = users.filter((user) => {
@@ -57,69 +58,109 @@ const FindUsers = () => {
   return (
     <>
       <Navbar />
-      <div className="py-3 px-3 flex flex-col md:flex-row justify-center items-center gap-4">
+      <div className="py-3 px-3 flex flex-col md:flex-row justify-center gap-4">
         <div className="w-full max-w-[750px] bg-white">
           <div className="border-b">
-            <p className="px-5 py-3">55,914 members matchings</p>
+            <p className="px-5 py-3 text-slate-400">{currentRecords ? currentRecords.length : "no"}{" "}users matchings</p>
           </div>
           {currentRecords && currentRecords.length > 0 ? (
             currentRecords.map((user) => (
-              <div className="flex justify-between px-5 py-5">
-                <div className="flex flex-row gap-2">
+              <div className="flex flex-col sm:flex-row justify-between px-5 py-7 border-b">
+                <div className="flex flex-row gap-2 min-w-fit">
                   <div>
                     {user.profileImage ? (
                       <img
                         src={`${user?.profileImage}`}
                         alt="img"
                         onClick={() => handleClick(user._id)}
-                        className="border rounded-full w-14 h-14"
+                        className="border rounded-full w-14 h-14 cursor-pointer"
                       />
                     ) : (
                       <img
                         src={`/profile-picture-placeholder.png`}
                         alt=""
                         onClick={() => handleClick(user._id)}
-                        className="w-14 h-14 object-cover rounded-full opacity-100"
+                        className="w-14 h-14 object-cover rounded-full opacity-100 cursor-pointer"
                       />
                     )}
                   </div>
                   <div className="flex flex-col justify-between">
                     <div>
-                      <h1>{user.name}</h1>
+                      <h1
+                        className="text-slate-700 font-bold cursor-pointer"
+                        onClick={() => handleClick(user._id)}
+                      >
+                        {user.name}
+                      </h1>
                     </div>
                     <div>
-                      <p>
+                      <p className="text-slate-700">
                         {user.address ? user.address : "address unspecified"}
                       </p>
                     </div>
-                    <div className="flex flex-row gap-1 items-center">
+                    <div className="flex flex-row gap-1 items-center text-sm text-slate-400">
                       <div className="flex items-center">
                         <RiDoubleQuotesL className="mr-1" />
                         <p>
                           {user?.references && user?.references.length > 0
                             ? user?.references.length > 1
-                              ? `${user?.references.length}references`
-                              : `${user?.references.length}reference`
+                              ? `${user?.references.length} references`
+                              : `${user?.references.length} reference`
                             : "0 reference"}
                         </p>
                       </div>
                       <div className="flex items-center">
                         <ImUsers className="mr-1" />
-                        <p>578 friends</p>
+                        <p>
+                          {user?.friends && user?.friends.length > 0
+                            ? user?.friends.length > 1
+                              ? `${user?.friends.length} friends`
+                              : `${user?.friends.length} friends`
+                            : "0 friends"}
+                        </p>
                       </div>
                     </div>
-                    <div className="flex items-center">
+                    <div className="flex items-center text-sm text-slate-400">
                       <FaGlobeAmericas className="mr-1" />
-                      <p>{user?.languagesFluentIn ? (`speaks ${user?.languagesFluentIn}`) : "No language listed"}</p>
+                      <p>
+                        {user?.languagesFluentIn
+                          ? `speaks ${user?.languagesFluentIn}`
+                          : "No language listed"}
+                      </p>
                     </div>
                   </div>
                 </div>
-                <div></div>
+                <div className="flex flex-col text-center sm:text-end">
+                  <div className="">
+                    <h1
+                      className={`text-xl font-semibold ${
+                        user?.hostingAvailability === "Accepting Guests"
+                          ? "text-green-500"
+                          : user?.hostingAvailability === "Not Accepting Guests"
+                          ? "text-red-600"
+                          : "text-slate-700"
+                      }`}
+                    >
+                      {user.hostingAvailability
+                        ? user.hostingAvailability
+                        : "Not updated"}
+                    </h1>
+                  </div>
+                  {user?.isLoggin ? (
+                    <p className="text-sm pt-4 text-green-500">
+                      {user?.isLoggin}
+                    </p>
+                  ) : (
+                    <p className="text-sm pt-4 text-slate-400">
+                      Last login {moment(user.lastLogin).fromNow()}
+                    </p>
+                  )}
+                </div>
               </div>
             ))
           ) : (
-            <div>
-              <p>No user found</p>
+            <div className="bg-slate-100 p-5 text-center text-slate-400">
+              <p>No users found matching your search.</p>
             </div>
           )}
           <Pagination
@@ -128,7 +169,7 @@ const FindUsers = () => {
             setCurrentPage={setCurrentPage}
           />
         </div>
-        <div className="w-full max-w-[310px] bg-white">pc</div>
+        {/* <div className="w-full max-w-[310px] bg-white">pc</div> */}
       </div>
     </>
   );

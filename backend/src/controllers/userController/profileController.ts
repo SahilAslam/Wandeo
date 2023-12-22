@@ -6,7 +6,7 @@ const getUserProfile = async (req: Request, res: Response) => {
     try {
         const userId = req.params.userId;
 
-        const user = await userModel.findById(userId).populate("groups").populate("hostingId").populate({
+        const user = await userModel.findById(userId).populate("groups").populate("hostingId").populate("friends").populate("publicTrips").populate({
             path: 'references',
             populate: {
                 path: 'userId',
@@ -17,7 +17,6 @@ const getUserProfile = async (req: Request, res: Response) => {
         if (!user) {
             return res.status(404).json({ message: "User not found!" });
         }
-        
         return res.status(201).json({ user });
     } catch (error) {
         console.error(error);
@@ -116,4 +115,30 @@ const addProfileImage = async (req: Request, res: Response) => {
     }
 };
 
-export { getUserProfile, editUserProfile, addProfileImage };
+const propertyImage = async (req: Request, res: Response) => {
+    try {
+        const userId = req.user?.id
+
+        const { image } = req.body;
+
+        if(!req.body) {
+            return res.status(404).json({message: "No image received"})
+        }
+
+        const userData = await userModel.findById(userId);
+
+        if (!userData) {
+            return res.status(404).json({ error: "No user found with the id" });
+        }
+
+        userData.propImages.push(image);
+        await userData.save();
+
+        res.status(200).json({ message: "Succefully uploaded Image" });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: "Internal server error" });
+    }
+};
+
+export { getUserProfile, editUserProfile, addProfileImage, propertyImage };

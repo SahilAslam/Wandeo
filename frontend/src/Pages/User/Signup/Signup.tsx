@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import "./Signup.css";
 import axiosInstance from "../../../Axios/Axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -58,19 +57,19 @@ function Signup() {
         password: trimmedPassword,
       });
       console.log(response);
+      setTimeout(() => {
+        toast.success("Registered Successfull");
+      }, 0);
+      navigate(`/createuserinfo/${response.data._id}`);
     } catch (error: any) {
       console.log(error);
       toast.error(error.response.data.message);
     }
-    setTimeout(() => {
-      navigate("/login");
-    }, 2000);
-    toast.success("Registered Successfull");
   };
 
   return (
     <>
-    <SignupNavbar />
+      <SignupNavbar />
       <ToastContainer />
       <GoogleOAuthProvider clientId="307319234489-tjsu09c3qicatftagifvbbugpv9cnr3o.apps.googleusercontent.com">
         <div className="signup flex min-h-full flex-1 flex-col justify-center px-6 md:py-12  lg:px-8 items-center h-screen ">
@@ -125,6 +124,7 @@ function Signup() {
                             type="text"
                             placeholder="name_123"
                             className="block w-full rounded-xl border py-3 text-gray-900 shadow-sm placeholder:text-gray-400 p-2 sm:text-sm sm:leading-6"
+                            value={username}
                             onChange={(e) => setUsername(e.target.value)}
                           />
                         </div>
@@ -195,10 +195,9 @@ function Signup() {
                           .then((res) => {
                             if (res?.data) {
                               toast.success(res.data.message);
-
                               setTimeout(() => {
-                                navigate("/login");
-                              }, 3000);
+                                navigate(`/createuserinfo/${res.data.newUser._id}`);
+                              }, 1000);
                             }
                           })
                           .catch((err) =>

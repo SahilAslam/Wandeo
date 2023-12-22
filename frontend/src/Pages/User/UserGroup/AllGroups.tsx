@@ -7,8 +7,8 @@ import { ImUsers } from "react-icons/im";
 import { FaComments } from "react-icons/fa";
 import Pagination from "../../../Components/Pagination/Pagination";
 
-const AllGroups = () => {
-  const [group, setGroup] = useState([]);
+const AllGroups: React.FC = () => {
+  const [group, setGroup] = useState<any[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [recordsPerPage] = useState(10);
 
@@ -89,7 +89,7 @@ const AllGroups = () => {
               </div>
               <div className="w-full border-b">
                 {currentRecords ? (
-                  currentRecords.map((group, index) => (
+                  currentRecords.map((group) => (
                     <div
                       key={group?._id}
                       className="w-auto event-card border-t"

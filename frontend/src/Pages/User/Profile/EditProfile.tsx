@@ -8,39 +8,34 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import HostingForm from "../../../Components/User/Profile/HostingForm";
 
+
+
 const EditProfile = () => {
-  const [userDatails, setUserDetails] = useState({});
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [selectedMenu, setSelectedMenu] = useState("Not Accepting Guests"); // Initialize with the default menu item
-  const [hosting, setHosting] = useState("Not Accepting Guests");
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [birthday, setBirthday] = useState("");
-  const [gender, setGender] = useState("");
-  const [phone, setPhone] = useState("");
+  const [userDatails, setUserDetails] = useState<any>({});
+  const [menuOpen, setMenuOpen] = useState<boolean>(false);
+  const [selectedMenu, setSelectedMenu] = useState<string>("Not Accepting Guests"); // Initialize with the default menu item
+  const [hosting, setHosting] = useState<string>("Not Accepting Guests");
+  const [name, setName] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
+  const [birthday, setBirthday] = useState<string>("");
+  const [gender, setGender] = useState<string>("");
+  const [phone, setPhone] = useState<string>("");
   const [address, setAddress] = useState("");
   const [occupation, setOccupation] = useState("");
   const [education, setEducation] = useState("");
   const [fluentlanguage, setFluentLanguage] = useState("");
   const [languageLearning, setLanguageLearning] = useState("");
   const [about, setAbout] = useState("");
-  const [updateUI, setUpdateUI] = useState<boolean>(false);
   const [isAbout, setIsAbout] = useState(true);
-
-  
-  
-    // State to keep track of selected days
-    
-
 
   const navigate = useNavigate();
 
   const dispatch = useDispatch();
 
-  const user = useSelector(selectUser);
+  const user = useSelector(selectUser) as any;
   const id = user?.id ? user?.id : user?.user?._id;
 
-  const ulRef = useRef<HTMLAnchorElement | null>(null); // Specify the correct type for ulRef
+  const ulRef = useRef(null); // Specify the correct type for ulRef
   const menuRef = useRef<HTMLLIElement | null>(null); // Specify the correct type for menuRef
 
   const Menus = [
@@ -141,7 +136,7 @@ const EditProfile = () => {
         <div className="py-4 px-4 xl:px-32">
           <div className="flex flex-col gap-4 md:flex-row xl:gap-8 md:gap-4">
             <div>
-              <ProfileCard userDetails={userDatails} updateUI={updateUI} />
+              <ProfileCard userDetails={userDatails} id={id} />
             </div>
             <div className="w-full md:auto flex flex-col">
               <div className=" py-2 hidden md:flex md:flex-col justify-center ">
@@ -404,7 +399,7 @@ const EditProfile = () => {
                             <textarea
                               name=""
                               id=""
-                              rows="6"
+                              rows={6}
                               value={about}
                               onChange={(e) => setAbout(e.target.value)}
                               className="block w-full rounded-md border-0 py-0.5 px-2 mt-2 md:mt-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:ring-gray-400 placeholder:text-gray-400 focus:ring-slate-800 sm:text-sm sm:leading-6"

@@ -1,10 +1,28 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Navbar from "../../../Components/User/Navbar/Navbar";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
+import axiosInstance from "../../../Axios/Axios";
+import LoginUserTrips from "../../../Components/User/Trips/LoginUserTrips";
 
-const PublicTrips = () => {
+const PublicTrips: React.FC = () => {
+  const [publicTrips, setPublicTrips] = useState([]);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    axiosInstance
+      .get('/getPublicTrips')
+      .then((response) => {
+        if(response.data.publicTrips) {
+          setPublicTrips(response.data.publicTrips)
+        } else {
+          console.log("Public trips not found")
+        }
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+  }, [])
 
   return (
     <>
@@ -18,7 +36,9 @@ const PublicTrips = () => {
                 PUBLIC TRIPS
               </h1>
             </div>
-            <p className="p-4">You have no active public trips.</p>
+            <div>
+              <LoginUserTrips publicTrips={publicTrips} />
+            </div>
           </div>
         </div>
         <div className="order-1 w-full md:w-fit">

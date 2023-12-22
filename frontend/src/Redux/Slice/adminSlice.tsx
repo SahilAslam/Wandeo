@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export interface adminState {
-    admin: string
+    admin: any
 }
 
 const initialState: adminState = {
@@ -15,6 +15,7 @@ const adminSlice = createSlice({
         login: (state, action: PayloadAction<string>) => {
             state.admin = action.payload;
             console.log(state.admin, "admin State")
+            
             localStorage.setItem('adminInfo', JSON.stringify(state.admin?.adminCred))
             
         },
@@ -22,7 +23,7 @@ const adminSlice = createSlice({
             state.admin = ''
             localStorage.removeItem("adminToken"); 
             localStorage.removeItem("adminId");
-            
+            localStorage.removeItem("adminInfo");           
         }
     }
 })

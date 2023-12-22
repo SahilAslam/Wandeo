@@ -7,11 +7,11 @@ import { IoMdArrowDropdown } from "react-icons/io";
 import "./Navbar.css";
 import axiosInstance from "../../../Axios/Axios";
 
-function Navbar() {
+const Navbar: React.FC = () => {
   const [isNavOpen, setIsNavOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchMenuOpen, setSearchMenuOpen] = useState(false);
-  const [selectedMenu, setSelectedMenu] = useState("Explore");
+  const [selectedMenu, setSelectedMenu] = useState("Find Users");
   const [searchQuery, setSearchQuery] = useState("");
 
   const dispatch = useDispatch();
@@ -26,10 +26,10 @@ function Navbar() {
 
   useEffect(() => {
     // Set the initial selectedMenu based on the current location
-    if (isHomePage || location.pathname === "/search") {
-      setSelectedMenu("Explore");
+    if (isHomePage || location.pathname === "/findUser") {
+      setSelectedMenu("Find Users");
     } else if (isEventsPage || location.pathname === "/findEvents") {
-      setSelectedMenu("Find Events");
+      setSelectedMenu("Find Users");
     } else if (isProfilePage || location.pathname === "/findUser") {
       setSelectedMenu("Find Users"); // Adjust this based on your actual category for the profile page
     } else if (isGroupPage || location.pathname === "/findGroups") {
@@ -68,14 +68,13 @@ function Navbar() {
     }
   });
 
-  const searchUlRef = useRef<HTMLAnchorElement | null>(null); // Specify the correct type for ulRef
-  const searchMenuRef = useRef<HTMLLIElement | null>(null); // Specify the correct type for menuRef
+  const searchUlRef = useRef(null); 
+  const searchMenuRef = useRef<HTMLLIElement | null>(null);
 
   const SearchMenus = [
     "Find Hosts",
     "Find Travelers",
     "Find Users",
-    "Find Events",
     "Find Groups",
   ];
 
@@ -88,11 +87,11 @@ function Navbar() {
     }
   });
 
-  const handleSearchChange = (e) => {
+  const handleSearchChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
     setSearchQuery(e.target.value);
   };
 
-  const handleSearchSubmit = (e) => {
+  const handleSearchSubmit: React.ChangeEventHandler<HTMLInputElement> = (e) => {
     e.preventDefault();
     // Navigate to the search page with the search query
     if(selectedMenu === "Explore") {
@@ -174,7 +173,7 @@ function Navbar() {
                   />
                 </svg>
               </div>
-              <form onSubmit={handleSearchSubmit}>
+              <form onSubmit={() => handleSearchSubmit}>
                 <input
                   type="text"
                   id="search-navbar"

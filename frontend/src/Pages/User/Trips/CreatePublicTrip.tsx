@@ -7,7 +7,7 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { HiOutlineExclamation } from "react-icons/hi";
 
-const CreatePublicTrip = () => {
+const CreatePublicTrip: React.FC = () => {
   const [MenuOpen, setMenuOpen] = useState(false);
   const [selectedMenu, setSelectedMenu] = useState("");
   const [noOfTravelers, setNoOfTravelers] = useState<string>("");
@@ -19,22 +19,21 @@ const CreatePublicTrip = () => {
 
   const navigate = useNavigate();
 
-  const user = useSelector(selectUser)
+  const user = useSelector(selectUser) as any;
   const id = user?.id ? user?.id : user?.user?._id;
 
-  const UlRef = useRef<HTMLAnchorElement | null>(null); // Specify the correct type for ulRef
-  const MenuRef = useRef<HTMLLIElement | null>(null); // Specify the correct type for menuRef
+  const UlRef = useRef(null); // Specify the correct type for ulRef
 
   const Menus = ["", 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
 
   const today = new Date().toISOString().split('T')[0];
 
-  const handleArrivalDateChange = (e) => {
+  const handleArrivalDateChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newArrivalDate = e.target.value;
     setArrivalDate(newArrivalDate);
   };
 
-  const handleDepartureDateChange = (e) => {
+  const handleDepartureDateChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newDepartureDate = e.target.value;
     setDepartureDate(newDepartureDate);
 
@@ -128,7 +127,7 @@ const CreatePublicTrip = () => {
                   <input
                     type="date"
                     value={arrivalDate}
-                    onChange={handleArrivalDateChange}
+                    onChange={() => handleArrivalDateChange}
                     min={today}
                     className={`border rounded px-2 py-1 `}
                   />
@@ -140,7 +139,7 @@ const CreatePublicTrip = () => {
                   <input
                     type="date"
                     value={departureDate}
-                    onChange={handleDepartureDateChange}
+                    onChange={() => handleDepartureDateChange}
                     min={today}
                     className={`border rounded px-2 py-1 ${error === "Departure cannot be before the arrival" && "border-red-500 border-2"} `}
                   />
@@ -169,8 +168,8 @@ const CreatePublicTrip = () => {
                             key={index}
                             className="px-2 cursor-pointer hover:bg-blue-100"
                             onClick={() => {
-                              setSelectedMenu(menu);
-                              setNoOfTravelers(menu);
+                              setSelectedMenu(String(menu));
+                              setNoOfTravelers(String(menu));
                               setMenuOpen(false);
                             }}
                           >
@@ -189,7 +188,7 @@ const CreatePublicTrip = () => {
                 <textarea
                   name="description"
                   id="description"
-                  rows="5"
+                  rows={5}
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   placeholder="Tell locals about yout trip and why they should meet or host you."

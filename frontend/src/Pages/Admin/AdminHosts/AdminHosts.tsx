@@ -3,7 +3,7 @@ import Sidebar from '../../../Components/Admin/Sidebar/Sidebar'
 import AdminNavbar from '../../../Components/Admin/AdminNavbar/AdminNavbar'
 import HostsTable from '../../../Components/Admin/Tables/HostsTable';
 
-const AdminHosts = () => {
+const AdminHosts: React.FC = () => {
     const [open, setOpen] = useState(true);
 
   return (
