@@ -4,7 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importDefault(require("mongoose"));
-const connectDB = mongoose_1.default.connect("mongodb://127.0.0.1:27017/Project_2")
+const connectDB = mongoose_1.default.connect("mongodb+srv://sahil_aslam:1ipqH5WjdONX3Hqc@cluster0.hwqhb60.mongodb.net/")
     .then(() => {
     console.log('Mongodb Connected');
 })
