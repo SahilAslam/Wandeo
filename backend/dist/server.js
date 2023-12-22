@@ -13,6 +13,7 @@ const paymentRoutes_1 = __importDefault(require("./routes/paymentRoutes/paymentR
 dotenv_1.default.config();
 const socket_io_1 = require("socket.io");
 const http_1 = __importDefault(require("http"));
+const path_1 = require("path");
 const port = 5000;
 const app = (0, express_1.default)();
 const server = http_1.default.createServer(app);
@@ -29,6 +30,10 @@ app.use(express_1.default.urlencoded({ extended: true }));
 app.use('/', userRouter_1.default);
 app.use('/admin', adminRouter_1.default);
 app.use('/payment', paymentRoutes_1.default);
+app.use(express_1.default.static((0, path_1.join)(__dirname, "../../frontend/dist")));
+app.get("*", function (req, res) {
+    res.sendFile((0, path_1.join)(__dirname, "../../frontend/dist/index.html"));
+});
 io.on('connection', (socket) => {
     console.log('connected to socket.io');
     socket.on("setup", (userData) => {
