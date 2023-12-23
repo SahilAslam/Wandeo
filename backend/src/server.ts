@@ -2,7 +2,7 @@ import express from 'express';
 import userRouter from './routes/userRoutes/userRouter'
 import adminRouter from './routes/adminRoutes/adminRouter'
 import morgan from 'morgan'
-import './connections/connection';
+import  connectDB from './connections/connection';
 import cors from 'cors'
 import dotenv from 'dotenv'
 import paymentRouter from './routes/paymentRoutes/paymentRoutes';
@@ -11,7 +11,7 @@ import { Server as SocketIoServer } from 'socket.io';
 import http from 'http';
 import {join} from 'path'
 
-
+connectDB()
 const port = 5000;
 const app = express();
 const server = http.createServer(app);
@@ -28,6 +28,7 @@ const io = new SocketIoServer(server, {
 });
 
 app.use(cors());
+
 
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));

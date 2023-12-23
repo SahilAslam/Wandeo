@@ -7,7 +7,7 @@ const express_1 = __importDefault(require("express"));
 const userRouter_1 = __importDefault(require("./routes/userRoutes/userRouter"));
 const adminRouter_1 = __importDefault(require("./routes/adminRoutes/adminRouter"));
 const morgan_1 = __importDefault(require("morgan"));
-require("./connections/connection");
+const connection_1 = __importDefault(require("./connections/connection"));
 const cors_1 = __importDefault(require("cors"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const paymentRoutes_1 = __importDefault(require("./routes/paymentRoutes/paymentRoutes"));
@@ -15,12 +15,17 @@ dotenv_1.default.config();
 const socket_io_1 = require("socket.io");
 const http_1 = __importDefault(require("http"));
 const path_1 = require("path");
+(0, connection_1.default)();
 const port = 5000;
 const app = (0, express_1.default)();
 const server = http_1.default.createServer(app);
 const io = new socket_io_1.Server(server, {
     cors: {
-        origin: "http://localhost:5173",
+        origin: [
+            "http://localhost:5173",
+            "http://wandeo.website",
+            "https://wandeo.website",
+        ],
         methods: ["GET", "POST"],
         credentials: true
     }
