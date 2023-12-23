@@ -1,9 +1,7 @@
 import axios from "axios";
-
+const arr = ["http://localhost:5000/admin","https://wandeo.website/admin"]
 const adminInstance = axios.create({
-    // baseURL: "http://localhost:5000/admin",
-    baseURL: "https://wandeo.website",
-    
+    baseURL: arr[0]
 });
 
 adminInstance.interceptors.request.use(

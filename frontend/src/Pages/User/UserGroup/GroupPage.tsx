@@ -11,7 +11,7 @@ import { MdArrowRight } from "react-icons/md";
 
 const GroupPage: React.FC = () => {
   const [mostPopularGroup, setMostPopularGroup] = useState<any[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  // const [isLoading, setIsLoading] = useState(true);
 
   const BASE_URL = import.meta.env.VITE_CLOUDINARY_BASE_URL || ""
 
@@ -28,7 +28,7 @@ const GroupPage: React.FC = () => {
       .then((response) => {
         if (response.data.popularGroups) {
           setMostPopularGroup(response.data.popularGroups);
-          setIsLoading(false);
+          // setIsLoading(false);
         } else {
           console.log("No response received for the most popular group");
         }
@@ -79,7 +79,7 @@ const GroupPage: React.FC = () => {
       <SignupNavbar />
       <ToastContainer />
       <div className="w-full px-0 lg:px-4 pb-20 xl:px-40 bg-bgColor lg:rounded-lg overflow-hidden">
-        {isLoading ? (
+        {/* {isLoading ? (
           <div
             className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
             role="status"
@@ -88,7 +88,7 @@ const GroupPage: React.FC = () => {
               Loading...
             </span>
           </div>
-        ) : (
+        ) : ( */}
           <div className="w-full flex justify-center xl:justify-start flex-col gap-2 pt-5 pb-10 h-auto sm:flex-col sm:w-full lg:gap-4 md:flex-row  ">
             <div className="flex flex-col gap-4">
               <div className="flex items-center flex-col bg-white border border-slate-300 mx-4 md:mr-2 lg:mx-0">
@@ -201,7 +201,7 @@ const GroupPage: React.FC = () => {
               <UserJoinedGroups />
             </div>
           </div>
-        )}
+        {/* )} */}
       </div>
     </>
   );

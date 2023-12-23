@@ -93,6 +93,8 @@ const Navbar: React.FC = () => {
 
   const handleSearchSubmit: React.ChangeEventHandler<HTMLInputElement> = (e) => {
     e.preventDefault();
+    console.log('entered')
+    toast.success(selectedMenu)
     // Navigate to the search page with the search query
     if(selectedMenu === "Explore") {
       navigate(`/search?q=${encodeURIComponent(searchQuery)}`, { state: { searchQuery } });
@@ -156,13 +158,14 @@ const Navbar: React.FC = () => {
               )}
             </div>
             <div className="search relative hidden md:block">
-              <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+              <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none" onClick={() => alert("asdfasdf")}>
                 <svg
-                  className="w-4 h-4 text-gray-500 "
+                  className="w-4 h-4 text-gray-500 cursor-pointer"
                   aria-hidden="true"
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
-                  viewBox="0 0 20 20"
+                  viewBox="0 0 20 20"          
+                  
                 >
                   <path
                     stroke="currentColor"
