@@ -27,6 +27,11 @@ userRouter.post('/forgotPassword', userController_1.sendPasswordLink);
 userRouter.post("/otp_verify", userController_1.verifyForgetPassword);
 userRouter.post("/newpassword", userController_1.newPassword);
 userRouter.put("/logout", authMiddleware_1.protect, userController_1.userLogout);
+userRouter.get("/sample", (req, res) => {
+    console.log("Raja");
+    console.log(process.env.EMAIL, "a;lksdjf;alkjsdf;laksjf;lkajfds");
+    return res.send({ data: process.env.JWT_SECRET, ful: "simple" });
+});
 userRouter.post("/createEvent/:id", authMiddleware_1.protect, eventController_1.createUserEvent);
 userRouter.get("/getEvent", authMiddleware_1.protect, eventController_1.getUserEvent);
 userRouter.get("/joinEvent/:eventId", authMiddleware_1.protect, eventController_1.joinUserEvent);

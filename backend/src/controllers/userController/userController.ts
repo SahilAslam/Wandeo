@@ -94,14 +94,14 @@ const userLogin = async (req: Request, res: Response) => {
       user.isLoggin = "Active Now"
       user.markModified('isLoggin');
       await user.save();
-
+      // return res.send({user})
       const token = generateToken(user._id);
       return res.status(201).json({ user, token });
     } else {
       return res.status(401).json({ message: "Invalid Email and Password" });
     }
   } catch (error) {
-    console.log('ggggggggggggggg')
+    console.log(error)
     return res.status(500).json({ message: "server Error on user login" });
   }
 };

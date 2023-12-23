@@ -12,7 +12,8 @@ const createUserGroup = async (req: Request, res: Response) => {
     if (!user) {
       return res.status(404).json({ message: "User not Found!" });
     }
-
+    
+    
     const group = await GroupModel.create({
       createdBy: user._id,
       name: name,

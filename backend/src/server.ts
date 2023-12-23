@@ -6,7 +6,7 @@ import  connectDB from './connections/connection';
 import cors from 'cors'
 import dotenv from 'dotenv'
 import paymentRouter from './routes/paymentRoutes/paymentRoutes';
-dotenv.config()
+dotenv.config({path:__dirname+'../.env'})
 import { Server as SocketIoServer } from 'socket.io';
 import http from 'http';
 import {join} from 'path'
@@ -16,15 +16,11 @@ const port = 5000;
 const app = express();
 const server = http.createServer(app);
 const io = new SocketIoServer(server, {
-    cors: {
-        origin: [
-          "http://localhost:5173",
-          "http://wandeo.website",
-          "https://wandeo.website",
-        ],
-        methods: ["GET", "POST"],
-        credentials : true
-    }
+  cors: {
+    origin: '*',
+    credentials: true,
+    methods: ["GET", "POST"],
+  },
 });
 
 app.use(cors());

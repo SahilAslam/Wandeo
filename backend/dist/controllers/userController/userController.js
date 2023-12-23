@@ -99,7 +99,7 @@ const userLogin = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         }
     }
     catch (error) {
-        console.log('ggggggggggggggg');
+        console.log(error);
         return res.status(500).json({ message: "server Error on user login" });
     }
 });

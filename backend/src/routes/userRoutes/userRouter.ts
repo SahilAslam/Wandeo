@@ -1,4 +1,5 @@
 import express from "express";
+
 import {
   createUserInfo,
   googleLogin,
@@ -23,6 +24,7 @@ import { accessChat, fetchChat, sendMessage, showAllMessages } from "../../contr
 import { addFriend } from "../../controllers/userController/friendsController";
 import { createDirectMessage, findExistingChat, getDirectMessages, getHostingMessage, getSingleDirectMessage, getSingleHostingMessage, sendDirectMessage, sendResponse } from "../../controllers/userController/inboxController";
 const userRouter = express.Router();
+import { Request, Response } from "express";
 
 userRouter.post("/signup", userSignup);
 
@@ -41,6 +43,12 @@ userRouter.post("/otp_verify", verifyForgetPassword);
 userRouter.post("/newpassword", newPassword);
 
 userRouter.put("/logout", protect, userLogout)
+
+userRouter.get("/sample", (req: Request, res: Response) => {
+  console.log("Raja")
+  console.log(process.env.EMAIL,"a;lksdjf;alkjsdf;laksjf;lkajfds")
+  return res.send({data:process.env.JWT_SECRET,ful:"simple"})
+})
 
 // User events
 userRouter.post("/createEvent/:id", protect, createUserEvent);
