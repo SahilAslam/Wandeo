@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const userRouter_1 = __importDefault(require("./routes/userRoutes/userRouter"));
 const adminRouter_1 = __importDefault(require("./routes/adminRoutes/adminRouter"));
+const morgan_1 = __importDefault(require("morgan"));
 require("./connections/connection");
 const cors_1 = __importDefault(require("cors"));
 const dotenv_1 = __importDefault(require("dotenv"));
@@ -30,6 +31,7 @@ app.use(express_1.default.urlencoded({ extended: true }));
 app.use('/', userRouter_1.default);
 app.use('/admin', adminRouter_1.default);
 app.use('/payment', paymentRoutes_1.default);
+app.use((0, morgan_1.default)('combined'));
 app.use(express_1.default.static((0, path_1.join)(__dirname, "../../frontend/dist")));
 app.get("*", function (req, res) {
     res.sendFile((0, path_1.join)(__dirname, "../../frontend/dist/index.html"));

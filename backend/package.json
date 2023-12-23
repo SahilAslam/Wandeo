@@ -4,7 +4,6 @@
   "description": "",
   "main": "src/server.ts",
   "type": "commonjs",
-  
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon src/server.ts",
@@ -30,6 +29,7 @@
   },
   "dependencies": {
     "@stripe/stripe-js": "^2.2.0",
+    "@types/morgan": "^1.9.9",
     "bcrypt": "^5.1.1",
     "cloudinary": "^1.41.0",
     "cors": "^2.8.5",
@@ -39,6 +39,7 @@
     "google-auth-library": "^9.2.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^7.5.2",
+    "morgan": "^1.10.0",
     "nodemailer": "^6.9.7",
     "socket.io": "^4.7.2",
     "stripe": "^14.7.0"
