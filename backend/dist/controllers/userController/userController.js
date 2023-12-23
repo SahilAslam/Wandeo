@@ -77,6 +77,7 @@ exports.createUserInfo = createUserInfo;
 const userLogin = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { emailOrUsername, password } = req.body;
+        console.log(req.body, "klklkklkklkll");
         const user = yield userModel_1.default.findOne({
             $or: [{ email: emailOrUsername }, { username: emailOrUsername }],
         });
@@ -98,7 +99,8 @@ const userLogin = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         }
     }
     catch (error) {
-        res.status(500).json({ message: "server Error on user login" });
+        console.log('ggggggggggggggg');
+        return res.status(500).json({ message: "server Error on user login" });
     }
 });
 exports.userLogin = userLogin;

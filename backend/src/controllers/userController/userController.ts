@@ -77,7 +77,7 @@ const createUserInfo = async (req: Request, res: Response) => {
 const userLogin = async (req: Request, res: Response) => {
   try {
     const { emailOrUsername, password } = req.body;
-
+    console.log(req.body, "klklkklkklkll")
     const user = await userModel.findOne({
       $or: [{ email: emailOrUsername }, { username: emailOrUsername }],
     });
@@ -101,7 +101,8 @@ const userLogin = async (req: Request, res: Response) => {
       return res.status(401).json({ message: "Invalid Email and Password" });
     }
   } catch (error) {
-    res.status(500).json({ message: "server Error on user login" });
+    console.log('ggggggggggggggg')
+    return res.status(500).json({ message: "server Error on user login" });
   }
 };
 

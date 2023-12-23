@@ -18,7 +18,7 @@ function connectToDb() {
         try {
             yield mongoose_1.default.connect("mongodb+srv://sahil_aslam:1ipqH5WjdONX3Hqc@cluster0.hwqhb60.mongodb.net/");
             console.log('====================================');
-            console.log("conncted");
+            console.log("MongoDB connected");
             console.log('====================================');
         }
         catch (error) {
