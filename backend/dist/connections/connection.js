@@ -16,7 +16,7 @@ const mongoose_1 = __importDefault(require("mongoose"));
 function connectToDb() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            yield mongoose_1.default.connect("mongodb+srv://sahil_aslam:1ipqH5WjdONX3Hqc@cluster0.hwqhb60.mongodb.net/");
+            yield mongoose_1.default.connect("mongodb+srv://sahil_aslam:1ipqH5WjdONX3Hqc@cluster0.hwqhb60.mongodb.net/Wandeo?retryWrites=true&w=majority");
             console.log('====================================');
             console.log("MongoDB connected");
             console.log('====================================');
