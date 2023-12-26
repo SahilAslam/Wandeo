@@ -91,7 +91,7 @@ const Navbar: React.FC = () => {
     setSearchQuery(e.target.value);
   };
 
-  const handleSearchSubmit: React.ChangeEventHandler<HTMLInputElement> = (e) => {
+  const handleSearchSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
     console.log('entered')
     toast.success(selectedMenu)
@@ -176,7 +176,7 @@ const Navbar: React.FC = () => {
                   />
                 </svg>
               </div>
-              <form onSubmit={() => handleSearchSubmit}>
+              <form onSubmit={handleSearchSubmit}>
                 <input
                   type="text"
                   id="search-navbar"
