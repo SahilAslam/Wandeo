@@ -27,8 +27,10 @@ const getVerified = async (req: Request, res: Response) => {
         },
       ],
       mode: "payment",
-      success_url: `http://localhost:5173/paymentSuccess`,
-      cancel_url: `http://localhost:5173/payment`,
+      // success_url: `http://localhost:5173/paymentSuccess`,
+      success_url: `http://wandeo.website/paymentSuccess`,
+      // cancel_url: `http://localhost:5173/payment`,
+      cancel_url: `http://wandeo.website/payment`,
     });
   
     if (session.payment_status === "unpaid") {

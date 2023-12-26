@@ -38,8 +38,8 @@ const getVerified = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
                 },
             ],
             mode: "payment",
-            success_url: `http://localhost:5173/paymentSuccess`,
-            cancel_url: `http://localhost:5173/payment`,
+            success_url: `http://wandeo.website/paymentSuccess`,
+            cancel_url: `http://wandeo.website/payment`,
         });
         if (session.payment_status === "unpaid") {
             const verified = yield verifiedUserModel_1.default.create({
