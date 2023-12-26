@@ -36,9 +36,10 @@ export const options = {
 
 interface LineChartProps {
   userMonthlyData : number[],
+  verifiedMonthlyData: number[],
 }
 
-const LineChart: React.FC<LineChartProps> = ({userMonthlyData}) => {
+const LineChart: React.FC<LineChartProps> = ({ userMonthlyData, verifiedMonthlyData }) => {
   const labels = ['Jan', 'Feb', 'Mar', 'April', 'May', 'June', 'July' , 'Aug' , 'Sept' , 'Oct' , 'Nov' , 'Dec'];
   const actualLables = labels.slice(0 , userMonthlyData.length);
 
@@ -51,14 +52,12 @@ const LineChart: React.FC<LineChartProps> = ({userMonthlyData}) => {
         borderColor: "rgb(255, 99, 132)",
         backgroundColor: "rgba(255, 99, 132, 0.5)",
       },
-      // {
-      //   label: "Dataset 2",
-      //   data: labels.map(() =>
-      //     faker.datatype.number({ min: -1000, max: 1000 })
-      //   ),
-      //   borderColor: "rgb(53, 162, 235)",
-      //   backgroundColor: "rgba(53, 162, 235, 0.5)",
-      // },
+      {
+        label: "Verified Users",
+        data: verifiedMonthlyData,
+        borderColor: "rgb(53, 162, 235)",
+        backgroundColor: "rgba(53, 162, 235, 0.5)",
+      },
     ],
   };
 

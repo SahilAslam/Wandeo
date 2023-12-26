@@ -5,6 +5,7 @@ import  jwt  from "jsonwebtoken";
 import GroupModel from "../../models/groupModel";
 import EventModel from "../../models/eventModel";
 import HostingModel from "../../models/hostingModel";
+import VerifiedModel from "../../models/verifiedUserModel";
 
 const adminCred = {
     Email: "sahilaslam77@gmail.com",
@@ -99,17 +100,23 @@ export const unblockUser = async (req: Request, res: Response) => {
 
 export const adminDashboard = async (req: Request, res: Response) => {
     try {
-        const totalUsers = await userModel.countDocuments();
-        console.log("totalUsers: ", totalUsers)
-
         const currentDate = new Date();
         const currentYear = currentDate.getFullYear();
         const currentMonth = currentDate.getMonth() + 1;
 
+        const totalUsers = await userModel.countDocuments();
+        const totalVerifiedUsers = await VerifiedModel.countDocuments();
+        const totalGroups = await GroupModel.countDocuments();
+        const eventsGoingOn = await EventModel.countDocuments({
+            endDate: { $gte: currentDate },
+          });
+
         const userMonthlyCounts = new Array(12).fill(0);
+        const verifiedMonthlyCounts = new Array(12).fill(0);
         
         const users = await userModel.find();
-        let verifiedUser = 0;
+        const verifiedUsers = await VerifiedModel.find();
+        
 
         users.forEach((user) => {
             const userJoinedDate = new Date(user.createdAt);
@@ -119,13 +126,19 @@ export const adminDashboard = async (req: Request, res: Response) => {
             if(userJoinedYear === currentYear) {
                 userMonthlyCounts[userJoinedMonth]++;
             }
+        })
 
-            if(user.verified == true) {
-                verifiedUser ++;
+        verifiedUsers.forEach((user) => {
+            const verifiedDate = new Date(user.createdAt);
+            const verifiedMonth = verifiedDate.getMonth();
+            const verifiedYear = verifiedDate.getFullYear();
+
+            if(verifiedYear === currentYear) {
+                verifiedMonthlyCounts[verifiedMonth]++;
             }
         })
 
-        return res.status(201).json({totalUsers, userMonthlyCounts, verifiedUser,})
+        return res.status(201).json({totalUsers, userMonthlyCounts, totalVerifiedUsers, verifiedMonthlyCounts, totalGroups, eventsGoingOn})
     } catch (error) {
         console.error(error);
         res.status(500).json({message: "Internal server error"})       

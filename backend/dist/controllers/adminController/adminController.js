@@ -18,6 +18,7 @@ const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const groupModel_1 = __importDefault(require("../../models/groupModel"));
 const eventModel_1 = __importDefault(require("../../models/eventModel"));
 const hostingModel_1 = __importDefault(require("../../models/hostingModel"));
+const verifiedUserModel_1 = __importDefault(require("../../models/verifiedUserModel"));
 const adminCred = {
     Email: "sahilaslam77@gmail.com",
     username: "SahilAslam",
@@ -97,14 +98,19 @@ const unblockUser = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
 exports.unblockUser = unblockUser;
 const adminDashboard = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const totalUsers = yield userModel_1.default.countDocuments();
-        console.log("totalUsers: ", totalUsers);
         const currentDate = new Date();
         const currentYear = currentDate.getFullYear();
         const currentMonth = currentDate.getMonth() + 1;
+        const totalUsers = yield userModel_1.default.countDocuments();
+        const totalVerifiedUsers = yield verifiedUserModel_1.default.countDocuments();
+        const totalGroups = yield groupModel_1.default.countDocuments();
+        const eventsGoingOn = yield eventModel_1.default.countDocuments({
+            endDate: { $gte: currentDate },
+        });
         const userMonthlyCounts = new Array(12).fill(0);
+        const verifiedMonthlyCounts = new Array(12).fill(0);
         const users = yield userModel_1.default.find();
-        let verifiedUser = 0;
+        const verifiedUsers = yield verifiedUserModel_1.default.find();
         users.forEach((user) => {
             const userJoinedDate = new Date(user.createdAt);
             const userJoinedMonth = userJoinedDate.getMonth();
@@ -112,11 +118,16 @@ const adminDashboard = (req, res) => __awaiter(void 0, void 0, void 0, function*
             if (userJoinedYear === currentYear) {
                 userMonthlyCounts[userJoinedMonth]++;
             }
-            if (user.verified == true) {
-                verifiedUser++;
+        });
+        verifiedUsers.forEach((user) => {
+            const verifiedDate = new Date(user.createdAt);
+            const verifiedMonth = verifiedDate.getMonth();
+            const verifiedYear = verifiedDate.getFullYear();
+            if (verifiedYear === currentYear) {
+                verifiedMonthlyCounts[verifiedMonth]++;
             }
         });
-        return res.status(201).json({ totalUsers, userMonthlyCounts, verifiedUser, });
+        return res.status(201).json({ totalUsers, userMonthlyCounts, totalVerifiedUsers, verifiedMonthlyCounts, totalGroups, eventsGoingOn });
     }
     catch (error) {
         console.error(error);
