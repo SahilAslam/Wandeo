@@ -249,7 +249,7 @@ const CreateEvent: React.FC<CreateEventProps> = ({ visible, closeModal, updateUI
                             />
                           </div>
                         </div>
-                        {error && <p className="text-red-500">{error}</p>}
+                        {error && error == 'End date cannot be before the start date' && <p className="text-red-500">{error}</p>}
                       </div>
                       <div className="grid grid-cols-1 gap-1">
                         <label
@@ -274,7 +274,7 @@ const CreateEvent: React.FC<CreateEventProps> = ({ visible, closeModal, updateUI
                           className="w-full bg-secondary rounded border 
                           border-[#66666690] outline-none text-sm text-ascent-1 px-4 py-3 placeholder:text=[#666]"
                         />
-                        {error && <p className="text-red-500">{error}</p>}
+                        {error && error == "Please enter a non-negative number." && <p className="text-red-500">{error}</p>}
                       </div>
                       <div className="grid grid-cols-1 gap-1">
                         <label
