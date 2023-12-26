@@ -109,6 +109,7 @@ export const adminDashboard = async (req: Request, res: Response) => {
         const userMonthlyCounts = new Array(12).fill(0);
         
         const users = await userModel.find();
+        let verifiedUser = 0;
 
         users.forEach((user) => {
             const userJoinedDate = new Date(user.createdAt);
@@ -118,10 +119,13 @@ export const adminDashboard = async (req: Request, res: Response) => {
             if(userJoinedYear === currentYear) {
                 userMonthlyCounts[userJoinedMonth]++;
             }
-        })
-        
 
-        return res.status(201).json({totalUsers, userMonthlyCounts})
+            if(user.verified == true) {
+                verifiedUser ++;
+            }
+        })
+
+        return res.status(201).json({totalUsers, userMonthlyCounts, verifiedUser,})
     } catch (error) {
         console.error(error);
         res.status(500).json({message: "Internal server error"})       

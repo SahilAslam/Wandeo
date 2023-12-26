@@ -9,6 +9,7 @@ import Sidebar from "../../../Components/Admin/Sidebar/Sidebar";
 export const AdminDashboard = () => {
   const [usersCount, setUsersCount] = useState<number | null>(null);
   const [userMonthlyData, setUserMonthlyData] = useState<number[]>([]);
+  const [verifiedUser, setVerifiedUser] = useState<number | null>(null);
   const [open, setOpen] = useState(true);
 
   useEffect(() => {
@@ -18,6 +19,7 @@ export const AdminDashboard = () => {
         if (response.data) {
           setUsersCount(response.data?.totalUsers);
           setUserMonthlyData(response.data?.userMonthlyCounts);
+          setVerifiedUser(response.data?.verifiedUser)
         }
       })
       .catch((error) => {
@@ -45,7 +47,7 @@ export const AdminDashboard = () => {
                 <div className="bg-gradient-to-r from-blue-400 to-blue-500 rounded-lg h-40 border-l-4 border-white flex items-center justify-between px-4 cursor-pointer hover:shadow-lg transform hover:scale-105 transition duration-300 ease-out">
                   <div className="uppercase">
                     <h1 className="text-sm font-bold">Total Users</h1>
-                    <h1 className="text-2xl font-bold">10</h1>
+                    <h1 className="text-2xl font-bold">{verifiedUser}</h1>
                   </div>
                   <FaUsers className="text-3xl" />
                 </div>

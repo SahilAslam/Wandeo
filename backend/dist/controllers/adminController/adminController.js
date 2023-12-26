@@ -104,6 +104,7 @@ const adminDashboard = (req, res) => __awaiter(void 0, void 0, void 0, function*
         const currentMonth = currentDate.getMonth() + 1;
         const userMonthlyCounts = new Array(12).fill(0);
         const users = yield userModel_1.default.find();
+        let verifiedUser = 0;
         users.forEach((user) => {
             const userJoinedDate = new Date(user.createdAt);
             const userJoinedMonth = userJoinedDate.getMonth();
@@ -111,8 +112,11 @@ const adminDashboard = (req, res) => __awaiter(void 0, void 0, void 0, function*
             if (userJoinedYear === currentYear) {
                 userMonthlyCounts[userJoinedMonth]++;
             }
+            if (user.verified == true) {
+                verifiedUser++;
+            }
         });
-        return res.status(201).json({ totalUsers, userMonthlyCounts });
+        return res.status(201).json({ totalUsers, userMonthlyCounts, verifiedUser, });
     }
     catch (error) {
         console.error(error);
