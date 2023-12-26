@@ -263,12 +263,12 @@ const CreateEvent: React.FC<CreateEventProps> = ({ visible, closeModal, updateUI
                           value={attendeesLimit}
                           name="attandeesLimit"
                           onChange={(e) => {
-                            const inputValue = parseInt(e.target.value, 10);
-                            if (isNaN(inputValue) || inputValue < 0) {
+                            const inputValue: any = e.target.value 
+                            if (inputValue < 0) {
                               setError("Please enter a non-negative number.");
                             } else {
                               setError("");
-                              setAttendeesLimit(inputValue.toString());
+                              setAttendeesLimit(e.target.value);
                             }
                           }}
                           className="w-full bg-secondary rounded border 
