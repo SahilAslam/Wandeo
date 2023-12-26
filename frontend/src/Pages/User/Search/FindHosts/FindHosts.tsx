@@ -64,7 +64,7 @@ const FindHosts: React.FC = () => {
       <SignupNavbar />
       <div className="px-4 py-2 flex xl:justify-center flex-col gap-2 md:flex-row">
         <div className="order-2 md:order-1 w-full xl:w-auto flex flex-col gap-2">
-          <div className="bg-white shadow-lg w-auto xl:w-[375px]">
+          <div className="bg-white shadow-lg w-auto xl:w-full">
             <div className="px-5 py-2 w-auto">
               <h1 className="text-slate-700 font-semibold">Hosts</h1>
             </div>
@@ -117,7 +117,7 @@ const FindHosts: React.FC = () => {
                 Search
               </button>
             </div> */}
-            <div className="bg-gray-100 px-5 py-2.5">
+            <div className="bg-gray-100 px-5 py-2.5 w-full">
               <p className="text-gray-400 font-base">
                 {filteredhosts ? filteredhosts.length : "no"} users matchings
                 <span className="text-sky-600 cursor-pointer hover:text-green-800 hover:font-medium"></span>
@@ -127,8 +127,8 @@ const FindHosts: React.FC = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 mb-5">
             {filteredhosts ? (
               filteredhosts.map((host) => (
-                <div className=" p-2 bg-white shadow-lg w-auto xl:w-[375px] cursor-pointer" onClick={() => handleClick(host?.userId?._id)}>
-                  <div className="card-details pb-2 flex flex-row ">
+                <div className=" p-2 bg-white shadow-lg w-auto xl:w-[375px] cursor-pointer">
+                  <div className="card-details pb-2 flex flex-row" onClick={() => handleClick(host?.userId?._id)}>
                     <div className="image">
                       {host?.userId?.profileImage ? (
                         <img

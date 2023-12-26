@@ -69,8 +69,18 @@ const CreateEvent: React.FC<CreateEventProps> = ({ visible, closeModal, updateUI
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    if(error) {
+      toast.error(error);
+      return;
+    }
+
     if (new Date(endDate) <= new Date(startDate)) {
       toast.error("End date must be greater than the start date");
+      return;
+    }
+
+    if(eventName == "" || location == "" || startDate == "" || endDate == "" || attendeesLimit == "" || description == "") {
+      toast.error("Required all fields");
       return;
     }
 
@@ -252,10 +262,19 @@ const CreateEvent: React.FC<CreateEventProps> = ({ visible, closeModal, updateUI
                           type="number"
                           value={attendeesLimit}
                           name="attandeesLimit"
-                          onChange={(e) => setAttendeesLimit(e.target.value)}
+                          onChange={(e) => {
+                            const inputValue = parseInt(e.target.value, 10);
+                            if (isNaN(inputValue) || inputValue < 0) {
+                              setError("Please enter a non-negative number.");
+                            } else {
+                              setError("");
+                              setAttendeesLimit(inputValue.toString());
+                            }
+                          }}
                           className="w-full bg-secondary rounded border 
                           border-[#66666690] outline-none text-sm text-ascent-1 px-4 py-3 placeholder:text=[#666]"
                         />
+                        {error && <p className="text-red-500">{error}</p>}
                       </div>
                       <div className="grid grid-cols-1 gap-1">
                         <label
@@ -287,7 +306,7 @@ const CreateEvent: React.FC<CreateEventProps> = ({ visible, closeModal, updateUI
                         >
                           Description
                         </label>
-                        
+
                         <textarea
                           name=""
                           id=""

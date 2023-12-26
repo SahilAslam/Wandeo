@@ -76,8 +76,8 @@ const FindTravelers: React.FC = () => {
       <Navbar />
       <div className="px-4 py-2 flex xl:justify-center flex-col gap-2 md:flex-row">
         <div className="order-2 md:order-1 w-full xl:w-auto flex flex-col gap-2">
-          <div className="bg-white shadow-lg w-auto">
-            <div className="px-5 py-2 w-auto xl:w-[375px]">
+          <div className="bg-white shadow-lg w-auto xl:w-full">
+            <div className="px-5 py-2 w-auto">
               <h1 className="text-slate-700 font-semibold">Travelers</h1>
             </div>
             {/* <div className="flex flex-col lg:flex-row gap-3 px-5 pt-5 w-auto">
@@ -129,7 +129,7 @@ const FindTravelers: React.FC = () => {
                 Search
               </button>
             </div> */}
-            <div className="bg-gray-100 px-5 py-2.5">
+            <div className="bg-gray-100 px-5 py-2.5 w-full">
               <p className="text-gray-400 font-base">
                 {filteredTravelers ? filteredTravelers.length : "no"} users
                 matching
