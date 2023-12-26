@@ -148,7 +148,10 @@ function UserTable() {
                 <th scope="col" className="px-6 py-3 ">
                   Email
                 </th>
-                <th scope="col" className="px-6 py-3 bg-gray-50 ">
+                <th scope="col" className="px-6 py-3 bg-gray-50">
+                  Status
+                </th>
+                <th scope="col" className="px-6 py-3">
                   Action
                 </th>
               </tr>
@@ -164,9 +167,10 @@ function UserTable() {
                       {index + 1}
                     </th>
                     <td className="px-6 py-4">{user?.name}</td>
-                    <td className="px-6 py-4  bg-gray-50 ">{user?.username}</td>
+                    <td className="px-6 py-4 bg-gray-50 ">{user?.username}</td>
                     <td className="px-6 py-4">{user?.email}</td>
-                    <td className="px-6 py-4  bg-gray-50 ">
+                    <td className="px-6 py-4 bg-gray-50 ">{user?.verified ? "Verified" : "Not verified"}</td>
+                    <td className="px-6 py-4">
                       {!user?.isBlocked ? (
                         <button
                           onClick={() => blockUser(user?._id)}

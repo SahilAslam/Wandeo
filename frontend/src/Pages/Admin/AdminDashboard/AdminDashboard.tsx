@@ -4,6 +4,9 @@ import { FaUsers } from "react-icons/fa";
 import adminInstance from "../../../Axios/adminInstance";
 import LineChart from "../../../Components/Admin/Charts/LineChart";
 import Sidebar from "../../../Components/Admin/Sidebar/Sidebar";
+import { MdVerified } from "react-icons/md";
+import { LiaUsersSolid } from "react-icons/lia";
+import { MdEventNote } from "react-icons/md";
 
 
 export const AdminDashboard = () => {
@@ -56,7 +59,7 @@ export const AdminDashboard = () => {
                     <h1 className="text-sm font-bold">Verifed Users</h1>
                     <h1 className="text-2xl font-bold">{verifiedUser}</h1>
                   </div>
-                  <FaUsers className="text-3xl" />
+                  <MdVerified className="text-3xl" />
                 </div>
 
                 <div className="bg-gradient-to-r from-yellow-400 to-yellow-500 rounded-lg h-40 border-l-4 border-white flex items-center justify-between px-4 cursor-pointer hover:shadow-lg transform hover:scale-105 transition duration-300 ease-out">
@@ -64,14 +67,14 @@ export const AdminDashboard = () => {
                     <h1 className="text-sm font-bold">Events Going on</h1>
                     <h1 className="text-2xl font-bold">{events}</h1>
                   </div>
-                  <FaUsers className="text-3xl" />
+                  <MdEventNote className="text-3xl" />
                 </div>
                 <div className="bg-gradient-to-r from-red-400 to-red-500 rounded-lg h-40 border-l-4 border-white flex items-center justify-between px-4 cursor-pointer hover:shadow-lg transform hover:scale-105 transition duration-300 ease-out">
                   <div className="uppercase">
                     <h1 className="text-sm font-bold">Total Groups</h1>
                     <h1 className="text-2xl font-bold">{groups}</h1>
                   </div>
-                  <FaUsers className="text-3xl" />
+                  <LiaUsersSolid className="text-3xl" />
                 </div>
               </div>
               <div className="flex justify-center px-4 sm:px-6 md:px-8">
