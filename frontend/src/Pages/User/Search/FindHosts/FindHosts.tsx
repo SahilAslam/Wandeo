@@ -64,7 +64,7 @@ const FindHosts: React.FC = () => {
       <SignupNavbar />
       <div className="px-4 py-2 flex xl:justify-center flex-col gap-2 md:flex-row">
         <div className="order-2 md:order-1 w-full xl:w-auto flex flex-col gap-2">
-          <div className="bg-white shadow-lg w-auto">
+          <div className="bg-white shadow-lg w-auto xl:w-[375px]">
             <div className="px-5 py-2 w-auto">
               <h1 className="text-slate-700 font-semibold">Hosts</h1>
             </div>

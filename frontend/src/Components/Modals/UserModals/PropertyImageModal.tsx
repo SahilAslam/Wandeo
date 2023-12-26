@@ -77,7 +77,7 @@ const PropertyImageModal: React.FC<PropertyImageProps> = ({ visible, closeModal,
         image: uploadedUrl,
       })
       .then((res) => {
-        if (res.data.message) {
+        if (res.data) {
           console.log(res.data.message);
           closeModal();
         }

@@ -11,7 +11,7 @@ const GroupDiscussionPage = () => {
 
   const { id } = useParams();
 
-  const BASE_URL = import.meta.env.VITE_CLOUDINARY_BASE_URL || ""
+  // const BASE_URL = import.meta.env.VITE_CLOUDINARY_BASE_URL || ""
 
   const getDiscussion = async () => {
     // eslint-disable-next-line no-useless-catch
@@ -141,7 +141,7 @@ const GroupDiscussionPage = () => {
                 <div className="flex gap-3 border-b py-5">
                   <div>
                     <img
-                      src={`${BASE_URL}/${reply?.userId?.profileImage}`}
+                      src={`${reply?.userId?.profileImage}`}
                       alt="img"
                       className="w-8 h-8 border rounded-full"
                     />

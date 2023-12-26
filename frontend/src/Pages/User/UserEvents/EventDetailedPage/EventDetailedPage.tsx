@@ -8,6 +8,7 @@ import { selectUser } from "../../../../Redux/Slice/userSlice";
 import { BiTimeFive } from "react-icons/bi";
 import { MdLocationOn } from "react-icons/md";
 import { toast, ToastContainer } from "react-toastify";
+import LeaveEventModal from "../../../../Components/Modals/UserModals/LeaveEventModal";
 
 interface Attender {
   _id: string;
@@ -35,6 +36,7 @@ const EventDetailedPage: React.FC = () => {
   const [event, setEvent] = useState<Event | null>(null);
   const [updateUI, setUpdateUI] = useState<boolean>(false);
   // const [usersAttending, setUsersAttending] = useState([])
+  const [LeaveModal, setLeaveModal] = useState<boolean>(false);
 
   const navigate = useNavigate();
 
@@ -108,6 +110,14 @@ const EventDetailedPage: React.FC = () => {
     } else {
       navigate(`/DiffProfile/${attenderId}`)
     }
+  }
+
+  const openLeaveModal = () => {
+    setLeaveModal(true);
+  }
+
+  const closeLeaveModal = () => {
+    setLeaveModal(false);
   }
 
   return (
@@ -209,7 +219,7 @@ const EventDetailedPage: React.FC = () => {
                         {isAttendingEvent() ? ( // Conditionally render the button
                           <button
                             type="submit"
-                            onClick={() => leaveEvent(event?._id)}
+                            onClick={openLeaveModal}
                             className="bg-gray-500 px-5 py-1 rounded-sm text-white mt-2"
                           >
                             Leave Event
@@ -244,6 +254,7 @@ const EventDetailedPage: React.FC = () => {
           </div>
         </div>
       </div>
+      <LeaveEventModal visible={LeaveModal} closeModal={closeLeaveModal} LeaveEvent={() => leaveEvent(event?._id)} />
     </>
   );
 };

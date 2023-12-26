@@ -23,7 +23,6 @@ const UserProfile = () => {
 
   const user = useSelector(selectUser) as any;
   const id = user?.id ? user?.id : user?.user?._id;
-  console.log(id);
 
   useEffect(() => {
     setIsLoading(true);
