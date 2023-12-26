@@ -1,7 +1,7 @@
 import axios from "axios";
 const arr = ["http://localhost:5000","https://wandeo.website"]
 const axiosInstance = axios.create({
-    baseURL: arr[0]
+    baseURL: arr[1]
 });
 
 axiosInstance.interceptors.request.use(
