@@ -418,7 +418,7 @@ const Navbar: React.FC = () => {
               </h1>
             </div>
             {searchMenuOpen && (
-              <div className="menus block md:hidden bg-white w-40 shadow-xl absolute xl:-left-1 md:-left-24 z-50 rounded-xl border">
+              <div className="menus block md:hidden bg-white w-40 shadow-xl absolute -left-28 z-50 rounded-xl border">
                 <ul>
                   {SearchMenus.map((menu, index) => (
                     <li
