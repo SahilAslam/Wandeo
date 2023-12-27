@@ -397,11 +397,11 @@ const Navbar: React.FC = () => {
       </div>
       {isSearchVisible && (
         <div className="flex lg:hidden pl-10">
-          <div className="">
+          <div className="relative">
             <div
               onClick={() => setSearchMenuOpen(!searchMenuOpen)}
               ref={searchUlRef}
-              className="relative flex md:hidden w-auto p-2 text-sm text-gray-900 border border-gray-300 rounded-l-lg bg-gray-50 cursor-pointer"
+              className="flex md:hidden w-auto p-2 text-sm text-gray-900 border border-gray-300 rounded-l-lg bg-gray-50 cursor-pointer"
             >
               <h1
                 onClick={(e) => {
