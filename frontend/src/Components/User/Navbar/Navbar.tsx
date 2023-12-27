@@ -401,7 +401,7 @@ const Navbar: React.FC = () => {
             <div
               onClick={() => setSearchMenuOpen(!searchMenuOpen)}
               ref={searchUlRef}
-              className="search flex md:hidden w-auto p-2 text-sm text-gray-900 border border-gray-300 rounded-l-lg bg-gray-50 cursor-pointer "
+              className="flex md:hidden w-auto p-2 text-sm text-gray-900 border border-gray-300 rounded-l-lg bg-gray-50 cursor-pointer"
             >
               <h1
                 onClick={(e) => {
@@ -439,7 +439,6 @@ const Navbar: React.FC = () => {
           <div className="relative block lg:hidden">
             <div
               className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"
-              onClick={() => alert("asdfasdf")}
             >
               <svg
                 className="w-4 h-4 text-gray-500 cursor-pointer"
