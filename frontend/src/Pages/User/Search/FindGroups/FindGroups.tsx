@@ -27,7 +27,6 @@ const FindGroups: React.FC = () => {
       .then((res) => {
         if (res.data.message) {
           setGroups(res.data.groups);
-          console.log(groups, "dddddddd");
         }
         if (res.data.error) {
           toast.error(res.data.error);

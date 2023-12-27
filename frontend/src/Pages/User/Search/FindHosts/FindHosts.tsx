@@ -28,7 +28,6 @@ const FindHosts: React.FC = () => {
       .then((response) => {
         if (response.data) {
           setHosts(response.data?.hosts);
-          console.log(hosts, "hosts");
         }
         if (response.data.error) {
           toast.error(response.data.error);

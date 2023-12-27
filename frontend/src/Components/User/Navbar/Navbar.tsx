@@ -13,6 +13,7 @@ const Navbar: React.FC = () => {
   const [searchMenuOpen, setSearchMenuOpen] = useState(false);
   const [selectedMenu, setSelectedMenu] = useState("Find Users");
   const [searchQuery, setSearchQuery] = useState("");
+  const [isSearchVisible, setIsSearchVisible] = useState<boolean>(false);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -38,22 +39,21 @@ const Navbar: React.FC = () => {
       setSelectedMenu("Explore"); // Adjust this based on your actual category for the inbox page
     }
   }, [location.pathname]);
-  
-  
+
   const toggleNav = () => {
     setIsNavOpen(!isNavOpen);
   };
 
   const handleLogout = async () => {
     const response = await axiosInstance.put(`/logout`);
-    if(response.data) {
+    if (response.data) {
       dispatch(logout());
       navigate("/login");
       setTimeout(() => {
         toast.success("Logout Successfull");
-      }, 0)
+      }, 0);
     } else {
-      console.log("coudn't update lastLogin")
+      console.log("coudn't update lastLogin");
     }
   };
 
@@ -68,7 +68,7 @@ const Navbar: React.FC = () => {
     }
   });
 
-  const searchUlRef = useRef(null); 
+  const searchUlRef = useRef(null);
   const searchMenuRef = useRef<HTMLLIElement | null>(null);
 
   const SearchMenus = [
@@ -87,28 +87,44 @@ const Navbar: React.FC = () => {
     }
   });
 
-  const handleSearchChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
+  const handleSearchChange: React.ChangeEventHandler<HTMLInputElement> = (
+    e
+  ) => {
     setSearchQuery(e.target.value);
   };
 
   const handleSearchSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
-    console.log('entered')
-    toast.success(selectedMenu)
     // Navigate to the search page with the search query
-    if(selectedMenu === "Explore") {
-      navigate(`/search?q=${encodeURIComponent(searchQuery)}`, { state: { searchQuery } });
-    } else if(selectedMenu === "Find Groups") {
-      navigate(`/findGroups?q=${encodeURIComponent(searchQuery)}`, { state: { searchQuery } });
-    } else if(selectedMenu === "Find Hosts") {
-      navigate(`/findHosts?q=${encodeURIComponent(searchQuery)}`, { state: { searchQuery } });
+    if (selectedMenu === "Explore") {
+      navigate(`/search?q=${encodeURIComponent(searchQuery)}`, {
+        state: { searchQuery },
+      });
+    } else if (selectedMenu === "Find Groups") {
+      navigate(`/findGroups?q=${encodeURIComponent(searchQuery)}`, {
+        state: { searchQuery },
+      });
+    } else if (selectedMenu === "Find Hosts") {
+      navigate(`/findHosts?q=${encodeURIComponent(searchQuery)}`, {
+        state: { searchQuery },
+      });
     } else if (selectedMenu === "Find Events") {
-      navigate(`/findEvents?q=${encodeURIComponent(searchQuery)}`, { state: { searchQuery } });
+      navigate(`/findEvents?q=${encodeURIComponent(searchQuery)}`, {
+        state: { searchQuery },
+      });
     } else if (selectedMenu === "Find Users") {
-      navigate(`/findUser?q=${encodeURIComponent(searchQuery)}`, { state: { searchQuery } });
+      navigate(`/findUser?q=${encodeURIComponent(searchQuery)}`, {
+        state: { searchQuery },
+      });
     } else if (selectedMenu === "Find Travelers") {
-      navigate(`/findTravelers?q=${encodeURIComponent(searchQuery)}`, { state: { searchQuery } });
+      navigate(`/findTravelers?q=${encodeURIComponent(searchQuery)}`, {
+        state: { searchQuery },
+      });
     }
+  };
+
+  const toggleSearch = () => {
+    setIsSearchVisible(!isSearchVisible);
   };
 
   return (
@@ -129,13 +145,15 @@ const Navbar: React.FC = () => {
                 <h1
                   onClick={(e) => {
                     e.stopPropagation();
-                    setSearchMenuOpen(!searchMenuOpen)
-                  }}                   
+                    setSearchMenuOpen(!searchMenuOpen);
+                  }}
                   ref={searchUlRef}
                   className="flex"
                 >
                   {selectedMenu}
-                  <IoMdArrowDropdown className={`mt-1.5 ml-1 ${searchMenuOpen && "hidden"}`} />
+                  <IoMdArrowDropdown
+                    className={`mt-1.5 ml-1 ${searchMenuOpen && "hidden"}`}
+                  />
                 </h1>
               </div>
               {searchMenuOpen && (
@@ -158,14 +176,16 @@ const Navbar: React.FC = () => {
               )}
             </div>
             <div className="search relative hidden md:block">
-              <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none" onClick={() => alert("asdfasdf")}>
+              <div
+                className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"
+                onClick={() => alert("asdfasdf")}
+              >
                 <svg
                   className="w-4 h-4 text-gray-500 cursor-pointer"
                   aria-hidden="true"
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
-                  viewBox="0 0 20 20"          
-                  
+                  viewBox="0 0 20 20"
                 >
                   <path
                     stroke="currentColor"
@@ -197,6 +217,7 @@ const Navbar: React.FC = () => {
             aria-controls="navbar-search"
             aria-expanded="false"
             className="togglesearchbutton md:hidden text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-4 focus:ring-gray-200 rounded-lg text-sm p-2.5 mr-1"
+            onClick={toggleSearch}
           >
             <svg
               className="w-5 h-5"
@@ -374,6 +395,82 @@ const Navbar: React.FC = () => {
           </ul>
         </div>
       </div>
+      {isSearchVisible && (
+        <div className="flex lg:hidden pl-10">
+          <div className="relative">
+            <div
+              onClick={() => setSearchMenuOpen(!searchMenuOpen)}
+              ref={searchUlRef}
+              className="search hidden md:flex w-auto p-2 text-sm text-gray-900 border border-gray-300 rounded-l-lg bg-gray-50 cursor-pointer "
+            >
+              <h1
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setSearchMenuOpen(!searchMenuOpen);
+                }}
+                ref={searchUlRef}
+                className="flex"
+              >
+                {selectedMenu}
+                <IoMdArrowDropdown
+                  className={`mt-1.5 ml-1 ${searchMenuOpen && "hidden"}`}
+                />
+              </h1>
+            </div>
+            {searchMenuOpen && (
+              <div className="menus bg-white w-40 shadow-xl absolute xl:-left-1 md:-left-24 z-50 rounded-xl border">
+                <ul>
+                  {SearchMenus.map((menu, index) => (
+                    <li
+                      key={index}
+                      className="p-2 cursor-pointer hover:bg-blue-100 rounded-xl text-sm"
+                      onClick={() => {
+                        setSelectedMenu(menu);
+                        setSearchMenuOpen(false);
+                      }}
+                    >
+                      {menu}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+          <div className="search relative hidden md:block">
+            <div
+              className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"
+              onClick={() => alert("asdfasdf")}
+            >
+              <svg
+                className="w-4 h-4 text-gray-500 cursor-pointer"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
+                />
+              </svg>
+            </div>
+            <form onSubmit={handleSearchSubmit}>
+              <input
+                type="text"
+                id="search-navbar"
+                value={searchQuery}
+                onChange={handleSearchChange}
+                onClick={(e) => e.stopPropagation()}
+                className="block w-full p-2 pl-10 text-sm text-gray-900 border-y border-r border-gray-300 rounded-r-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 "
+                placeholder="Search"
+              />
+            </form>
+          </div>
+        </div>
+      )}
       {isNavOpen && (
         <div
           className="togglenavbardiv items-center justify-between w-full md:flex md:w-auto md:order-2"
@@ -455,6 +552,6 @@ const Navbar: React.FC = () => {
       )}
     </nav>
   );
-}
+};
 
 export default Navbar;

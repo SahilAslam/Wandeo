@@ -65,7 +65,7 @@ const FindUsers: React.FC = () => {
           </div>
           {currentRecords && currentRecords.length > 0 ? (
             currentRecords.map((user) => (
-              <div className="flex flex-col sm:flex-row justify-between px-5 py-7 border-b">
+              <div className="flex flex-col sm:flex-row justify-between px-2 sm:px-5 py-7 border-b">
                 <div className="flex flex-row gap-2 min-w-fit">
                   <div>
                     {user.profileImage ? (
@@ -131,7 +131,7 @@ const FindUsers: React.FC = () => {
                   </div>
                 </div>
                 <div className="flex flex-col text-center sm:text-end">
-                  <div className="">
+                  <div className="pt-2 sm:pt-0">
                     <h1
                       className={`text-xl font-semibold ${
                         user?.hostingAvailability === "Accepting Guests"
