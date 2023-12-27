@@ -396,7 +396,7 @@ const Navbar: React.FC = () => {
         </div>
       </div>
       {isSearchVisible && (
-        <div className="flex lg:hidden pl-10">
+        <div className="flex justify-center lg:hidden pb-2">
           <div className="relative">
             <div
               onClick={() => setSearchMenuOpen(!searchMenuOpen)}
@@ -418,7 +418,7 @@ const Navbar: React.FC = () => {
               </h1>
             </div>
             {searchMenuOpen && (
-              <div className="menus block md:hidden bg-white w-40 shadow-xl absolute ml-16 left-0 z-50 rounded-xl border">
+              <div className="menus block md:hidden bg-white w-40 shadow-xl absolute ml-24 left-0 z-50 rounded-xl border">
                 <ul>
                   {SearchMenus.map((menu, index) => (
                     <li
