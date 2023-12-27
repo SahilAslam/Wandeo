@@ -436,7 +436,7 @@ const Navbar: React.FC = () => {
               </div>
             )}
           </div>
-          <div className="search relative hidden md:block">
+          <div className="search relative block lg:hidden">
             <div
               className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"
               onClick={() => alert("asdfasdf")}
@@ -512,12 +512,15 @@ const Navbar: React.FC = () => {
               </Link>
             </li>
             <li>
-              <a
-                href="#"
-                className="togglenavitem block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0"
-              >
-                Inbox
-              </a>
+              <Link to="/inbox"> 
+                <a
+                  className={`togglenavitem block py-2 pl-3 pr-4 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 ${
+                    isInboxPage ? "bg-green-800 text-white" : "text-gray-900"
+                  }`}
+                >
+                  Inbox
+                </a>
+              </Link>
             </li>
             <li>
               <Link to="/profile">
@@ -530,18 +533,18 @@ const Navbar: React.FC = () => {
                 </a>
               </Link>
             </li>
-            <li>
+            {/* <li>
               <a
                 href="#"
                 className="togglenavitem block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0"
               >
                 Settings
               </a>
-            </li>
+            </li> */}
             <li>
               <a
                 href="#"
-                className="togglenavitem block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0"
+                className="togglenavitem block py-2 pl-3 pr-4 text-red-600 hover:underline rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0"
                 onClick={handleLogout}
               >
                 Logout
