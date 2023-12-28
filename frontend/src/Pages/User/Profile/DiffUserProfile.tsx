@@ -178,8 +178,8 @@ const DiffUserProfile = () => {
                 id={userId}
               />
             </div>
-            <div className="w-full flex flex-col justify-between gap-2">
-              <div className="flex flex-col sm:flex-row bg-white">
+            <div className="w-full flex flex-col gap-2">
+              <div className="flex flex-col sm:flex-row sm:justify-between bg-white">
                 <div className="flex flex-col py-5 px-5 md:w-fit">
                   <h1
                     className={`text-2xl font-semibold ${
@@ -205,7 +205,7 @@ const DiffUserProfile = () => {
                     </p>
                   )}
                 </div>
-                <div className="flex md:flex-wrap lg:flex-row items-center justify-end gap-2 px-5 pb-5 sm:pt-0 sm:py-0">
+                <div className="flex md:flex-wrap lg:flex-row items-center justify-end gap-2 px-5  sm:pt-0 sm:py-0">
                   {(userDatails?.hostingAvailability === "Accepting Guests" ||
                     userDatails?.hostingAvailability ===
                       "Maybe Accepting Guests") &&
