@@ -55,7 +55,7 @@ const CreateDiscussion: React.FC<CreateDiscussionProps> = ({
           className="px-4 flex justify-center items-center fixed z-50 top-0 left-0 inset-0 bg-[#131313] bg-opacity-30 backdrop-blur-sm"
           id="wrapper"
         >
-          <div className="flex flex-col rounded-lg bg-white h-auto w-auto">
+          <div className="flex flex-col rounded-lg bg-white h-auto w-full sm:max-w-sm">
             <form onSubmit={handleSubmit}>
               <div className="px-4 py-5 border-b rounded-t-lg bg-slate-200 flex flex-row">
                 <h1 className="uppercase w-full text-lg text-slate-600 font-semibold">

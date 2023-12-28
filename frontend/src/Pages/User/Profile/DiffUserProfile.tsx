@@ -11,6 +11,7 @@ import moment from "moment";
 import UsersTrips from "../../../Components/User/Trips/UsersTrips";
 import CreateHostingModal from "../../../Components/Modals/UserModals/CreateHostingModal";
 import CreateMessage from "../../../Components/Modals/UserModals/CreateMessage";
+import { BiSolidMessageDetail } from "react-icons/bi";
 
 const DiffUserProfile = () => {
   const [userDatails, setUserDetails] = useState<any>([]);
@@ -221,7 +222,13 @@ const DiffUserProfile = () => {
                     ) : (
                       <div>
                         <button
-                          className="bg-green-700 hover:bg-green-800 text-white font-semibold px-4 py-2 rounded flex items-center gap-2"
+                          className="sm:hidden flex items-center gap-2 bg-green-700 hover:bg-green-800 text-white font-semibold px-4 py-2 rounded "
+                          onClick={openHostingModal}
+                        >
+                          <FaBed className="text-xl" />
+                        </button>
+                        <button
+                          className="hidden sm:flex items-center gap-2 bg-green-700 hover:bg-green-800 text-white font-semibold px-4 py-2 rounded "
                           onClick={openHostingModal}
                         >
                           <FaBed className="text-xl" />
@@ -233,7 +240,13 @@ const DiffUserProfile = () => {
                     <div>
                       <button
                         onClick={() => handleClick(chatExists?._id)}
-                        className="bg-green-700 hover:bg-green-800 text-white font-semibold px-4 py-2 rounded flex items-center gap-2"
+                        className="bg-green-700 hover:bg-green-800 text-white font-semibold px-4 py-2 rounded sm:hidden flex items-center gap-2"
+                      >
+                        <BiSolidMessageDetail className="text-xl" />
+                      </button>
+                      <button
+                        onClick={() => handleClick(chatExists?._id)}
+                        className="bg-green-700 hover:bg-green-800 text-white font-semibold px-4 py-2 rounded hidden sm:flex items-center gap-2"
                       >
                         Show Message
                       </button>
@@ -260,7 +273,7 @@ const DiffUserProfile = () => {
                       More
                     </button>
                     {menuOpen && (
-                      <div className="menus bg-white w-60 -right-4 shadow-xl absolute z-50 border">
+                      <div className="menus bg-white w-60 -right-10 xl:-right-4 shadow-xl absolute z-50 border">
                         <ul>
                           {Menus.map((menu, index) => (
                             <li
