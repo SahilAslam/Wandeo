@@ -179,7 +179,7 @@ const DiffUserProfile = () => {
               />
             </div>
             <div className="w-full flex flex-col gap-2">
-              <div className="grid grid-cols-1 sm:grid-cols-2 bg-white">
+              <div className="flex flex-col sm:flex-row bg-white">
                 <div className="flex flex-col py-5 px-5">
                   <h1
                     className={`text-2xl font-semibold ${
@@ -225,7 +225,7 @@ const DiffUserProfile = () => {
                           className="sm:hidden flex items-center gap-2 bg-green-700 hover:bg-green-800 text-white font-semibold px-4 py-2 rounded "
                           onClick={openHostingModal}
                         >
-                          <FaBed className="text-xl" />
+                          <FaBed className="text-2xl" />
                         </button>
                         <button
                           className="hidden sm:flex items-center gap-2 bg-green-700 hover:bg-green-800 text-white font-semibold px-4 py-2 rounded "
@@ -242,7 +242,7 @@ const DiffUserProfile = () => {
                         onClick={() => handleClick(chatExists?._id)}
                         className="bg-green-700 hover:bg-green-800 text-white font-semibold px-4 py-2 rounded sm:hidden flex items-center gap-2"
                       >
-                        <BiSolidMessageDetail className="text-xl" />
+                        <BiSolidMessageDetail className="text-2xl" />
                       </button>
                       <button
                         onClick={() => handleClick(chatExists?._id)}
@@ -255,7 +255,13 @@ const DiffUserProfile = () => {
                     <div>
                       <button
                         onClick={openModal}
-                        className="bg-green-700 hover:bg-green-800 text-white font-semibold px-4 py-2 rounded flex items-center gap-2"
+                        className="bg-green-700 hover:bg-green-800 text-white font-semibold px-4 py-2 rounded sm:hidden flex items-center gap-2"
+                      >
+                        <BiSolidMessageDetail className="text-2xl" />
+                      </button>
+                      <button
+                        onClick={openModal}
+                        className="bg-green-700 hover:bg-green-800 text-white font-semibold px-4 py-2 rounded hidden sm:flex items-center gap-2"
                       >
                         Message
                       </button>
@@ -273,7 +279,7 @@ const DiffUserProfile = () => {
                       More
                     </button>
                     {menuOpen && (
-                      <div className="menus bg-white w-60 -right-10 xl:-right-4 shadow-xl absolute z-50 border">
+                      <div className="menus bg-white w-fit lg:w-60 -right-10 lg:-right-4 shadow-xl absolute z-50 border">
                         <ul>
                           {Menus.map((menu, index) => (
                             <li
