@@ -178,9 +178,9 @@ const DiffUserProfile = () => {
                 id={userId}
               />
             </div>
-            <div className="w-full flex flex-col gap-2">
+            <div className="w-full flex flex-col justify-between gap-2">
               <div className="flex flex-col sm:flex-row bg-white">
-                <div className="flex flex-col py-5 px-5">
+                <div className="flex flex-col py-5 px-5 md:w-fit">
                   <h1
                     className={`text-2xl font-semibold ${
                       userDatails?.hostingAvailability === "Accepting Guests"
@@ -205,7 +205,7 @@ const DiffUserProfile = () => {
                     </p>
                   )}
                 </div>
-                <div className="flex items-center justify-end gap-2 px-5 pb-5 sm:pt-0 sm:py-0">
+                <div className="flex md:flex-wrap lg:flex-row items-center justify-end gap-2 px-5 pb-5 sm:pt-0 sm:py-0">
                   {(userDatails?.hostingAvailability === "Accepting Guests" ||
                     userDatails?.hostingAvailability ===
                       "Maybe Accepting Guests") &&
@@ -279,7 +279,7 @@ const DiffUserProfile = () => {
                       More
                     </button>
                     {menuOpen && (
-                      <div className="menus bg-white w-fit lg:w-60 -right-10 lg:-right-4 shadow-xl absolute z-50 border">
+                      <div className="menus bg-white w-fit lg:w-60 -right-4 shadow-xl absolute z-50 border">
                         <ul>
                           {Menus.map((menu, index) => (
                             <li
