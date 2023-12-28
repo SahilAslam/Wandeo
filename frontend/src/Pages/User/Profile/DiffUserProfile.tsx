@@ -205,7 +205,7 @@ const DiffUserProfile = () => {
                     </p>
                   )}
                 </div>
-                <div className="flex md:flex-wrap lg:flex-row items-center justify-end gap-2 px-5  sm:pt-0 sm:py-0">
+                <div className="flex md:flex-wrap lg:flex-row items-center justify-end gap-2 px-5 pb-5 sm:pt-0 sm:py-0">
                   {(userDatails?.hostingAvailability === "Accepting Guests" ||
                     userDatails?.hostingAvailability ===
                       "Maybe Accepting Guests") &&
@@ -222,13 +222,13 @@ const DiffUserProfile = () => {
                     ) : (
                       <div>
                         <button
-                          className="sm:hidden flex items-center gap-2 bg-green-700 hover:bg-green-800 text-white font-semibold px-4 py-2 rounded "
+                          className="sm:hidden flex items-center gap-x-2 bg-green-700 hover:bg-green-800 text-white font-semibold px-4 py-2 rounded "
                           onClick={openHostingModal}
                         >
                           <FaBed className="text-2xl" />
                         </button>
                         <button
-                          className="hidden sm:flex items-center gap-2 bg-green-700 hover:bg-green-800 text-white font-semibold px-4 py-2 rounded "
+                          className="hidden sm:flex items-center gap-x-2 bg-green-700 hover:bg-green-800 text-white font-semibold px-4 py-2 rounded "
                           onClick={openHostingModal}
                         >
                           <FaBed className="text-xl" />
@@ -240,13 +240,13 @@ const DiffUserProfile = () => {
                     <div>
                       <button
                         onClick={() => handleClick(chatExists?._id)}
-                        className="bg-green-700 hover:bg-green-800 text-white font-semibold px-4 py-2 rounded sm:hidden flex items-center gap-2"
+                        className="bg-green-700 hover:bg-green-800 text-white font-semibold px-4 py-2 rounded sm:hidden flex items-center gap-x-2"
                       >
                         <BiSolidMessageDetail className="text-2xl" />
                       </button>
                       <button
                         onClick={() => handleClick(chatExists?._id)}
-                        className="bg-green-700 hover:bg-green-800 text-white font-semibold px-4 py-2 rounded hidden sm:flex items-center gap-2"
+                        className="bg-green-700 hover:bg-green-800 text-white font-semibold px-4 py-2 rounded hidden sm:flex items-center gap-x-2"
                       >
                         Show Message
                       </button>
@@ -255,13 +255,13 @@ const DiffUserProfile = () => {
                     <div>
                       <button
                         onClick={openModal}
-                        className="bg-green-700 hover:bg-green-800 text-white font-semibold px-4 py-2 rounded sm:hidden flex items-center gap-2"
+                        className="bg-green-700 hover:bg-green-800 text-white font-semibold px-4 py-2 rounded sm:hidden flex items-center gap-x-2"
                       >
                         <BiSolidMessageDetail className="text-2xl" />
                       </button>
                       <button
                         onClick={openModal}
-                        className="bg-green-700 hover:bg-green-800 text-white font-semibold px-4 py-2 rounded hidden sm:flex items-center gap-2"
+                        className="bg-green-700 hover:bg-green-800 text-white font-semibold px-4 py-2 rounded hidden sm:flex items-center gap-x-2"
                       >
                         Message
                       </button>
