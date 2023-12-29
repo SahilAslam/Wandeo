@@ -159,6 +159,7 @@ const sendDirectMessage = (req, res) => __awaiter(void 0, void 0, void 0, functi
         const userId = (_e = req.user) === null || _e === void 0 ? void 0 : _e.id;
         const { chatId } = req.params;
         const { message } = req.body;
+        console.log(message);
         const chat = yield directMessage_1.default.findOneAndUpdate({ _id: chatId }, {
             $push: {
                 messages: {
@@ -166,13 +167,15 @@ const sendDirectMessage = (req, res) => __awaiter(void 0, void 0, void 0, functi
                     message: message,
                 },
             },
-            latestMessage: { userId: userId, message: message, createdAt: new Date },
+            latestMessage: { userId: userId, message: message },
         });
-        if (!chat) {
-            console.log(chat);
-            return res.status(400).json({ message: 'Message not sent', chat });
+        if (chat) {
+            console.log(chat.latestMessage);
+            return res.status(201).json({ message: 'Message sent successfully', chat });
         }
-        return res.status(201).json({ message: 'Message sent successfully', chat });
+        if (!chat) {
+            return res.status(400).json({ message: 'Message not sent' });
+        }
     }
     catch (error) {
         console.log(error);

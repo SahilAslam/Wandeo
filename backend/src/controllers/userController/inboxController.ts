@@ -157,6 +157,7 @@ export const sendDirectMessage = async (req: Request, res: Response) => {
     const { chatId } = req.params;
 
     const { message } = req.body;
+    console.log(message)
 
     const chat = await DirectMessageModel.findOneAndUpdate({_id: chatId}, {
       $push: {
@@ -165,16 +166,18 @@ export const sendDirectMessage = async (req: Request, res: Response) => {
           message: message,
         },
       },
-      latestMessage: { userId: userId, message: message, createdAt: new Date },
+      latestMessage: { userId: userId, message: message },
     });
 
-    if (!chat) {
-      console.log(chat)
-      return res.status(400).json({ message: 'Message not sent', chat });
+    if(chat) {
+      console.log(chat.latestMessage)
+      return res.status(201).json({ message: 'Message sent successfully', chat });
     }
 
-    return res.status(201).json({ message: 'Message sent successfully', chat });
-    
+    if (!chat) {    
+      return res.status(400).json({ message: 'Message not sent'});
+    }
+       
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Internal server error" });

@@ -12,22 +12,23 @@ import http from 'http';
 import {join} from 'path'
 
 connectDB()
-const port = 5000;
+const port = process.env.PORT || 5000;
 const app = express();
-const server = http.createServer(app);
-const io = new SocketIoServer(server, {
-  cors: {
-    origin: '*',
-    credentials: true,
-    methods: ["GET", "POST"],
-  },
-});
 
 app.use(cors());
 
-
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
+
+const server = http.createServer(app);
+
+const io = new SocketIoServer(server, {
+  cors: {
+    origin: 'https://wandeo.website',
+    methods: ["GET", "POST"],
+    credentials: true,
+  },
+});
 
 app.use('/', userRouter);
 
@@ -45,24 +46,37 @@ app.get("*", function (req, res) {
 
 
 io.on('connection', (socket) => {
-    console.log('connected to socket.io');
-  
-    socket.on("setup", (userData) => {
-      socket.join(userData);
-      console.log('userId:', userData);
-      socket.emit("connected");
+    console.log(`User Connected: ${socket.id}`);
+
+    socket.on("join_room", (data) => {
+      socket.join(data);
+      console.log("joined room: ", data)
     });
-  
-    socket.on("join chat", (room) => {
-      socket.join(room);
-      console.log("user Joined room: " + room);
+
+    socket.on("send_message", (data) => {
+      console.log("message: ", data)
+      socket.to(data.id).emit("receive_message", data);
     });
+
+    
+
+    // socket.on("new message", (msg) => {
+    //   console.log("message: " + msg);
+    //   io.to(msg.room).emit("receive_message", msg);
+    // });
   
-    socket.on("new message", (msg) => {
-      console.log("message: " + msg);
-      // Broadcast the message to everyone in the room
-      io.to(msg.room).emit("new message", msg);
-    });
+    // socket.on("setup", (userData) => {
+    //   socket.join(userData);
+    //   console.log('userId:', userData);
+    //   socket.emit("connected");
+    // });
+  
+    // socket.on("join chat", (room) => {
+    //   socket.join(room);
+    //   console.log("user Joined room: " + room);
+    // });
+  
+    
   });
 
 server.listen(port, () => console.log(`server is running on port: http://localhost:${port}`));

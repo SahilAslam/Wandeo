@@ -16,19 +16,19 @@ const socket_io_1 = require("socket.io");
 const http_1 = __importDefault(require("http"));
 const path_1 = require("path");
 (0, connection_1.default)();
-const port = 5000;
+const port = process.env.PORT || 5000;
 const app = (0, express_1.default)();
-const server = http_1.default.createServer(app);
-const io = new socket_io_1.Server(server, {
-    cors: {
-        origin: '*',
-        credentials: true,
-        methods: ["GET", "POST"],
-    },
-});
 app.use((0, cors_1.default)());
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true }));
+const server = http_1.default.createServer(app);
+const io = new socket_io_1.Server(server, {
+    cors: {
+        origin: 'https://wandeo.website',
+        methods: ["GET", "POST"],
+        credentials: true,
+    },
+});
 app.use('/', userRouter_1.default);
 app.use('/admin', adminRouter_1.default);
 app.use('/payment', paymentRoutes_1.default);
@@ -38,19 +38,14 @@ app.get("*", function (req, res) {
     res.sendFile((0, path_1.join)(__dirname, "../../frontend/dist/index.html"));
 });
 io.on('connection', (socket) => {
-    console.log('connected to socket.io');
-    socket.on("setup", (userData) => {
-        socket.join(userData);
-        console.log('userId:', userData);
-        socket.emit("connected");
+    console.log(`User Connected: ${socket.id}`);
+    socket.on("join_room", (data) => {
+        socket.join(data);
+        console.log("joined room: ", data);
     });
-    socket.on("join chat", (room) => {
-        socket.join(room);
-        console.log("user Joined room: " + room);
-    });
-    socket.on("new message", (msg) => {
-        console.log("message: " + msg);
-        io.to(msg.room).emit("new message", msg);
+    socket.on("send_message", (data) => {
+        console.log("message: ", data);
+        socket.to(data.id).emit("receive_message", data);
     });
 });
 server.listen(port, () => console.log(`server is running on port: http://localhost:${port}`));

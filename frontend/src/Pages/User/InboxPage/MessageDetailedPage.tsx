@@ -7,7 +7,7 @@ import { selectUser } from "../../../Redux/Slice/userSlice";
 import { useSelector } from "react-redux";
 import axiosInstance from "../../../Axios/Axios";
 import moment from "moment";
-import { io , Socket } from "socket.io-client";
+import { io } from "socket.io-client";
 
 interface Message {
   userId?: {
@@ -25,38 +25,42 @@ interface Chat {
   messages?: Message[];
 }
 
+const socket = io("http://localhost:5000");
 
 const MessageDetailedPage: React.FC = () => {
   const [chat, setChat] = useState<Chat | null>(null);
   const [userData, setUserData] = useState({});
   const [message, setMessage] = useState("");
   const [updatUI, setUpdateUI] = useState(false);
-  const [socketConnected, setSocketConnected] = useState(false)
+  // const [socketConnected, setSocketConnected] = useState(false);
+  // const [room, setRoom] = useState("");
+  const [messageReceived, setMessageReceived] = useState("");
 
-  const ENDPOINT = "http://localhost:5000"
-  let socket : Socket | null = null;
-
-  useEffect(() => {
-    socket = io(ENDPOINT);
-    socket.emit("setup", chat?.userOne?._id)
-    socket.emit("setup", chat?.userTwo?._id)
-    socket.on("connection", () => setSocketConnected(true));
-    console.log(socketConnected)
-  }, [])
+  // const ENDPOINT = "http://localhost:5000"
+  // let socket: Socket | null = null;
 
   const user = useSelector(selectUser) as any;
   const userId = user?.id ? user?.id : user?.user?._id;
- 
+
   const { id } = useParams();
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    // socket = io(ENDPOINT);
+    // socket.emit("setup", chat?.userOne?._id)
+    // socket.emit("setup", chat?.userTwo?._id)
+    // socket.on("connection", () => setSocketConnected(true));
+    // console.log(socketConnected)
+    socket?.emit("join_room", id);
+  });
 
   const fetchChat = async () => {
     try {
       const res = await axiosInstance.get(`/messagedetailedpage/${id}`);
       if (res) {
         setChat(res?.data?.chat);
-        socket?.emit("join chat", id)
+        // socket?.emit("join chat", id)
         if (userId === res.data.chat?.userOne?._id) {
           setUserData(res.data.chat?.userTwo);
         } else {
@@ -70,7 +74,8 @@ const MessageDetailedPage: React.FC = () => {
 
   useEffect(() => {
     fetchChat();
-  }, [id, updatUI]);
+  }, [id, updatUI, messageReceived]);
+
 
   const handleSubmit = async (
     e: React.FormEvent<HTMLFormElement | HTMLTextAreaElement>
@@ -78,20 +83,23 @@ const MessageDetailedPage: React.FC = () => {
     try {
       e.preventDefault();
 
-      if(message === "") {
-        return  
+      if (message === "") {
+        return;
       }
+
+      socket?.emit("send_message", { message, id });
 
       const res = await axiosInstance.put(`/sendmessage/${id}`, {
         message: message,
       });
-      
+
       if (res.data) {
         setMessage("");
-        socket?.emit("new message", {
-          message: res.data.chat.latestMessage.message,
-          room: id, // Send the room information
-        });
+        // socket?.emit("new message", {
+        //   message: res.data.chat.latestMessage.message,
+        //   room: id, // Send the room information
+        // });
+        
         console.log(res.data.chat, "hi");
         setUpdateUI((prev) => !prev);
       }
@@ -101,10 +109,17 @@ const MessageDetailedPage: React.FC = () => {
   };
 
   useEffect(() => {
-    socket?.on("new message", (msg) => {
-      console.log('Received message:', msg);        
-    })
-  })
+    socket.on("receive_message", (data: any) => {
+      console.log(data)
+      setMessageReceived(data.message);
+    });
+  }, [socket]);
+
+  // useEffect(() => {
+  //   socket?.on("new message", (msg) => {
+  //     console.log('Received message:', msg);
+  //   })
+  // })
 
   return (
     <>
@@ -119,13 +134,23 @@ const MessageDetailedPage: React.FC = () => {
             </div>
             <div className="w-full flex flex-col">
               <div className="flex justify-between px-7 py-5 bg-white">
-                <div className="flex items-center cursor-pointer" onClick={() => navigate("/inbox")}>
+                <div
+                  className="flex items-center cursor-pointer"
+                  onClick={() => navigate("/inbox")}
+                >
                   <FaArrowLeft className="mr-2 mt-0.5 text-sm text-link-color" />
                   <h1 className="text-link-color font-semibold">Inbox</h1>
                 </div>
               </div>
               <div className="bg-slate-50 px-10 py-5">
                 <div>
+                  {/* <input
+                    placeholder="Room Number..."
+                    onChange={(event) => {
+                      setRoom(event.target.value);
+                    }}
+                  /> */}
+                  {/* <button onClick={joinRoom}>join room</button> */}
                   <form onSubmit={(e) => handleSubmit(e)}>
                     <textarea
                       className="border w-full mb-2 h-32 px-2 py-0.5"
@@ -140,42 +165,47 @@ const MessageDetailedPage: React.FC = () => {
                       Send
                     </button>
                   </form>
+                  {/* <h1> Message:</h1>
+                  {messageReceived} */}
                 </div>
               </div>
               <div className="px-5 bg-white">
                 {chat?.messages &&
-                  chat?.messages.slice().reverse().map((message) => (
-                    <div className="py-5 flex flex-col sm:flex-row gap-5 border-b">
-                      <div>
-                        {message?.userId?.profileImage ? (
-                          <img
-                            src={`${message?.userId?.profileImage}`}
-                            alt="img"
-                            // onClick={() => handleClick(user._id)}
-                            className="border rounded-full w-12 h-12 cursor-pointer"
-                          />
-                        ) : (
-                          <img
-                            src={`/profile-picture-placeholder.png`}
-                            alt=""
-                            // onClick={() => handleClick(user._id)}
-                            className="w-14 h-14 object-cover rounded-full opacity-100 cursor-pointer"
-                          />
-                        )}
-                      </div>
-                      <div className="">
-                        {userId !== message?.userId?._id && (
-                          <p className="text-slate-700 font-semibold pb-2">
-                            {message?.userId?.name}
+                  chat?.messages
+                    .slice()
+                    .reverse()
+                    .map((message) => (
+                      <div className="py-5 flex flex-col sm:flex-row gap-5 border-b">
+                        <div>
+                          {message?.userId?.profileImage ? (
+                            <img
+                              src={`${message?.userId?.profileImage}`}
+                              alt="img"
+                              // onClick={() => handleClick(user._id)}
+                              className="border rounded-full w-12 h-12 cursor-pointer"
+                            />
+                          ) : (
+                            <img
+                              src={`/profile-picture-placeholder.png`}
+                              alt=""
+                              // onClick={() => handleClick(user._id)}
+                              className="w-14 h-14 object-cover rounded-full opacity-100 cursor-pointer"
+                            />
+                          )}
+                        </div>
+                        <div className="">
+                          {userId !== message?.userId?._id && (
+                            <p className="text-slate-700 font-semibold pb-2">
+                              {message?.userId?.name}
+                            </p>
+                          )}
+                          <p className="text-sm text-slate-400 pb-5">
+                            {moment(message.createdAt).fromNow()}
                           </p>
-                        )}
-                        <p className="text-sm text-slate-400 pb-5">
-                          {moment(message.createdAt).fromNow()}
-                        </p>
-                        {message?.message}
+                          {message?.message}
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    ))}
               </div>
             </div>
           </div>
