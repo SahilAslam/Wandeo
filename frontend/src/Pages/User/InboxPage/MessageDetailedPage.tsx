@@ -25,7 +25,7 @@ interface Chat {
   messages?: Message[];
 }
 
-const socket = io("http://localhost:5000");
+const socket = io("https://wandeo.website");
 
 const MessageDetailedPage: React.FC = () => {
   const [chat, setChat] = useState<Chat | null>(null);
