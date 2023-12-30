@@ -8,12 +8,14 @@ interface HostingModalProps {
   visible: boolean;
   closeModal: () => void;
   id: any;
+  setUpdateUI: (data: any) => void;
 }
 
 const CreateHostingModal: React.FC<HostingModalProps> = ({
   visible,
   closeModal,
   id,
+  setUpdateUI
 }) => {
   const [MenuOpen, setMenuOpen] = useState(false);
   const [selectedMenu, setSelectedMenu] = useState("");
@@ -85,7 +87,7 @@ const CreateHostingModal: React.FC<HostingModalProps> = ({
     );
 
     if (response.data) {
-      console.log(response.data.message);
+      setUpdateUI((prev: boolean) => !prev);
       closeModal();
       setTimeout(() => {
           toast.success("Message sent successfully.");

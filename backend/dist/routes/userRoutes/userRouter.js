@@ -64,7 +64,7 @@ userRouter.get("/findUser", authMiddleware_1.protect, searchController_1.getSear
 userRouter.get("/findTravelers", authMiddleware_1.protect, searchController_1.fetchTavelers);
 userRouter.post("/addReference/:targettedUserId", authMiddleware_1.protect, referenceController_1.createReference);
 userRouter.post("/addFriend", authMiddleware_1.protect, friendsController_1.addFriend);
-userRouter.get("/getFriends", authMiddleware_1.protect);
+userRouter.post("/removeFriend", authMiddleware_1.protect, friendsController_1.removeFriend);
 userRouter.post("/hostuser/:targettedUserId", authMiddleware_1.protect, hostingController_1.hostAUser);
 userRouter.post("/requestauser/:targettedUserId", authMiddleware_1.protect, hostingController_1.requestForHosting);
 userRouter.post("/sendSimpleMessage/:chatId", authMiddleware_1.protect, hostingController_1.sendSimpleMessage);

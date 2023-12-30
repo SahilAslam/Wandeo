@@ -41,6 +41,7 @@ import HostUser from './Pages/User/TravelingAndHosting/HostUser'
 import TravelingAndHostingDetailed from './Pages/User/InboxPage/TravelingAndHostingDetailed'
 import MessageDetailedPage from './Pages/User/InboxPage/MessageDetailedPage'
 import CreateUserInfoPage from './Pages/User/Signup/CreateUserInfoPage'
+import NotExistsPage from './Pages/User/NotExistsPage'
 
 function App() {
   
@@ -48,7 +49,7 @@ function App() {
     <Router>
       <Routes>
         {/* User routes */}
-        <Route path='*' element={<h1>Page not Found</h1>} />
+        <Route path='*' element={<NotExistsPage />} />
         <Route path='/login' element={<Login/>} />
         <Route path='/signup' element={<Signup/>} />
         <Route path='/createuserinfo/:id' element={<CreateUserInfoPage />} />

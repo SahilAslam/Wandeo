@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.addFriend = void 0;
+exports.removeFriend = exports.addFriend = void 0;
 const userModel_1 = __importDefault(require("../../models/userModel"));
 const addFriend = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -42,3 +42,25 @@ const addFriend = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.addFriend = addFriend;
+const removeFriend = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { targettedUserId, userId } = req.body;
+        console.log("body:", targettedUserId, userId);
+        if (!userId) {
+            return res.status(400).json({ error: 'User ID is missing or invalid' });
+        }
+        const myModel = yield userModel_1.default.findOneAndUpdate({ _id: userId }, { $pull: { friends: targettedUserId } });
+        const friendModel = yield userModel_1.default.findOneAndUpdate({ _id: targettedUserId }, { $pull: { friends: userId } });
+        if (myModel && friendModel) {
+            return res.status(201).json({ message: "Removed friend" });
+        }
+        else {
+            return res.status(404).json({ error: "Friend not found" });
+        }
+    }
+    catch (error) {
+        console.error(error);
+        return res.status(500).json({ error: "Internal Server Error" });
+    }
+});
+exports.removeFriend = removeFriend;

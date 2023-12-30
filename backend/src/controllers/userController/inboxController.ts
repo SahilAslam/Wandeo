@@ -92,7 +92,7 @@ export const createDirectMessage = async (req: Request, res: Response) => {
           messages: [{ userId: userId, message: message, createdAt: new Date() }],
           userOne: userId,
           userTwo: targettedUserId,
-          latestMessage: { userId: userId, message: message, createdAt: new Date },         
+          latestMessage: { userId: userId, message: message, createdAt: new Date() },         
       });
 
       if(host) {
@@ -112,7 +112,8 @@ export const getDirectMessages = async (req: Request, res: Response) => {
       $or: [{ userOne: userId }, { userTwo: userId }],
     })
       .populate("userOne")
-      .populate("userTwo");
+      .populate("userTwo")
+      .sort({updatedAt: -1})
 
     if (chat) {
       return res
@@ -166,7 +167,7 @@ export const sendDirectMessage = async (req: Request, res: Response) => {
           message: message,
         },
       },
-      latestMessage: { userId: userId, message: message },
+      latestMessage: { userId: userId, message: message, createdAt: new Date() },
     });
 
     if(chat) {

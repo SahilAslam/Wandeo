@@ -22,6 +22,8 @@ const DiffUserProfile = () => {
   const [chatExists, setChatExists] = useState<any>();
   const [hostingExists, setHostingExists] = useState<any>();
   const [hostingModal, setHostingModal] = useState(false);
+  const [updateUI, setUpdateUI] = useState<boolean>(false)
+  const [isFriend, setIsFriend] = useState<boolean>(false);
 
   const navigate = useNavigate();
 
@@ -36,12 +38,20 @@ const DiffUserProfile = () => {
       .then((res) => {
         if (res.data.user) {
           setUserDetails(res.data.user);
+          
+          res.data.user.friends.forEach((friend: any) => {
+            if (friend._id === userId) {
+              setIsFriend(true);
+              return
+            }
+          });
+          console.log(isFriend, "friend hei")
         } else {
           console.error("Invalid data received from the API:", res.data.user);
         }
       })
       .catch((error) => console.log(error, "user profile error"));
-  }, [id]);
+  }, [id, updateUI]);
 
   useEffect(() => {
     axiosInstance
@@ -74,7 +84,7 @@ const DiffUserProfile = () => {
 
   useEffect(() => {
     findExistingChat();
-  }, [id]);
+  }, [id, updateUI]);
 
   const findExHostingChat = async () => {
     await axiosInstance
@@ -82,7 +92,6 @@ const DiffUserProfile = () => {
       .then((res) => {
         if (res.data?.chat) {
           setHostingExists(res.data?.chat);
-          console.log(res.data?.chat?._id, "///////////")
         }
       })
       .catch((error) => {
@@ -92,7 +101,7 @@ const DiffUserProfile = () => {
 
   useEffect(() => {
     findExHostingChat();
-  }, [id]);
+  }, [id, updateUI]);
 
   const handleMenuItemClick = (menuItem: string) => {
     setSelectedMenuItem(menuItem);
@@ -123,7 +132,7 @@ const DiffUserProfile = () => {
   const UlRef = useRef(null); 
   const MenuRef = useRef<HTMLLIElement | null>(null); 
 
-  const Menus = ["Friend Request", "Write Reference"];
+  const Menus = ["Add Friend", "Write Reference"];
 
   window.addEventListener("click", (e) => {
     if (e.target !== MenuRef.current && e.target !== UlRef.current) {
@@ -137,7 +146,20 @@ const DiffUserProfile = () => {
       userId,
     });
     if (response?.data?.message) {
+      setUpdateUI((prev: boolean) => !prev);
       toast.success("Added friend successfully");
+    }
+  };
+
+  const removeFriend = async (targettedUserId: string) => {
+    const response = await axiosInstance.post("/removeFriend", {
+      targettedUserId,
+      userId,
+    });
+    if (response?.data?.message) {
+      setUpdateUI((prev: boolean) => !prev);
+      setIsFriend(false)
+      toast.success(response?.data?.message);
     }
   };
 
@@ -299,12 +321,20 @@ const DiffUserProfile = () => {
                                 >
                                   {menu}
                                 </button>
-                              ) : menu === "Friend Request" ? (
-                                <button
-                                  onClick={() => addFriend(userDatails._id)}
-                                >
-                                  {menu}
-                                </button>
+                              ) : menu === "Add Friend" ? (
+                                isFriend ? (
+                                  <button
+                                    onClick={() => removeFriend(userDatails._id)}
+                                  >
+                                    Remove Friend
+                                  </button>
+                                ) : (
+                                  <button
+                                    onClick={() => addFriend(userDatails._id)}
+                                  >
+                                    {menu}
+                                  </button>
+                                )
                               ) : (
                                 <button>{menu}</button>
                               )}
@@ -758,11 +788,12 @@ const DiffUserProfile = () => {
           </div>
         </div>
       </div>
-      <CreateMessage visible={messageModal} closeModal={closeModal} id={id} />
+      <CreateMessage visible={messageModal} closeModal={closeModal} id={id} setUpdateUI={setUpdateUI} />
       <CreateHostingModal
         visible={hostingModal}
         closeModal={closeHostingModal}
         id={id}
+        setUpdateUI={setUpdateUI}
       />
     </>
   );

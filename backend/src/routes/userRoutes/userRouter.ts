@@ -21,7 +21,7 @@ import { createPublicTrip, getOtherUserTrips, getPublicTrips } from "../../contr
 import { fetchTavelers, getSearchedUsers, listGroups, listHostingUsers } from "../../controllers/userController/searchController";
 import { createReference } from "../../controllers/userController/referenceController";
 import { accessChat, fetchChat, sendMessage, showAllMessages } from "../../controllers/chatController/chatController";
-import { addFriend } from "../../controllers/userController/friendsController";
+import { addFriend, removeFriend } from "../../controllers/userController/friendsController";
 import { createDirectMessage, findExistingChat, getDirectMessages, getHostingMessage, getSingleDirectMessage, getSingleHostingMessage, sendDirectMessage, sendResponse } from "../../controllers/userController/inboxController";
 const userRouter = express.Router();
 import { Request, Response } from "express";
@@ -121,7 +121,9 @@ userRouter.post("/addReference/:targettedUserId", protect, createReference);
 // friends
 userRouter.post("/addFriend", protect, addFriend);
 
-userRouter.get("/getFriends", protect, )
+userRouter.post("/removeFriend", protect, removeFriend)
+
+// userRouter.get("/getFriends", protect, )
 
 // hosting and traveling
 userRouter.post("/hostuser/:targettedUserId", protect, hostAUser );

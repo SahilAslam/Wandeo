@@ -19,16 +19,16 @@ const groupModel_1 = __importDefault(require("../../models/groupModel"));
 const eventModel_1 = __importDefault(require("../../models/eventModel"));
 const hostingModel_1 = __importDefault(require("../../models/hostingModel"));
 const verifiedUserModel_1 = __importDefault(require("../../models/verifiedUserModel"));
+const cred = JSON.parse(process.env.ADMIN_CRED);
 const adminCred = {
-    Email: "sahilaslam77@gmail.com",
-    username: "SahilAslam",
-    Password: "admin123",
-    Id: "6502229c761cead53ce1099u"
+    Email: cred.EMAIL,
+    username: cred.USERNAME,
+    Password: cred.PASSWORD,
+    Id: cred.ID
 };
 const adminLogin = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { usernameOrEmail, password } = req.body;
-        console.log(usernameOrEmail);
         if (usernameOrEmail === adminCred.username || usernameOrEmail === adminCred.Email) {
             if (password !== adminCred.Password) {
                 return res.status(400).json({ message: "Invalid Password" });
@@ -100,7 +100,6 @@ const adminDashboard = (req, res) => __awaiter(void 0, void 0, void 0, function*
     try {
         const currentDate = new Date();
         const currentYear = currentDate.getFullYear();
-        const currentMonth = currentDate.getMonth() + 1;
         const totalUsers = yield userModel_1.default.countDocuments();
         const totalVerifiedUsers = yield verifiedUserModel_1.default.countDocuments();
         const totalGroups = yield groupModel_1.default.countDocuments();

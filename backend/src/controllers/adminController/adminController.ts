@@ -1,5 +1,4 @@
 import { Request, Response } from "express"
-import generateToken from "../../utils/generateToken";
 import userModel from "../../models/userModel";
 import  jwt  from "jsonwebtoken";
 import GroupModel from "../../models/groupModel";
@@ -7,17 +6,18 @@ import EventModel from "../../models/eventModel";
 import HostingModel from "../../models/hostingModel";
 import VerifiedModel from "../../models/verifiedUserModel";
 
+const cred = JSON.parse(process.env.ADMIN_CRED as any);
+
 const adminCred = {
-    Email: "sahilaslam77@gmail.com",
-    username: "SahilAslam",
-    Password: "admin123",
-    Id: "6502229c761cead53ce1099u"
+    Email: cred.EMAIL,
+    username: cred.USERNAME,
+    Password: cred.PASSWORD,
+    Id: cred.ID
 }
 
 export const adminLogin = async (req: Request, res: Response) => {
     try {
         const {usernameOrEmail, password} = req.body;
-        console.log(usernameOrEmail)
 
         if(usernameOrEmail === adminCred.username || usernameOrEmail === adminCred.Email) {
             if(password !== adminCred.Password) {
@@ -25,8 +25,7 @@ export const adminLogin = async (req: Request, res: Response) => {
             }
     
             const user_id = adminCred.Id
-            
-            
+                    
             const token = jwt.sign({ user_id }, process.env.JWT_SECRET as string, {
                 expiresIn: '30d',
             })
@@ -102,7 +101,7 @@ export const adminDashboard = async (req: Request, res: Response) => {
     try {
         const currentDate = new Date();
         const currentYear = currentDate.getFullYear();
-        const currentMonth = currentDate.getMonth() + 1;
+        // const currentMonth = currentDate.getMonth() + 1;
 
         const totalUsers = await userModel.countDocuments();
         const totalVerifiedUsers = await VerifiedModel.countDocuments();

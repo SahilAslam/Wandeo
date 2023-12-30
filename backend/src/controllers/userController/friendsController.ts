@@ -32,3 +32,34 @@ export const addFriend = async (req: Request, res: Response) => {
     }
 };
 
+export const removeFriend = async (req: Request, res: Response) => {
+    try {
+      const { targettedUserId, userId } = req.body;
+      console.log("body:", targettedUserId, userId)
+  
+      if (!userId) {
+        return res.status(400).json({ error: 'User ID is missing or invalid' });
+      }
+  
+      const myModel = await userModel.findOneAndUpdate(
+        { _id: userId },
+        { $pull: { friends: targettedUserId } },
+      );
+  
+      const friendModel = await userModel.findOneAndUpdate(
+        { _id: targettedUserId },
+        { $pull: { friends: userId } },
+      );
+  
+      if (myModel && friendModel) {
+        return res.status(201).json({ message: "Removed friend" });
+      } else {
+        return res.status(404).json({ error: "Friend not found" });
+      }
+  
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ error: "Internal Server Error" });
+    }
+};
+

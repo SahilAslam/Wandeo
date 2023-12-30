@@ -97,7 +97,7 @@ const createDirectMessage = (req, res) => __awaiter(void 0, void 0, void 0, func
             messages: [{ userId: userId, message: message, createdAt: new Date() }],
             userOne: userId,
             userTwo: targettedUserId,
-            latestMessage: { userId: userId, message: message, createdAt: new Date },
+            latestMessage: { userId: userId, message: message, createdAt: new Date() },
         });
         if (host) {
             return res.status(201).json({ message: "Saved successfully" });
@@ -117,7 +117,8 @@ const getDirectMessages = (req, res) => __awaiter(void 0, void 0, void 0, functi
             $or: [{ userOne: userId }, { userTwo: userId }],
         })
             .populate("userOne")
-            .populate("userTwo");
+            .populate("userTwo")
+            .sort({ updatedAt: -1 });
         if (chat) {
             return res
                 .status(201)
@@ -167,7 +168,7 @@ const sendDirectMessage = (req, res) => __awaiter(void 0, void 0, void 0, functi
                     message: message,
                 },
             },
-            latestMessage: { userId: userId, message: message },
+            latestMessage: { userId: userId, message: message, createdAt: new Date() },
         });
         if (chat) {
             console.log(chat.latestMessage);

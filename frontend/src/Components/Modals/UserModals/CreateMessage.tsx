@@ -7,12 +7,14 @@ interface DeclineRequestProps {
   visible: boolean;
   closeModal: () => void;
   id: any;
+  setUpdateUI: (data: any) => void;
 }
 
 const CreateMessage: React.FC<DeclineRequestProps> = ({
   visible,
   closeModal,
   id,
+  setUpdateUI
 }) => {
     const [message, setMessage] = useState("");
 
@@ -26,7 +28,8 @@ const CreateMessage: React.FC<DeclineRequestProps> = ({
         message: message,
       });
       if (res.data) {
-        closeModal
+        setUpdateUI((prevState: boolean) => !prevState)
+        closeModal();
         setTimeout(() => {
             toast.success("Successfully saved your message")
         }, 0)
