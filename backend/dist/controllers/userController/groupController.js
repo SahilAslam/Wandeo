@@ -32,7 +32,6 @@ const createUserGroup = (req, res) => __awaiter(void 0, void 0, void 0, function
             members: user._id,
         });
         if (group) {
-            console.log(group);
             user.groups.push(group._id);
             yield user.save();
             return res.status(201).json({ message: "Group created successfully" });
@@ -46,7 +45,7 @@ const createUserGroup = (req, res) => __awaiter(void 0, void 0, void 0, function
 exports.createUserGroup = createUserGroup;
 const getUserGroup = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const group = yield groupModel_1.default.find().exec();
+        const group = yield groupModel_1.default.find({ isBlocked: false }).exec();
         if (group) {
             return res.status(201).json({ group });
         }
@@ -63,6 +62,9 @@ exports.getUserGroup = getUserGroup;
 const getPopularGroup = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const popularGroups = yield groupModel_1.default.aggregate([
+            {
+                $match: { isBlocked: { $ne: true } }
+            },
             {
                 $project: {
                     _id: 1,
@@ -81,7 +83,6 @@ const getPopularGroup = (req, res) => __awaiter(void 0, void 0, void 0, function
             { $limit: 3 }
         ]).exec();
         if (popularGroups.length > 0) {
-            console.log(popularGroups, "////////aaaaaaaa");
             return res.status(200).json({ popularGroups });
         }
         else {
@@ -108,7 +109,6 @@ const getGroupDetailedPage = (req, res) => __awaiter(void 0, void 0, void 0, fun
         });
         if (group) {
             res.status(201).json({ group });
-            console.log(group);
         }
         else {
             res.status(404).json({ message: "Coudn't find group" });
@@ -158,9 +158,7 @@ const leaveUserGroup = (req, res) => __awaiter(void 0, void 0, void 0, function*
     var _b;
     try {
         const { groupId } = req.params;
-        console.log(groupId);
         const userId = (_b = req.user) === null || _b === void 0 ? void 0 : _b.id;
-        console.log(userId);
         if (!userId) {
             return res.status(404).json({ error: "UserId not found!" });
         }
@@ -193,7 +191,6 @@ exports.leaveUserGroup = leaveUserGroup;
 const userJoinedGroup = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { userId } = req.params;
-        console.log(userId);
         const user = yield userModel_1.default.findById(userId).populate("groups");
         if (!user) {
             return res.status(404).json({ message: "User not found!" });

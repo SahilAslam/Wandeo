@@ -130,7 +130,7 @@ const CreateUserInfoPage = () => {
                             <option value={option} className="">{option}</option>
                           ))}
                         </select>
-                        <p>{gender}</p>
+                        
                       </div>
                     </div>
                     <div className="mb-3">

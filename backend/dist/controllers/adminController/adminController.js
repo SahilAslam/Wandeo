@@ -44,6 +44,7 @@ const adminLogin = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         }
     }
     catch (error) {
+        console.log(error);
         return res.status(500).json({ message: "Admin login error" });
     }
 });
@@ -65,6 +66,7 @@ const getUsers = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
     catch (error) {
         console.error(error);
+        res.status(500).json({ message: "Internal server error" });
     }
 });
 exports.getUsers = getUsers;
@@ -79,6 +81,7 @@ const blockUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
     catch (error) {
         console.log(error);
+        res.status(500).json({ message: "Internal server error" });
     }
 });
 exports.blockUser = blockUser;
@@ -93,6 +96,7 @@ const unblockUser = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     }
     catch (error) {
         console.log(error);
+        res.status(500).json({ message: "Internal server error" });
     }
 });
 exports.unblockUser = unblockUser;
@@ -126,6 +130,7 @@ const adminDashboard = (req, res) => __awaiter(void 0, void 0, void 0, function*
                 verifiedMonthlyCounts[verifiedMonth]++;
             }
         });
+        console.log(userMonthlyCounts, "ddddddddddddddddd");
         return res.status(201).json({ totalUsers, userMonthlyCounts, totalVerifiedUsers, verifiedMonthlyCounts, totalGroups, eventsGoingOn });
     }
     catch (error) {
@@ -165,7 +170,8 @@ const getGroups = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 exports.getGroups = getGroups;
 const getEvents = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const events = yield eventModel_1.default.find();
+        const currentDate = new Date();
+        const events = yield eventModel_1.default.find({ endDate: { $gte: currentDate } });
         if (events) {
             return res.status(201).json({ message: "success", events });
         }

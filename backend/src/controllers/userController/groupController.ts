@@ -24,8 +24,6 @@ const createUserGroup = async (req: Request, res: Response) => {
     });
 
     if (group) {
-      console.log(group);
-
       user.groups.push(group._id);
       await user.save();
 
@@ -39,7 +37,7 @@ const createUserGroup = async (req: Request, res: Response) => {
 
 const getUserGroup = async (req: Request, res: Response) => {
   try {
-    const group = await GroupModel.find().exec();
+    const group = await GroupModel.find({ isBlocked: false }).exec();
 
     if (group) {
       return res.status(201).json({ group });
@@ -56,6 +54,9 @@ const getPopularGroup = async (req: Request, res: Response) => {
   try {
     const popularGroups = await GroupModel.aggregate([
       {
+        $match: { isBlocked: { $ne: true } } 
+      },
+      {
         $project: {
           _id: 1,
           name: 1,
@@ -70,11 +71,10 @@ const getPopularGroup = async (req: Request, res: Response) => {
         }
       },
       { $sort: { memberCount: -1 } },
-      { $limit: 3 } // Change the limit to 3 for top three popular groups
+      { $limit: 3 } 
     ]).exec();
     if (popularGroups.length > 0) {
-      console.log(popularGroups, "////////aaaaaaaa")
-      return res.status(200).json({ popularGroups }); // Adjust the response key to popularGroups for multiple groups
+      return res.status(200).json({ popularGroups }); 
     } else {
       return res.status(404).json({ message: "Couldn't find the most popular groups!" });
     }
@@ -100,7 +100,7 @@ const getGroupDetailedPage = async (req: Request, res: Response) => {
         });
     if (group) {
       res.status(201).json({ group });
-      console.log(group);
+      
     } else {
       res.status(404).json({ message: "Coudn't find group" });
     }
@@ -153,10 +153,8 @@ const joinUserGroup = async (req: Request, res: Response) => {
 const leaveUserGroup = async (req: Request, res: Response) => {
   try {
     const { groupId } = req.params;
-    console.log(groupId);
 
     const userId = req.user?.id;
-    console.log(userId);
 
     if (!userId) {
       return res.status(404).json({ error: "UserId not found!" });
@@ -198,7 +196,6 @@ const leaveUserGroup = async (req: Request, res: Response) => {
 const userJoinedGroup = async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
-    console.log(userId);
 
     const user = await userModel.findById(userId).populate("groups");
 

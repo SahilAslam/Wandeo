@@ -13,12 +13,77 @@ function Signup() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errMessage, setErrMessage] = useState("");
+  const [passwordStrength , SetPasswordstrength] = useState<string>('');
 
   const navigate = useNavigate();
 
-  const isStrongPassword = (password: string): boolean => {
-    return password.length >= 8;
+  const isValidEmail = (email: string): boolean => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
   };
+
+  const checkPasswordStrength = (password: string) => {
+    const passwordRequirements = {
+      minLength: 7,
+      requireUpperCase: true,
+      requireLowerCase: true,
+      requireNumbers: true,
+      requireSpecialChars: true,
+    };
+
+    // Regular expressions for character classes
+    const uppercaseRegex = /[A-Z]/;
+    const lowercaseRegex = /[a-z]/;
+    const numbersRegex = /[0-9]/;
+    const specialCharRegex = /[!@#$%^&*()_+{}\[\]:;<>,.?~\\-]/;
+
+    let strength = 0;
+
+    if (password.length >= passwordRequirements.minLength) {
+      strength++;
+    }
+
+    if (
+      passwordRequirements.requireUpperCase &&
+      uppercaseRegex.test(password)
+    ) {
+      strength++;
+    }
+
+    if (
+      passwordRequirements.requireLowerCase &&
+      lowercaseRegex.test(password)
+    ) {
+      strength++;
+    }
+
+    if (passwordRequirements.requireNumbers && numbersRegex.test(password)) {
+      strength++;
+    }
+
+    if (
+      passwordRequirements.requireSpecialChars &&
+      specialCharRegex.test(password)
+    ) {
+      strength++;
+    }
+
+    if (strength < 2) {
+      return "Weak";
+    } else if (strength < 4) {
+      return "Moderate";
+    } else {
+      return "Strong";
+    }
+  };
+
+  const handlePasswordChange = (e : React.ChangeEvent<HTMLInputElement>) => {
+    const newPassword = e.target.value;
+    setPassword(newPassword);
+
+    const strength = checkPasswordStrength(newPassword);
+    SetPasswordstrength(strength);
+  }
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -41,8 +106,16 @@ function Signup() {
       return;
     }
 
-    if (!isStrongPassword(password)) {
-      setErrMessage("password Must be atleast 8 characters");
+    if (!isValidEmail(trimmedEmail)) {
+      setErrMessage("Please enter a valid email address");
+      setTimeout(() => {
+        setErrMessage("");
+      }, 3000);
+      return;
+    }
+
+    if (passwordStrength === "Weak") {
+      setErrMessage("Please choose a strong password");
       setTimeout(() => {
         setErrMessage("");
       }, 3000);
@@ -142,7 +215,7 @@ function Signup() {
                         <input
                           id="email"
                           name="email"
-                          type="email"
+                          type="text"
                           placeholder="mail@sample"
                           className="block w-full rounded-xl border py-3 text-gray-900 shadow-sm ring-gray-300 placeholder:text-gray-400 p-2 sm:text-sm sm:leading-6"
                           onChange={(e) => setEmail(e.target.value)}
@@ -165,8 +238,20 @@ function Signup() {
                           type="password"
                           placeholder="Password"
                           className="block w-full rounded-xl border py-3 text-gray-900 shadow-sm ring-gray-300 placeholder:text-gray-400 p-2 sm:text-sm sm:leading-6"
-                          onChange={(e) => setPassword(e.target.value)}
+                          onChange={handlePasswordChange}
                         />
+                        {passwordStrength && (
+                          <div
+                            className={`text-sm mt-2 ${
+                              passwordStrength === "Strong"
+                                ? "text-[#5dc43e]"
+                                : passwordStrength === "Moderate" ? "text-orange-500"
+                                : "text-[#e84848]"
+                            }`}
+                          >
+                            Password Strength: {passwordStrength}
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -196,7 +281,9 @@ function Signup() {
                             if (res?.data) {
                               toast.success(res.data.message);
                               setTimeout(() => {
-                                navigate(`/createuserinfo/${res.data.newUser._id}`);
+                                navigate(
+                                  `/createuserinfo/${res.data.newUser._id}`
+                                );
                               }, 1000);
                             }
                           })

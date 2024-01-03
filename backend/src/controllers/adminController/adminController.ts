@@ -36,6 +36,7 @@ export const adminLogin = async (req: Request, res: Response) => {
         }
         
     } catch(error) {
+        console.log(error)
         return res.status(500).json({message: "Admin login error"})
     }
 }
@@ -56,6 +57,7 @@ export const getUsers = async (req: Request, res: Response) => {
         }
     } catch(error) {
         console.error(error);
+        res.status(500).json({message: "Internal server error"})   
     }
 }
 
@@ -73,9 +75,9 @@ export const blockUser = async(req: Request, res: Response) => {
 
         res.status(200).json({message : `Blocked ${updateUser.name}`, user: updateUser});
 
-    } catch (error: any) {
+    } catch (error) {
         console.log(error);
-        
+        res.status(500).json({message: "Internal server error"})   
     }
 }
 
@@ -94,6 +96,7 @@ export const unblockUser = async (req: Request, res: Response) => {
         res.status(200).json({message : `Unblocked ${updateUser.name}`});
     } catch (error) {
         console.log(error);
+        res.status(500).json({message: "Internal server error"})   
     }
 }
 
@@ -136,7 +139,7 @@ export const adminDashboard = async (req: Request, res: Response) => {
                 verifiedMonthlyCounts[verifiedMonth]++;
             }
         })
-
+        console.log(userMonthlyCounts, "ddddddddddddddddd")
         return res.status(201).json({totalUsers, userMonthlyCounts, totalVerifiedUsers, verifiedMonthlyCounts, totalGroups, eventsGoingOn})
     } catch (error) {
         console.error(error);
@@ -172,7 +175,8 @@ export const getGroups = async (req: Request, res: Response) => {
 
 export const getEvents = async (req: Request, res: Response) => {
     try {
-        const events = await EventModel.find();
+        const currentDate = new Date();
+        const events = await EventModel.find({ endDate: { $gte: currentDate }});
         if(events) {
             return res.status(201).json({message: "success", events})
         } else {

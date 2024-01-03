@@ -39,13 +39,9 @@ app.get("*", function (req, res) {
 });
 io.on('connection', (socket) => {
     console.log(`User Connected: ${socket.id}`);
-    socket.on("join_room", (data) => {
-        socket.join(data);
-        console.log("joined room: ", data);
-    });
     socket.on("send_message", (data) => {
         console.log("message: ", data);
-        socket.to(data.id).emit("receive_message", data);
+        socket.broadcast.emit("receive_message", data);
     });
 });
 server.listen(port, () => console.log(`server is running on port: http://localhost:${port}`));

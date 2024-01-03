@@ -52,7 +52,15 @@ const MessageDetailedPage: React.FC = () => {
     // socket.emit("setup", chat?.userTwo?._id)
     // socket.on("connection", () => setSocketConnected(true));
     // console.log(socketConnected)
-    socket?.emit("join_room", id);
+    // socket?.emit("setup", userId);
+    
+  }, []);
+
+  useEffect(() => {
+    socket.on("receive_message", (data: any) => {
+      console.log(data)
+      setMessageReceived(data.message);
+    });
   });
 
   const fetchChat = async () => {
@@ -60,7 +68,7 @@ const MessageDetailedPage: React.FC = () => {
       const res = await axiosInstance.get(`/messagedetailedpage/${id}`);
       if (res) {
         setChat(res?.data?.chat);
-        // socket?.emit("join chat", id)
+        // socket.emit("join_room", id)
         if (userId === res.data.chat?.userOne?._id) {
           setUserData(res.data.chat?.userTwo);
         } else {
@@ -74,7 +82,7 @@ const MessageDetailedPage: React.FC = () => {
 
   useEffect(() => {
     fetchChat();
-  }, [id, updatUI, messageReceived]);
+  }, [messageReceived, id, updatUI]);
 
 
   const handleSubmit = async (
@@ -107,13 +115,6 @@ const MessageDetailedPage: React.FC = () => {
       console.log(error);
     }
   };
-
-  useEffect(() => {
-    socket.on("receive_message", (data: any) => {
-      console.log(data)
-      setMessageReceived(data.message);
-    });
-  }, [socket]);
 
   // useEffect(() => {
   //   socket?.on("new message", (msg) => {
@@ -151,6 +152,7 @@ const MessageDetailedPage: React.FC = () => {
                     }}
                   /> */}
                   {/* <button onClick={joinRoom}>join room</button> */}
+                  
                   <form onSubmit={(e) => handleSubmit(e)}>
                     <textarea
                       className="border w-full mb-2 h-32 px-2 py-0.5"
@@ -165,8 +167,8 @@ const MessageDetailedPage: React.FC = () => {
                       Send
                     </button>
                   </form>
-                  {/* <h1> Message:</h1>
-                  {messageReceived} */}
+                  
+                  <p className="">{messageReceived}</p>
                 </div>
               </div>
               <div className="px-5 bg-white">
