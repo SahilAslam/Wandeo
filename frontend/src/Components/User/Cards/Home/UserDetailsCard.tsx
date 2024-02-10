@@ -19,7 +19,7 @@ const UserDetailsCard: React.FC<UserDetailsProps> = ({ userDetails }) => {
           </h1>
         </div>
         <div className="py-4">
-          <h1 className="text-base text-slate-700 font-semibold capitalize">
+          <h1 className="text-base text-slate-700 font-semibold capitalize ">
             {userDetails?.hostingAvailability}
           </h1>
         </div>

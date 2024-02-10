@@ -53,12 +53,11 @@ const MessageDetailedPage: React.FC = () => {
     // socket.on("connection", () => setSocketConnected(true));
     // console.log(socketConnected)
     // socket?.emit("setup", userId);
-    
   }, []);
 
   useEffect(() => {
     socket.on("receive_message", (data: any) => {
-      console.log(data)
+      console.log(data);
       setMessageReceived(data.message);
     });
   });
@@ -84,7 +83,6 @@ const MessageDetailedPage: React.FC = () => {
     fetchChat();
   }, [messageReceived, id, updatUI]);
 
-
   const handleSubmit = async (
     e: React.FormEvent<HTMLFormElement | HTMLTextAreaElement>
   ) => {
@@ -107,7 +105,7 @@ const MessageDetailedPage: React.FC = () => {
         //   message: res.data.chat.latestMessage.message,
         //   room: id, // Send the room information
         // });
-        
+
         console.log(res.data.chat, "hi");
         setUpdateUI((prev) => !prev);
       }
@@ -122,13 +120,21 @@ const MessageDetailedPage: React.FC = () => {
   //   })
   // })
 
+  const handleClick = (userId: any) => {
+    if (id === userId) {
+      navigate("/profile");
+    } else {
+      navigate(`/DiffProfile/${userId}`);
+    }
+  };
+
   return (
     <>
       <Navbar />
       <div className="w-full">
         <div className="pt-3 px-4 lg:px-32">
           <div className="flex flex-col md:flex-row gap-3">
-            <div className="flex flex-col gap-3">
+            <div className="hidden md:flex flex-col gap-3">
               <div>
                 <ProfileUser userData={userData} id={userId} />
               </div>
@@ -152,7 +158,7 @@ const MessageDetailedPage: React.FC = () => {
                     }}
                   /> */}
                   {/* <button onClick={joinRoom}>join room</button> */}
-                  
+
                   <form onSubmit={(e) => handleSubmit(e)}>
                     <textarea
                       className="border w-full mb-2 h-32 px-2 py-0.5"
@@ -160,15 +166,16 @@ const MessageDetailedPage: React.FC = () => {
                       onChange={(e) => setMessage(e.target.value)}
                       placeholder="Write a message"
                     ></textarea>
-                    <button
-                      className="bg-link-color text-white py-1.5 px-6 rounded-sm"
-                      type="submit"
-                    >
-                      Send
-                    </button>
+                    <div className="flex justify-between">
+                      <button
+                        className="bg-link-color text-white py-1.5 px-6 rounded-sm"
+                        type="submit"
+                      >
+                        Send
+                      </button>
+                      <p className="text-slate-50">{messageReceived}</p>
+                    </div>
                   </form>
-                  
-                  <p className="">{messageReceived}</p>
                 </div>
               </div>
               <div className="px-5 bg-white">
@@ -183,21 +190,24 @@ const MessageDetailedPage: React.FC = () => {
                             <img
                               src={`${message?.userId?.profileImage}`}
                               alt="img"
-                              // onClick={() => handleClick(user._id)}
+                              onClick={() => handleClick(message?.userId?._id)}
                               className="border rounded-full w-12 h-12 cursor-pointer"
                             />
                           ) : (
                             <img
                               src={`/profile-picture-placeholder.png`}
                               alt=""
-                              // onClick={() => handleClick(user._id)}
+                              onClick={() => handleClick(message?.userId?._id)}
                               className="w-14 h-14 object-cover rounded-full opacity-100 cursor-pointer"
                             />
                           )}
                         </div>
                         <div className="">
                           {userId !== message?.userId?._id && (
-                            <p className="text-slate-700 font-semibold pb-2">
+                            <p
+                              className="text-slate-700 font-semibold pb-2 cursor-pointer"
+                              onClick={() => handleClick(message?.userId?._id)}
+                            >
                               {message?.userId?.name}
                             </p>
                           )}

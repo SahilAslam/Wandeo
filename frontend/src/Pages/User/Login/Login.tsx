@@ -8,7 +8,7 @@ import { useDispatch } from "react-redux";
 import { login } from "../../../Redux/Slice/userSlice";
 import { GoogleLogin, GoogleOAuthProvider } from "@react-oauth/google";
 import axiosInstance from "../../../Axios/Axios";
-import { FaExclamationCircle } from "react-icons/fa";
+import { FaExclamationCircle, FaEye, FaEyeSlash } from "react-icons/fa";
 import SignupNavbar from "../../../Components/User/SignupNavbar/SignupNavbar";
 
 
@@ -16,6 +16,7 @@ function Login() {
   const [emailOrUsername, setEmailOrUsername] = useState("");
   const [password, setPassword] = useState("");
   const [errMessage, setErrMessage] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -76,9 +77,13 @@ function Login() {
     }
   };
 
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
   return (
     <>
-    <SignupNavbar />
+      <SignupNavbar />
       <ToastContainer />
       <GoogleOAuthProvider clientId="307319234489-tjsu09c3qicatftagifvbbugpv9cnr3o.apps.googleusercontent.com">
         <div className="login flex min-h-full flex-1 flex-col justify-center px-4 sm:px-6 py-12 lg:px-8 items-center h-screen">
@@ -129,23 +134,29 @@ function Login() {
                       </label>
                       <div className="text-sm">
                         <a
-                          onClick={() => navigate('/forget_password')}
+                          onClick={() => navigate("/forget_password")}
                           className="font-semibold text-blue-500 hover:text-blue-600 cursor-pointer"
                         >
                           Forgot password?
                         </a>
                       </div>
                     </div>
-                    <div className="mt-2">
+                    <div className="mt-2 relative">
                       <input
                         id="password"
                         name="password"
-                        type="password"
+                        type={showPassword ? "text" : "password"}
                         autoComplete="current-password"
                         placeholder="Min. 8 characters"
                         className="block w-full rounded-xl border py-3 text-gray-900 shadow-sm placeholder:text-gray-400 p-2 sm:text-sm sm:leading-6"
                         onChange={(e) => setPassword(e.target.value)}
                       />
+                      <div
+                        className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer"
+                        onClick={togglePasswordVisibility}
+                      >
+                        {showPassword ? <FaEyeSlash className="text-gray-400" /> : <FaEye className="text-gray-400" />}
+                      </div>
                     </div>
                   </div>
                   <div>
