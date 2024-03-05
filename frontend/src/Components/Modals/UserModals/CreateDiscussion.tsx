@@ -3,7 +3,13 @@ import { IoMdClose } from "react-icons/io";
 import { useParams } from "react-router-dom";
 import axiosInstance from "../../../Axios/Axios";
 import { toast } from "react-toastify";
-import { ModalProps } from "../../../Interfaces/ModalInterface";
+// import { ModalProps } from "../../../Interfaces/ModalInterface";
+
+interface ModalProps {
+  visible: boolean;
+  closeModal: () => void;
+  setUpdateUI: (data: any) => void;
+}
 
 const CreateDiscussion: React.FC<ModalProps> = ({
   visible,

@@ -2,7 +2,14 @@ import React, { useRef, useState } from "react";
 import { HiOutlineExclamation } from "react-icons/hi";
 import axiosInstance from "../../../Axios/Axios";
 import { toast } from "react-toastify";
-import { ModalProps } from "../../../Interfaces/ModalInterface";
+// import { ModalProps } from "../../../Interfaces/ModalInterface";
+
+interface ModalProps {
+  visible: boolean;
+  closeModal: () => void;
+  id: any;
+  setUpdateUI: (data: any) => void;
+}
 
 const CreateHostingModal: React.FC<ModalProps> = ({
   visible,

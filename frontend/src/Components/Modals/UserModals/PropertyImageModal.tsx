@@ -4,7 +4,13 @@ import axiosInstance from "../../../Axios/Axios";
 import axios from "axios";
 import { IoMdClose } from "react-icons/io";
 import { HiOutlineExclamation } from "react-icons/hi";
-import { ModalProps } from "../../../Interfaces/ModalInterface";
+// import { ModalProps } from "../../../Interfaces/ModalInterface";
+
+interface ModalProps {
+  visible: boolean;
+  closeModal: () => void;
+  setUpdateUI: (data: any) => void;
+}
 
 const PropertyImageModal: React.FC<ModalProps> = ({ visible, closeModal, setUpdateUI }) => {
   const [image, setImage] = useState<File | null>(null);

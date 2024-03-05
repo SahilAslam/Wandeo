@@ -2,8 +2,14 @@ import React, { useState } from "react";
 import { IoMdClose } from "react-icons/io";
 import axiosInstance from "../../../Axios/Axios";
 import { toast } from "react-toastify";
-import { ModalProps } from "../../../Interfaces/ModalInterface";
+// import { ModalProps } from "../../../Interfaces/ModalInterface";
 
+interface ModalProps {
+  visible: boolean;
+  closeModal: () => void;
+  id: any;
+  setUpdateUI: (data: any) => void;
+}
 
 const CreateMessage: React.FC<ModalProps> = ({
   visible,

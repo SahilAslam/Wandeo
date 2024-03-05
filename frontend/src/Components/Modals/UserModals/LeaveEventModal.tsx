@@ -1,7 +1,13 @@
 import React from "react";
 import { FaExclamationCircle } from "react-icons/fa";
 import { IoMdClose } from "react-icons/io";
-import { ModalProps } from "../../../Interfaces/ModalInterface";
+// import { ModalProps } from "../../../Interfaces/ModalInterface";
+
+interface ModalProps {
+  visible: boolean;
+  closeModal: () => void;
+  LeaveEvent: () => void;
+}
 
 const LeaveEventModal: React.FC<ModalProps> = ({
   visible,
