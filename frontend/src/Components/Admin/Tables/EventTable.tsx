@@ -3,6 +3,7 @@ import adminInstance from "../../../Axios/adminInstance";
 import Pagination from "../../Pagination/Pagination";
 import { ToastContainer } from "react-toastify";
 import moment from "moment";
+import { IoSearch } from "react-icons/io5";
 
 interface Event {
   _id: string;
@@ -70,14 +71,15 @@ const EventTable: React.FC = () => {
   return (
     <>
       <ToastContainer />
-      <div className="py-2">
+      <div className="py-2 relative">
         <form onSubmit={handleSearch}>
           <input
             type="text"
-            className="border rounded-xl px-2 py-1"
+            className="border rounded-full pl-8 pr-2 py-2 w-full sm:w-3/4 md:w-72"
             placeholder="Search"
             onChange={(e) => setSearchInput(e.target.value)}
           />
+          <IoSearch className="absolute top-1/2 left-3 transform -translate-y-1/2" />
         </form>
       </div>
       <div className="sm:rounded-lg bg-white mb-10 shadow-md ">
@@ -123,7 +125,7 @@ const EventTable: React.FC = () => {
                     </th>
                     <td className="px-6 py-4">{event?.eventName}</td>
                     <td className="px-6 py-4  bg-gray-50">
-                    {expandedDescriptionIndex === index
+                      {expandedDescriptionIndex === index
                         ? event?.description
                             ?.split("\n")
                             .map((line, lineIndex) => (
@@ -141,22 +143,25 @@ const EventTable: React.FC = () => {
                                 <br />
                               </span>
                             ))}
-                      {event?.description && event?.description?.length > 200 && (
-                        <button
-                          className="text-link-color font-medium cursor-pointer"
-                          onClick={() => toggleDescriptionExpansion(index)}
-                        >
-                          {expandedDescriptionIndex === index
-                            ? "Show Less"
-                            : "Show More"}
-                        </button>
-                      )}
+                      {event?.description &&
+                        event?.description?.length > 200 && (
+                          <button
+                            className="text-link-color font-medium cursor-pointer"
+                            onClick={() => toggleDescriptionExpansion(index)}
+                          >
+                            {expandedDescriptionIndex === index
+                              ? "Show Less"
+                              : "Show More"}
+                          </button>
+                        )}
                     </td>
                     <td className="px-6 py-4">{event?.location}</td>
                     <td className="px-6 py-4 bg-gray-50 ">
-                    {moment(event?.startDate).format('DD-MMM-Y')}
+                      {moment(event?.startDate).format("DD-MMM-Y")}
                     </td>
-                    <td className="px-6 py-4">{moment(event?.endDate).format('DD-MMM-Y')}</td>
+                    <td className="px-6 py-4">
+                      {moment(event?.endDate).format("DD-MMM-Y")}
+                    </td>
                     <td className="px-6 py-4 bg-gray-50">
                       {event?.attendees?.length > 0
                         ? event?.attendees.length

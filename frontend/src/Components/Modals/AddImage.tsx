@@ -6,14 +6,9 @@ import { useSelector } from "react-redux";
 import { selectUser } from "../../Redux/Slice/userSlice";
 import axiosInstance from "../../Axios/Axios";
 import { HiOutlineExclamation } from "react-icons/hi";
+import { ModalProps } from "../../Interfaces/ModalInterface";
 
-interface CreateEventProps {
-  closeModal: () => any;
-  visible: boolean;
-  setUpdateUI: (data: any) => void;
-}
-
-const AddImage: React.FC<CreateEventProps> = ({
+const AddImage: React.FC<ModalProps> = ({
   visible,
   closeModal,
   setUpdateUI,

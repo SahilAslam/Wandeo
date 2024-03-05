@@ -11,7 +11,9 @@ const AdminEventPage: React.FC = () => {
       <div className="flex flex-col md:flex-row">
         <Sidebar open={open} setOpen={setOpen} />
         <div
-          className={`flex-1 duration-700 ${open ? "md:ml-72" : "md:ml-20"}`}
+          className={`flex-1 duration-700 ${
+            open ? "md:ml-20 lg:ml-72" : "md:ml-20"
+          }`}
         >
           <AdminNavbar />
           <div className="px-7 py-3 text-slate-700 font-extrabold shadow bg-white">
@@ -29,7 +31,7 @@ const AdminEventPage: React.FC = () => {
         </div>
       </div>
     </>
-  )
+  );
 }
 
 export default AdminEventPage

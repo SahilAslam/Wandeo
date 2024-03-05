@@ -1,5 +1,5 @@
-import { useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -7,6 +7,7 @@ import "./AdminNavbar.css";
 import { logout, selectAdmin } from "../../../Redux/Slice/adminSlice";
 import { MdOutlineKeyboardArrowDown } from "react-icons/md";
 import { RiAdminLine } from "react-icons/ri";
+import { CiLogout } from "react-icons/ci";
 
 interface Admin {
   username?: string;
@@ -45,53 +46,68 @@ function AdminNavbar() {
     navigate("/admin/login");
   };
 
-  const ulRef = useRef<HTMLAnchorElement | null>(null); // Specify the correct type for ulRef
-  const menuRef = useRef<HTMLLIElement | null>(null); // Specify the correct type for menuRef
+  const Menus = [{ title: "Logout", path: "/admin/login" }];
 
-  const Menus = ["Logout"];
+  // const ulRef = useRef<HTMLAnchorElement | null>(null); // Specify the correct type for ulRef
+  // const menuRef = useRef<HTMLLIElement | null>(null); // Specify the correct type for menuRef
 
-  window.addEventListener("click", (e) => {
-    if (e.target !== menuRef.current && e.target !== ulRef.current) {
-      setMenuOpen(false);
-    }
-  });
+  // window.addEventListener("click", (e) => {
+  //   if (e.target !== menuRef.current && e.target !== ulRef.current) {
+  //     setMenuOpen(false);
+  //   }
+  // });
 
   return (
     <>
       <ToastContainer />
       <nav className="bg-blue-900">
-        <div className="max-w-screen-xl flex items-center justify-between mx-auto  h-full ">
+        <div className="max-w-screen-xl flex items-center justify-between mx-auto h-full ">
           <div className="px-7 flex items-center">
-            <div className="rounded-full bg-slate-200 p-1">
-              <RiAdminLine className="text-2xl text-blue-900 " />
+            <div className="hidden sm:block rounded-full bg-slate-200 p-1">
+              <RiAdminLine className="text-2xl text-blue-900" />
             </div>
             <h1 className="text-white text-xl font-semibold">Admin Panel</h1>
           </div>
           <div className="relative">
-            <a className="flex items-center cursor-pointer bg-green-900 py-3 px-4 ">
+            <a className="flex items-center justify-center bg-green-900 py-3 px-2 sm:px-4">
               <span
-                className="self-center text-white text-xl font-bold whitespace-nowrap"
+                className="self-center text-white text-xl font-bold whitespace-nowrap cursor-pointer pl-1.5"
                 onClick={() => setMenuOpen(!menuOpen)}
-                ref={ulRef}
+                // ref={ulRef}
               >
                 {adminUsername}
               </span>
-              <MdOutlineKeyboardArrowDown className="text-white ml-1"  />
+              <MdOutlineKeyboardArrowDown
+                className={`text-white ml-0.5 mt-1.5 cursor-pointer duration-300 ${
+                  menuOpen && "rotate-[180deg]"
+                }`}
+                onClick={() => setMenuOpen(!menuOpen)}
+              />
             </a>
             {menuOpen && (
-              <div className="bg-red-600  rounded-lg border border-slate-300  shadow-xl absolute right-4 z-50">
+              <div className=" rounded-lg border border-slate-300  shadow-xl absolute right-4 z-50">
                 <ul>
                   {Menus.map((menu, index) => (
-                    <li
-                      key={index}
-                      className="px-4 py-1 cursor-pointer text-black"
-                    >
-                      {menu === "Logout" ? (
-                        <button className="hover:underline text-white font-bold" onClick={handleLogout}>{menu}</button>
-                      ) : (
-                        <span>{menu}</span>
-                      )}
-                    </li>
+                    <Link to={menu.path}>
+                      <li
+                        key={index}
+                        className="px-4 py-1 cursor-pointer text-black"
+                      >
+                        {menu.title === "Logout" ? (
+                          <button
+                            className="hover:underline text-red-500 font-bold"
+                            onClick={handleLogout}
+                          >
+                            <div className="flex justify-center items-center gap-1">
+                              <CiLogout className="text-3xl font-bold" />
+                              {menu.title}
+                            </div>
+                          </button>
+                        ) : (
+                          <span>{menu.title}</span>
+                        )}
+                      </li>
+                    </Link>
                   ))}
                 </ul>
               </div>

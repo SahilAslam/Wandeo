@@ -1,14 +1,9 @@
 import React from 'react'
 import { FaExclamationCircle } from "react-icons/fa";
 import { IoMdClose } from "react-icons/io";
+import { ModalProps } from '../../../Interfaces/ModalInterface';
 
-interface DeleteGroupProps {
-    visible: boolean;
-    closeModal: () => void;
-    deleteGroup: () => void;
-}
-
-const DeleteGroupModal: React.FC<DeleteGroupProps> = ({
+const DeleteGroupModal: React.FC<ModalProps> = ({
     visible,
     closeModal,
     deleteGroup,

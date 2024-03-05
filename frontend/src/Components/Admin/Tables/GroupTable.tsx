@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import Pagination from "../../Pagination/Pagination";
 import { ToastContainer, toast } from "react-toastify";
 import adminInstance from "../../../Axios/adminInstance";
+import { IoSearch } from "react-icons/io5";
 
 interface Group {
   _id: string;
@@ -107,14 +108,15 @@ const GroupTable: React.FC = () => {
   return (
     <>
       <ToastContainer />
-      <div className="py-2">
+      <div className="py-2 relative">
         <form onSubmit={handleSearch}>
           <input
             type="text"
-            className="border rounded-xl px-2 py-1"
+            className="border rounded-full pl-8 pr-2 py-2 w-full sm:w-3/4 md:w-72"
             placeholder="Search"
             onChange={(e) => setSearchInput(e.target.value)}
           />
+          <IoSearch className="absolute top-1/2 left-3 transform -translate-y-1/2" />
         </form>
       </div>
       <div className="sm:rounded-lg bg-white mb-10 shadow-md ">

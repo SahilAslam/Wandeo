@@ -1,14 +1,9 @@
 import React from 'react'
 import { FaExclamationCircle } from "react-icons/fa";
 import { IoMdClose } from "react-icons/io";
+import { ModalProps } from '../../../Interfaces/ModalInterface';
 
-interface LeaveGroupProps {
-    visible: boolean;
-    closeModal: () => void;
-    LeaveGroup: () => void;
-}
-
-const LeaveGroup: React.FC<LeaveGroupProps> = ({ visible, closeModal, LeaveGroup }) => {
+const LeaveGroup: React.FC<ModalProps> = ({ visible, closeModal, LeaveGroup }) => {
     const handleClick = () => {
         LeaveGroup();
         closeModal();

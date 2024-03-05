@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import Pagination from '../../Pagination/Pagination'
 import { ToastContainer } from 'react-toastify'
 import adminInstance from '../../../Axios/adminInstance';
+import { IoSearch } from 'react-icons/io5';
 
 interface Host {
   userId: {
@@ -60,14 +61,15 @@ const HostsTable: React.FC = () => {
   return (
     <>
       <ToastContainer />
-      <div className="py-2">
+      <div className="py-2 relative">
         <form onSubmit={handleSearch}>
           <input
             type="text"
-            className="border rounded-xl px-2 py-1"
+            className="border rounded-full pl-8 pr-2 py-2 w-full sm:w-3/4 md:w-72"
             placeholder="Search"
             onChange={(e) => setSearchInput(e.target.value)}
           />
+          <IoSearch className="absolute top-1/2 left-3 transform -translate-y-1/2" />
         </form>
       </div>
       <div className="sm:rounded-lg bg-white mb-10 shadow-md ">
@@ -104,15 +106,13 @@ const HostsTable: React.FC = () => {
                     </th>
                     <td className="px-6 py-4">{hosts?.userId?.name}</td>
                     <td className="px-6 py-4  bg-gray-50">
-                        {hosts?.hostingAvailability}
+                      {hosts?.hostingAvailability}
                     </td>
-                    <td className="px-6 py-4">
-                      {hosts?.userId?.address}
-                    </td>
+                    <td className="px-6 py-4">{hosts?.userId?.address}</td>
                     <td className="px-6 py-4 bg-gray-50 ">
-                    {!hosts?.isBlocked ? (
+                      {!hosts?.isBlocked ? (
                         <button
-                        //   onClick={() => blockUser(user?._id)}
+                          //   onClick={() => blockUser(user?._id)}
                           type="button"
                           className={
                             "text-white bg-gradient-to-r from-red-400 via-red-500 to-red-600 font-medium rounded-lg text-sm px-7 py-2.5 text-center mr-2 mb-2"
@@ -122,14 +122,13 @@ const HostsTable: React.FC = () => {
                         </button>
                       ) : (
                         <button
-                        //   onClick={() => unBlockUser(user?._id)}
+                          //   onClick={() => unBlockUser(user?._id)}
                           className="text-gray-900 bg-gradient-to-r from-lime-200 via-lime-400 to-lime-500 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2"
                         >
                           UnBlock
                         </button>
                       )}
                     </td>
-                    
                   </tr>
                 ))
               ) : (
@@ -145,7 +144,7 @@ const HostsTable: React.FC = () => {
         />
       </div>
     </>
-  )
+  );
 }
 
 export default HostsTable

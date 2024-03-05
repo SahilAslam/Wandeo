@@ -11,7 +11,6 @@ import axiosInstance from "../../../Axios/Axios";
 import { FaExclamationCircle, FaEye, FaEyeSlash } from "react-icons/fa";
 import SignupNavbar from "../../../Components/User/SignupNavbar/SignupNavbar";
 
-
 function Login() {
   const [emailOrUsername, setEmailOrUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -48,31 +47,31 @@ function Login() {
         password: trimmedPassword,
       });
 
-      const userData = response.data;
+      const userData = response?.data;
 
       if (userData.isBlocked) {
-        console.log(userData.isBlocked, "user is blocked");
+        console.log(userData?.isBlocked, "user is blocked");
 
         toast.error("Your account is blocked. Please contact support.");
       } else {
-        localStorage.setItem("token", JSON.stringify(response.data.token));
-
-        dispatch(login(response.data));
-
-        navigate("/");    
+        localStorage.setItem("token", JSON.stringify(response?.data?.token));
+        
+        dispatch(login(response?.data));
+        
+        navigate("/");
       }
     } catch (error: any) {
       if (
-        error.response &&
-        error.response.status === 401 &&
-        error.response.data.message === "User is blocked"
+        error?.response &&
+        error?.response?.status === 401 &&
+        error?.response?.data?.message === "User is blocked"
       ) {
         setErrMessage("Your account is blocked. Please contact support.");
         setTimeout(() => {
           setErrMessage("");
-        }, 3000)
+        }, 3000);
       } else {
-        toast.error(error.response.data.message);
+        toast.error(error?.response?.data?.message);
       }
     }
   };
@@ -155,7 +154,11 @@ function Login() {
                         className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer"
                         onClick={togglePasswordVisibility}
                       >
-                        {showPassword ? <FaEyeSlash className="text-gray-400" /> : <FaEye className="text-gray-400" />}
+                        {showPassword ? (
+                          <FaEyeSlash className="text-gray-400" />
+                        ) : (
+                          <FaEye className="text-gray-400" />
+                        )}
                       </div>
                     </div>
                   </div>

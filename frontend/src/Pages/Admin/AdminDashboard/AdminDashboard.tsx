@@ -40,7 +40,7 @@ export const AdminDashboard = () => {
     <div className="min-h-screen">
       <div className="flex flex-col md:flex-row">
         <Sidebar open={open} setOpen={setOpen} />
-          <div className={`flex-1 duration-700 ${open ? "md:ml-72" : "md:ml-20"}`}>
+          <div className={`flex-1 duration-700 ${open ? "md:ml-20 lg:ml-72" : "md:ml-20"}`}>
             <AdminNavbar />
             <div className={`justify-center`} >
               <div className="px-7 py-3 text-slate-700 font-extrabold shadow bg-white">

@@ -1,16 +1,9 @@
 import React from 'react'
 import { IoMdClose } from "react-icons/io";
 import axiosInstance from '../../../Axios/Axios';
+import { ModalProps } from '../../../Interfaces/ModalInterface';
 
-interface DeclineRequestProps {
-    visible: boolean;
-    closeModal: () => void;
-    userName: any;
-    setUpdateUI: (data: any) => void;
-    id: any;
-}
-
-const DeclineHostingRequest: React.FC<DeclineRequestProps> = ({
+const DeclineHostingRequest: React.FC<ModalProps> = ({
     visible,
     closeModal,
     userName,

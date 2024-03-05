@@ -5,14 +5,9 @@ import { toast, ToastContainer } from "react-toastify";
 import { useSelector } from "react-redux";
 import { selectUser } from "../../Redux/Slice/userSlice";
 import axios from "axios";
+import { ModalProps } from "../../Interfaces/ModalInterface";
 
-interface CreateEventProps {
-  closeModal: () => void;
-  visible: boolean;
-  updateUI: (data: any) => void;
-}
-
-const CreateEvent: React.FC<CreateEventProps> = ({ visible, closeModal, updateUI }) => {
+const CreateEvent: React.FC<ModalProps> = ({ visible, closeModal, updateUI }) => {
   const [eventName, setEventName] = useState("");
   const [location, setLocation] = useState("");
   const [startDate, setStartDate] = useState("");

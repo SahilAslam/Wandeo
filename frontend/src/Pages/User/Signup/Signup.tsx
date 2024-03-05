@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axiosInstance from "../../../Axios/Axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Link, useNavigate } from "react-router-dom";
 import { GoogleLogin, GoogleOAuthProvider } from "@react-oauth/google";
-import { FaExclamationCircle } from "react-icons/fa";
+import { FaExclamationCircle, FaEye, FaEyeSlash } from "react-icons/fa";
 import SignupNavbar from "../../../Components/User/SignupNavbar/SignupNavbar";
 
 function Signup() {
@@ -14,8 +14,15 @@ function Signup() {
   const [password, setPassword] = useState("");
   const [errMessage, setErrMessage] = useState("");
   const [passwordStrength , SetPasswordstrength] = useState<string>('');
+  const [showPassword, setShowPassword] = useState<boolean>(false)
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (localStorage.getItem("userData")) {
+      navigate("/");
+    }
+  }, [navigate]);
 
   const isValidEmail = (email: string): boolean => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -45,25 +52,32 @@ function Signup() {
 
     if (
       passwordRequirements.requireUpperCase &&
-      uppercaseRegex.test(password)
+      uppercaseRegex.test(password) &&
+      password.length >= passwordRequirements.minLength
     ) {
       strength++;
     }
 
     if (
       passwordRequirements.requireLowerCase &&
-      lowercaseRegex.test(password)
+      lowercaseRegex.test(password) &&
+      password.length >= passwordRequirements.minLength
     ) {
       strength++;
     }
 
-    if (passwordRequirements.requireNumbers && numbersRegex.test(password)) {
+    if (
+      passwordRequirements.requireNumbers &&
+      numbersRegex.test(password) &&
+      password.length >= passwordRequirements.minLength
+    ) {
       strength++;
     }
 
     if (
       passwordRequirements.requireSpecialChars &&
-      specialCharRegex.test(password)
+      specialCharRegex.test(password) &&
+      password.length >= passwordRequirements.minLength
     ) {
       strength++;
     }
@@ -139,6 +153,10 @@ function Signup() {
       toast.error(error.response.data.message);
     }
   };
+
+  const handleShow = () => {
+    setShowPassword(!showPassword);
+  }
 
   return (
     <>
@@ -231,28 +249,39 @@ function Signup() {
                           Password *
                         </label>
                       </div>
-                      <div className="mt-1">
+                      <div className="mt-1 relative">
                         <input
                           id="password"
                           name="password"
-                          type="password"
+                          type={showPassword ? "text" : "password"}
                           placeholder="Password"
-                          className="block w-full rounded-xl border py-3 text-gray-900 shadow-sm ring-gray-300 placeholder:text-gray-400 p-2 sm:text-sm sm:leading-6"
+                          className=" block w-full rounded-xl border py-3 text-gray-900 shadow-sm ring-gray-300 placeholder:text-gray-400 p-2 sm:text-sm sm:leading-6"
                           onChange={handlePasswordChange}
                         />
-                        {passwordStrength && (
-                          <div
-                            className={`text-sm mt-2 ${
-                              passwordStrength === "Strong"
-                                ? "text-[#5dc43e]"
-                                : passwordStrength === "Moderate" ? "text-orange-500"
-                                : "text-[#e84848]"
-                            }`}
-                          >
-                            Password Strength: {passwordStrength}
-                          </div>
-                        )}
+                        <div
+                          className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer"
+                          onClick={handleShow}
+                        >
+                          {showPassword ? (
+                            <FaEyeSlash className="text-gray-400" />
+                          ) : (
+                            <FaEye className="text-gray-400" />
+                          )}
+                        </div>
                       </div>
+                      {passwordStrength && (
+                        <div
+                          className={`text-sm mt-2 ${
+                            passwordStrength === "Strong"
+                              ? "text-[#5dc43e]"
+                              : passwordStrength === "Moderate"
+                              ? "text-orange-500"
+                              : "text-[#e84848]"
+                          }`}
+                        >
+                          Password Strength: {passwordStrength}
+                        </div>
+                      )}
                     </div>
                   </div>
 
