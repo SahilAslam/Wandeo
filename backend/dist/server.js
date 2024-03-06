@@ -33,7 +33,7 @@ app.use(express_1.default.urlencoded({ extended: true }));
 const server = http_1.default.createServer(app);
 const io = new socket_io_1.Server(server, {
     cors: {
-        origin: 'https://wandeo.website',
+        origin: ["http://localhost:5173", 'https://wandeo.website', 'https://wandeo.website', '*'],
         methods: ["GET", "POST"],
         credentials: true,
     },

@@ -34,7 +34,7 @@ const server = http.createServer(app);
 
 const io = new SocketIoServer(server, {
   cors: {
-    origin: 'https://wandeo.website',
+    origin: ["http://localhost:5173", 'https://wandeo.website', 'https://wandeo.website', '*'],
     methods: ["GET", "POST"],
     credentials: true,
   },
