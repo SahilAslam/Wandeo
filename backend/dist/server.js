@@ -18,7 +18,16 @@ const path_1 = require("path");
 (0, connection_1.default)();
 const port = process.env.PORT || 5000;
 const app = (0, express_1.default)();
-app.use((0, cors_1.default)());
+const corsOptions = {
+    origin: [
+        "http://localhost:5173",
+        "https://wandeo.website",
+        "http://localhost:5000",
+        "https://wandeo.website",
+    ],
+    methods: "GET,PUT,PATCH,POST,DELETE",
+};
+app.use((0, cors_1.default)(corsOptions));
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true }));
 const server = http_1.default.createServer(app);
