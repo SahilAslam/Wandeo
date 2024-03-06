@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import Navbar from "../../../Components/User/Navbar/Navbar";
 import axiosInstance from "../../../Axios/Axios";
 import { useSelector } from "react-redux";
@@ -28,26 +28,21 @@ const CreatePublicTrip: React.FC = () => {
 
   const today = new Date().toISOString().split('T')[0];
 
-  const handleArrivalDateChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const newArrivalDate = e.target.value;
+  const handleArrivalDateChange = (e: React.FormEvent<HTMLInputElement>) => {
+    const newArrivalDate = e.currentTarget.value;
     setArrivalDate(newArrivalDate);
   };
 
-  const handleDepartureDateChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const newDepartureDate = e.target.value;
+  const handleDepartureDateChange = (e: React.FormEvent<HTMLInputElement>) => {
+    const newDepartureDate = e.currentTarget.value;
     setDepartureDate(newDepartureDate);
 
-    // Check if the end date is less than the start date
     if (newDepartureDate < arrivalDate) {
-      setError('Departure cannot be before the arrival');
+      setError("Departure cannot be before the arrival");
     } else {
-      setError('');
+      setError("");
     }
   };
-
-  useEffect(() => {
-    
-  })
 
   const handleSubmit = async (
     e: React.FormEvent<HTMLFormElement | HTMLTextAreaElement>
@@ -127,7 +122,7 @@ const CreatePublicTrip: React.FC = () => {
                   <input
                     type="date"
                     value={arrivalDate}
-                    onChange={() => handleArrivalDateChange}
+                    onChange={handleArrivalDateChange}
                     min={today}
                     className={`border rounded px-2 py-1 `}
                   />
@@ -139,7 +134,7 @@ const CreatePublicTrip: React.FC = () => {
                   <input
                     type="date"
                     value={departureDate}
-                    onChange={() => handleDepartureDateChange}
+                    onChange={handleDepartureDateChange}
                     min={today}
                     className={`border rounded px-2 py-1 ${error === "Departure cannot be before the arrival" && "border-red-500 border-2"} `}
                   />
