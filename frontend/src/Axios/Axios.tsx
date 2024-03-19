@@ -1,4 +1,6 @@
 import axios from "axios";
+import { toast } from "react-toastify";
+
 const arr = ["http://localhost:5000","https://wandeo.website"]
 const axiosInstance = axios.create({
     baseURL: arr[1]
@@ -23,6 +25,8 @@ axiosInstance.interceptors.request.use(
     }
 )
 
+let toastDisplayed = false;
+
 axiosInstance.interceptors.response.use(
     (response) => {
         if(response?.data?.message === "jwt expired") {
@@ -32,6 +36,17 @@ axiosInstance.interceptors.response.use(
         return response;
     },
     (error) => {
+        const userToken = localStorage.getItem("token");
+        if(!userToken) {
+            localStorage.removeItem("userData");
+            if(!toastDisplayed) {
+                toast.error("Coudn't find token! Please login again")
+                toastDisplayed = true;
+            }
+            setTimeout(() => {
+                window.location.replace("/login");
+            },3000)
+        }
         console.error(error)
         return Promise.reject(error)
     }

@@ -51,7 +51,17 @@ const EditProfile = () => {
     }
   });
 
- 
+  const today = new Date();
+  today.setFullYear(today.getFullYear() - 15);
+
+  const fifteenYearsBeforeToday = today.toISOString().split("T")[0];
+
+  const options = ["Male", "Female", "Others"];
+
+  const handleChange = (e: React.FormEvent<HTMLSelectElement>) => {
+    setGender((e.target as HTMLSelectElement).value);
+  };
+
   useEffect(() => {
     axiosInstance
       .get(`/profile/${id}`)
@@ -246,7 +256,7 @@ const EditProfile = () => {
                                 type="date"
                                 onChange={(e) => setBirthday(e.target.value)}
                                 value={birthday}
-                                placeholder=""
+                                max={fifteenYearsBeforeToday}
                                 className="block w-full rounded-md border-0 py-0.5 px-2 mt-2 md:mt-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:ring-gray-400 placeholder:text-gray-400 focus:ring-slate-800 sm:text-sm sm:leading-6"
                               />
                             </div>
@@ -256,13 +266,17 @@ const EditProfile = () => {
                               Gender
                             </h1>
                             <div className="md:mx-1 md:w-auto lg:w-[12rem] xl:w-[12rem] flex flex-col">
-                              <input
-                                type="text"
+                              <select
                                 value={gender}
-                                onChange={(e) => setGender(e.target.value)}
-                                placeholder=""
-                                className="block w-full rounded-md border-0 py-0.5 px-2 mt-2 md:mt-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:ring-gray-400 placeholder:text-gray-400 focus:ring-slate-800 sm:text-sm sm:leading-6"
-                              />
+                                onChange={handleChange}
+                                className="block w-full rounded-md border-0 py-1.5 px-2 mt-2 md:mt-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:ring-gray-400 placeholder:text-gray-400 focus:ring-slate-800 sm:text-sm sm:leading-6"
+                              >
+                                {options.map((option) => (
+                                  <option value={option} className="">
+                                    {option}
+                                  </option>
+                                ))}
+                              </select>
                             </div>
                           </div>
                         </div>
@@ -273,7 +287,7 @@ const EditProfile = () => {
                             </h1>
                             <div className="md:mx-2 md:w-auto lg:w-auto xl:w-[30rem]  flex flex-col">
                               <input
-                                type="text"
+                                type="email"
                                 placeholder=""
                                 required
                                 value={email}
@@ -288,7 +302,8 @@ const EditProfile = () => {
                             </h1>
                             <div className="md:w-auto lg:w-[25rem] xl:w-[30rem] flex flex-col">
                               <input
-                                type="text"
+                                type="tel"
+                                pattern="^(?!([0-9])\1+$)[6789]\d{9}$"
                                 value={phone}
                                 onChange={(e) => setPhone(e.target.value)}
                                 placeholder=""
@@ -485,7 +500,10 @@ const EditProfile = () => {
                           >
                             Save
                           </button>
-                          <button onClick={handleCancel} className="px-5 py-1 bg-gray-400 text-white font-semibold rounded-sm">
+                          <button
+                            onClick={handleCancel}
+                            className="px-5 py-1 bg-gray-400 text-white font-semibold rounded-sm"
+                          >
                             Cancel
                           </button>
                         </div>

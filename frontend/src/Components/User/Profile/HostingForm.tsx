@@ -13,8 +13,6 @@ const HostingForm = () => {
   const [genderMenuOpen, setGenderMenuOpen] = useState(false);
   const [selectedGenderMenu, setSelectedGenderMenu] = useState("Any");
   const [genderAccepting, setGenderAccepting] = useState("");
-  const [sleepingMenuOpen, setSleepingMenuOpen] = useState(false);
-  const [selectedSleepingMenu, setSelectedSleepingMenu] = useState("");
   const [sleepingArrangement, setSleepingArrangement] = useState("");
   const [sleepingArrangementDescription, setSleepingArrangementDescription] = useState("");
   const [transportationAccess, setTransportationAccess] = useState("");
@@ -87,9 +85,6 @@ const HostingForm = () => {
     }
   });
 
-  const sleepingUlRef = useRef(null); // Specify the correct type for ulRef
-  const sleepingMenuRef = useRef<HTMLLIElement | null>(null); // Specify the correct type for menuRef
-
   const sleepingMenus = [
     "",
     "Shared Bed",
@@ -98,14 +93,9 @@ const HostingForm = () => {
     "Private Room",
   ];
 
-  window.addEventListener("click", (e) => {
-    if (
-      e.target !== sleepingMenuRef.current &&
-      e.target !== sleepingUlRef.current
-    ) {
-      setSleepingMenuOpen(false);
-    }
-  });
+  const handleChange = (e: React.FormEvent<HTMLSelectElement>) => {
+    setSleepingArrangement((e.target as HTMLSelectElement).value);
+  };
 
   // const handleCheckboxChange = (day) => {
   //   setAvailability({ ...availability, [day]: !availability[day] });
@@ -272,9 +262,21 @@ const HostingForm = () => {
               Preferred Gender to Host
             </h1>
             <div className="w-auto md:mx-6 flex flex-col relative">
-              <Checkbox label="Kid Friendly" onChange={handleChangeOne} value={checkedOne} />
-              <Checkbox label="Pet Friendly" onChange={handleChangeTwo} value={checkedTwo} />
-              <Checkbox label="Smoking is Allowed" onChange={handleChangeThree} value={checkedThree} />
+              <Checkbox
+                label="Kid Friendly"
+                onChange={handleChangeOne}
+                value={checkedOne}
+              />
+              <Checkbox
+                label="Pet Friendly"
+                onChange={handleChangeTwo}
+                value={checkedTwo}
+              />
+              <Checkbox
+                label="Smoking is Allowed"
+                onChange={handleChangeThree}
+                value={checkedThree}
+              />
             </div>
           </div>
         </div>
@@ -289,36 +291,17 @@ const HostingForm = () => {
               </h1>
             </div>
             <div className="w-full relative">
-              <input
-                type="text"
-                onClick={() => setSleepingMenuOpen(!sleepingMenuOpen)}
-                ref={sleepingUlRef}
-                value={
-                  sleepingArrangement
-                    ? sleepingArrangement
-                    : selectedSleepingMenu
-                }
-                className="cursor-pointer rounded-md border-0 py-0.5 px-2 mt-2 md:mt-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:ring-gray-400 placeholder:text-gray-400 focus:ring-slate-800 sm:text-sm sm:leading-6"
-              />
-              {sleepingMenuOpen && (
-                <div className="bg-white w-auto md:w-60 text-sm shadow-xl -left-1 border rounded-md absolute ml-1 cursor-pointer z-50">
-                  <ul>
-                    {sleepingMenus.map((menu, index) => (
-                      <li
-                        key={index}
-                        className="px-2 py-0.5 cursor-pointer hover:bg-blue-100"
-                        onClick={() => {
-                          setSelectedSleepingMenu(menu);
-                          setSleepingArrangement(menu);
-                          setSleepingMenuOpen(false);
-                        }}
-                      >
-                        {<span>{menu}</span>}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
+              <select
+                value={sleepingArrangement}
+                onChange={handleChange}
+                className="cursor-pointer rounded-md border-0 py-1.5 mt-2 md:mt-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:ring-gray-400 placeholder:text-gray-400 focus:ring-slate-800 sm:text-sm sm:leading-6"
+              >
+                {sleepingMenus.map((option) => (
+                  <option value={option} className="">
+                    {option}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
           <div className="py-4 flex flex-col md:flex-row md:gap-9 ">

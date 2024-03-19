@@ -19,20 +19,20 @@ const CreateGroup = () => {
   const id = user?.id ? user?.id : user?.user?._id;
   const navigate = useNavigate();
 
-  const UPLOAD_PRESET = import.meta.env.VITE_UPLOAD_PRESET || ""
-  const CLOUD_NAME = import.meta.env.VITE_CLOUD_NAME || ""
-  const UPLOAD_URL = import.meta.env.VITE_CLOUDINARY_UPLOAD_URL || ""
+  const UPLOAD_PRESET = import.meta.env.VITE_UPLOAD_PRESET || "";
+  const CLOUD_NAME = import.meta.env.VITE_CLOUD_NAME || "";
+  const UPLOAD_URL = import.meta.env.VITE_CLOUDINARY_UPLOAD_URL || "";
 
   function handleChange(e: ChangeEvent<HTMLInputElement>) {
-    if(e.target.files && e.target.files.length > 0) {
+    if (e.target.files && e.target.files.length > 0) {
       const selectedFile = e.target.files?.[0];
 
       if (selectedFile) {
         const allowedFormats = ["image/jpeg", "image/png", "image/gif"];
-  
+
         if (allowedFormats.includes(selectedFile.type)) {
           setImage(selectedFile);
-          setErr("")
+          setErr("");
         } else {
           setErr("Only image formats (JPEG, PNG, GIF) are allowed");
         }
@@ -43,14 +43,11 @@ const CreateGroup = () => {
   const handleImageUpload = async () => {
     try {
       const formData = new FormData();
-      if(image) {
+      if (image) {
         formData.append("file", image);
         formData.append("upload_preset", UPLOAD_PRESET);
         formData.append("cloud_name", CLOUD_NAME);
-        const response = await axios.post(
-          UPLOAD_URL,
-          formData
-        );
+        const response = await axios.post(UPLOAD_URL, formData);
         console.log(response.data, "//data//");
         return response.data.public_id;
       } else {
@@ -59,15 +56,32 @@ const CreateGroup = () => {
     } catch (error) {
       console.error("Error while uploading the image:", error);
     }
-  }
+  };
 
   const handleSubmit = async (
     e: React.FormEvent<HTMLFormElement | HTMLTextAreaElement>
   ) => {
     e.preventDefault();
 
-    if(err) {
-      return toast.error(err)
+    setErr("")
+
+    const trimmedName = name.trim();
+    const trimmedDescription = description.trim();
+
+    if (!trimmedName) {
+      setErr("Group name is required");
+      return;
+    } else if (trimmedName.length < 4) {
+      setErr("Group name should contain atleast 4 letters");
+      return
+    }
+
+    if (!trimmedDescription) {
+      setErr("Please add a description");
+      return;
+    } else if (trimmedDescription.length < 10) {
+      setErr("Group name should contain atleast 10 letters");
+      return;
     }
 
     const uploadUrl = await handleImageUpload();

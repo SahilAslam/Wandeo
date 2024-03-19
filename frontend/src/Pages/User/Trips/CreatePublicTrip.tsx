@@ -97,11 +97,14 @@ const CreatePublicTrip: React.FC = () => {
                 Post your trip details so that you can be discovered by local
                 hosts, event organizers, or other travelers
               </p>
-              {error === "Required all fields" &&
-                <div className=" pb-5">       
-                  <p className="bg-red-200 flex justify-center items-center text-[#3E1214] font-semibold py-4"><HiOutlineExclamation className="mr-1 text-xl" />{error}</p>
-                </div>           
-              }
+              {error === "Required all fields" && (
+                <div className=" pb-5">
+                  <p className="bg-red-200 flex justify-center items-center text-[#3E1214] font-semibold py-4">
+                    <HiOutlineExclamation className="mr-1 text-xl" />
+                    {error}
+                  </p>
+                </div>
+              )}
               <div className="flex flex-col pb-5">
                 <label className="text-slate-800 font-semibold mb-1">
                   Destination *
@@ -136,12 +139,17 @@ const CreatePublicTrip: React.FC = () => {
                     value={departureDate}
                     onChange={handleDepartureDateChange}
                     min={today}
-                    className={`border rounded px-2 py-1 ${error === "Departure cannot be before the arrival" && "border-red-500 border-2"} `}
+                    className={`border rounded px-2 py-1 ${
+                      error === "Departure cannot be before the arrival" &&
+                      "border-red-500 border-2"
+                    } `}
                   />
                 </div>
               </div>
               <div className="pb-5">
-                <p className="text-red-500">{error === "Departure cannot be before the arrival" && error}</p>
+                <p className="text-red-500">
+                  {error === "Departure cannot be before the arrival" && error}
+                </p>
               </div>
               <div className="flex flex-col pb-5">
                 <label className="text-slate-800 font-semibold mb-1">
@@ -192,10 +200,16 @@ const CreatePublicTrip: React.FC = () => {
               </div>
             </div>
             <div className="px-8 py-3 flex justify-end gap-2 bg-slate-200">
-              <button className="px-4 bg-slate-400 rounded py-1.5 text-white ">
+              <button
+                onClick={() => navigate("/publictrips")}
+                className="px-4 bg-slate-400 rounded py-1.5 text-white "
+              >
                 Cancel
               </button>
-              <button type="submit" className="px-4 bg-green-600 hover:bg-green-700 delay-75 hover:delay-75 rounded py-1.5 text-white">
+              <button
+                type="submit"
+                className="px-4 bg-green-600 hover:bg-green-700 delay-75 hover:delay-75 rounded py-1.5 text-white"
+              >
                 Create
               </button>
             </div>
