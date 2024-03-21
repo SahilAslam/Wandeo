@@ -65,6 +65,7 @@ export const blockUser = async(req: Request, res: Response) => {
     try {
         const userId = req.params.id;
 
+        
         const updateUser = await userModel.findByIdAndUpdate(userId, 
             {isBlocked : true} , {new : true}
         );

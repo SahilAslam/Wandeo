@@ -34,9 +34,13 @@ const protect = (0, express_async_handler_1.default)((req, res, next) => __await
             const user = yield userModel_1.default
                 .findById(userId)
                 .select("-password");
-            if (user) {
+            if (user && (user === null || user === void 0 ? void 0 : user.isBlocked) === false) {
                 req.user = user;
                 next();
+            }
+            else if ((user === null || user === void 0 ? void 0 : user.isBlocked) === true) {
+                res.status(401).json({ message: "User is blocked" });
+                return;
             }
             else {
                 res.status(404);

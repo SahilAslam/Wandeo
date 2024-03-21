@@ -32,21 +32,35 @@ axiosInstance.interceptors.response.use(
         if(response?.data?.message === "jwt expired") {
             localStorage.removeItem('token');
             window.location.replace("/login")
-        }
-        return response;
+        } 
+          return response;
     },
     (error) => {
         const userToken = localStorage.getItem("token");
-        if(!userToken) {
-            localStorage.removeItem("userData");
-            if(!toastDisplayed) {
-                toast.error("Coudn't find token! Please login again")
-                toastDisplayed = true;
-            }
-            setTimeout(() => {
-                window.location.replace("/login");
-            },3000)
+        if (!userToken) {
+          localStorage.removeItem("userData");
+          if (!toastDisplayed) {
+            toast.error("Coudn't find token! Please login again");
+            toastDisplayed = true;
+          }
+          setTimeout(() => {
+            window.location.replace("/login");
+          }, 3000);
+        } 
+        
+        if (error?.response?.data?.message === "User is blocked") {
+          console.log("entered");
+          localStorage.removeItem("token");
+          localStorage.removeItem("userData");
+          if (!toastDisplayed) {
+            toast.error("You have been blocked by the admin!");
+            toastDisplayed = true;
+          }
+          setTimeout(() => {
+            window.location.replace("/login");
+          }, 3000);
         }
+
         console.error(error)
         return Promise.reject(error)
     }

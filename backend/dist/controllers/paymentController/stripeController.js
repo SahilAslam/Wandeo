@@ -14,23 +14,23 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getVerified = void 0;
 const stripe_1 = __importDefault(require("stripe"));
-const verifiedUserModel_1 = __importDefault(require("../../models/verifiedUserModel"));
-const userModel_1 = __importDefault(require("../../models/userModel"));
 const stripeSecretKey = process.env.STRIPE_SECRET;
 const stripe = new stripe_1.default(stripeSecretKey, {
     apiVersion: "2023-10-16",
 });
 const getVerified = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        console.log(req.body, "body");
-        const { userId } = req.body;
         const session = yield stripe.checkout.sessions.create({
             line_items: [
                 {
                     price_data: {
                         currency: "INR",
                         product_data: {
-                            name: "Verified"
+                            name: "Verification",
+                            description: "Get verified and find host's 2x faster",
+                            images: [
+                                "https://res.cloudinary.com/dkba47utw/image/upload/b_rgb:FFFFFF/v1711016680/Wandeo_logo_main_c2oilb.png",
+                            ],
                         },
                         unit_amount: 5000 * 100,
                     },
@@ -38,31 +38,9 @@ const getVerified = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
                 },
             ],
             mode: "payment",
-            success_url: `http://wandeo.website/paymentSuccess`,
+            success_url: `http://wandeo.website/paymentSuccess?success=true`,
             cancel_url: `http://wandeo.website/payment`,
         });
-        if (session.payment_status === "unpaid") {
-            const verified = yield verifiedUserModel_1.default.create({
-                userId: userId,
-                verified: true,
-            });
-            if (verified) {
-                const user = yield userModel_1.default.findByIdAndUpdate({ _id: userId }, {
-                    verified: true
-                });
-                if (!user) {
-                    return res.status(400).json({ message: "user not updated" });
-                }
-                console.log(user);
-                res.json({ url: session.url });
-            }
-            else {
-                return res.status(404).json({ error: "Something went wrong" });
-            }
-        }
-        else {
-            res.status(400).json({ error: "Verification not completed yet." });
-        }
         res.send({ url: session.url });
     }
     catch (err) {

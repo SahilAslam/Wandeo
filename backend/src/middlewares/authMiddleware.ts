@@ -15,6 +15,7 @@ interface customUser {
 
 // Extend the Request object to include a decodedToken property
 declare global {
+  // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace Express {
     interface Request {
       user?: customUser;
@@ -41,13 +42,16 @@ const protect = asyncHandler(
         const userId: string = decoded.user_id;
         console.log("token is valid:", decoded);
 
-        const user: Document | null = await userModel
+        const user = await userModel
           .findById(userId)
           .select("-password");
-
-        if (user) {   
+          
+        if (user && user?.isBlocked === false) {   
           req.user = user as unknown as customUser;
           next();
+        } else if (user?.isBlocked === true) {
+          res.status(401).json({message: "User is blocked"});
+          return;
         } else {
           res.status(404);
           throw new Error("User not found");

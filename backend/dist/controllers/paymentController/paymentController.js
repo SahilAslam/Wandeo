@@ -18,21 +18,24 @@ const userModel_1 = __importDefault(require("../../models/userModel"));
 const saveVerified = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
-        const verified = yield verifiedUserModel_1.default.create({
-            userId: id,
-            verified: true,
-        });
-        if (verified) {
-            const user = userModel_1.default.findByIdAndUpdate({ _id: id }, {
-                verified: true
+        const verifiedExists = yield verifiedUserModel_1.default.findOne({ userId: id });
+        if (!verifiedExists) {
+            const verified = yield verifiedUserModel_1.default.create({
+                userId: id,
+                verified: true,
             });
-            if (!user) {
-                return res.status(400).json({ message: "user Id not found" });
+            if (verified) {
+                const user = yield userModel_1.default.findByIdAndUpdate({ _id: id }, {
+                    verified: true,
+                });
+                if (!user) {
+                    return res.status(400).json({ message: "user Id not found" });
+                }
+                return res.status(201).json({ message: "Verified successfully" });
             }
-            return res.status(201).json({ message: "Verified successfully" });
-        }
-        else {
-            return res.status(404).json({ error: "Something went wrong" });
+            else {
+                return res.status(404).json({ error: "Something went wrong" });
+            }
         }
     }
     catch (error) {

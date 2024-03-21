@@ -1,7 +1,5 @@
 import { Request, Response } from "express";
 import Stripe from "stripe";
-import VerifiedModel from "../../models/verifiedUserModel";
-import userModel from "../../models/userModel";
 
 const stripeSecretKey = process.env.STRIPE_SECRET as string;
 
@@ -11,15 +9,17 @@ const stripe = new Stripe(stripeSecretKey, {
 
 const getVerified = async (req: Request, res: Response) => {
   try {
-    console.log(req.body, "body");
-    const { userId } = req.body
     const session = await stripe.checkout.sessions.create({
       line_items: [
         {
           price_data: {
             currency: "INR",
             product_data: {
-              name: "Verified"
+              name: "Verification",
+              description: "Get verified and find host's 2x faster",
+              images: [
+                "https://res.cloudinary.com/dkba47utw/image/upload/b_rgb:FFFFFF/v1711016680/Wandeo_logo_main_c2oilb.png",
+              ],
             },
             unit_amount: 5000 * 100,
           },
@@ -27,35 +27,12 @@ const getVerified = async (req: Request, res: Response) => {
         },
       ],
       mode: "payment",
-      // success_url: `http://localhost:5173/paymentSuccess`,
-      success_url: `http://wandeo.website/paymentSuccess`,
+      // success_url: `http://localhost:5173/paymentSuccess?success=true`,
+      success_url: `http://wandeo.website/paymentSuccess?success=true`,
       // cancel_url: `http://localhost:5173/payment`,
       cancel_url: `http://wandeo.website/payment`,
     });
   
-    if (session.payment_status === "unpaid") {
-      const verified = await VerifiedModel.create({
-        userId: userId,
-        verified: true,
-      })
-
-      if(verified) {
-          const user = await userModel.findByIdAndUpdate({_id: userId}, {
-              verified: true
-          });
-
-          if(!user) {
-              return res.status(400).json({message: "user not updated"})
-          }
-          console.log(user)
-          res.json({ url: session.url});
-      } else {
-          return res.status(404).json({error: "Something went wrong"})
-      }
-    } else {
-      res.status(400).json({ error: "Verification not completed yet." });
-    }
-   
     res.send({ url: session.url });
 
   } catch (err) {

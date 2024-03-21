@@ -6,21 +6,28 @@ export const saveVerified = async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
 
-        const verified = await VerifiedModel.create({
-            userId: id,
-            verified: true,
-        })
+        const verifiedExists = await VerifiedModel.findOne({ userId: id });
 
-        if(verified) {
-            const user = userModel.findByIdAndUpdate({_id: id}, {
-                verified: true
-            });
-            if(!user) {
-                return res.status(400).json({message: "user Id not found"})
+        if(!verifiedExists) {
+            const verified = await VerifiedModel.create({
+                userId: id,
+                verified: true,
+            })
+
+            if (verified) {
+              const user = await userModel.findByIdAndUpdate(
+                { _id: id },
+                {
+                  verified: true,
+                }
+              );
+              if (!user) {
+                return res.status(400).json({ message: "user Id not found" });
+              }
+              return res.status(201).json({ message: "Verified successfully" });
+            } else {
+              return res.status(404).json({ error: "Something went wrong" });
             }
-            return res.status(201).json({message: "Verified successfully"})
-        } else {
-            return res.status(404).json({error: "Something went wrong"})
         }
     } catch (error) {
         console.log(error)
