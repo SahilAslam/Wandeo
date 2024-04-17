@@ -10,13 +10,15 @@ import { ToastContainer, toast } from "react-toastify";
 import CreateDiscussion from "../../../../Components/Modals/UserModals/CreateDiscussion";
 import DeleteGroupModal from "../../../../Components/Modals/UserModals/DeleteGroupModal";
 import LeaveGroup from "../../../../Components/Modals/UserModals/LeaveGroup";
+import { MdError } from "react-icons/md";
 
 const GroupDetailedPage: React.FC = () => {
   const [groupData, setGroupData] = useState<any>("");
   const [updateUI, setUpdateUI] = useState<boolean>(false);
   const [discussionModal, setDiscussionModal] = useState<boolean>(false);
-  const [modal, setModal] = useState<boolean>(false)
+  const [modal, setModal] = useState<boolean>(false);
   const [LeaveModal, setLeaveModal] = useState<boolean>(false);
+  const [isBlocked, setIsBlocked] = useState<boolean>(false);
 
   const { id } = useParams();
 
@@ -25,7 +27,7 @@ const GroupDetailedPage: React.FC = () => {
 
   const navigate = useNavigate();
 
-  const BASE_URL = import.meta.env.VITE_CLOUDINARY_BASE_URL || ""
+  const BASE_URL = import.meta.env.VITE_CLOUDINARY_BASE_URL || "";
 
   const openModal = () => {
     setDiscussionModal(true);
@@ -37,28 +39,27 @@ const GroupDetailedPage: React.FC = () => {
 
   const openDeleteGroupModal = () => {
     setModal(true);
-  }
+  };
 
   const closeDeleteModal = () => {
     setModal(false);
-  }
+  };
 
   const openLeaveModal = () => {
     setLeaveModal(true);
-  }
+  };
 
   const closeLeaveModal = () => {
     setLeaveModal(false);
-  }
+  };
 
   const getGroupDetails = async () => {
     // eslint-disable-next-line no-useless-catch
     try {
       const response = await axiosInstance.get(`/groupDetailedPage/${id}`);
       const groupDetails = response.data?.group;
-      console.log(response.data?.group);
-
       setGroupData(groupDetails);
+      setIsBlocked(response?.data?.group?.isBlocked);
     } catch (error) {
       throw error;
     }
@@ -109,14 +110,13 @@ const GroupDetailedPage: React.FC = () => {
       await axiosInstance.delete(`/deleteGroup/${groupId}`);
 
       setTimeout(() => {
-        toast.success("Group Deleted")
-      }, 0)
-      navigate('/groups')
-  
+        toast.success("Group Deleted");
+      }, 0);
+      navigate("/groups");
     } catch (error) {
       console.error("Error while leaving the group:", error);
     }
-  }
+  };
 
   const timeAgo = (date: string) => {
     const currentDate = new Date();
@@ -178,34 +178,56 @@ const GroupDetailedPage: React.FC = () => {
               <div className="pt-8 pb-5">
                 <p>{groupData?.description}</p>
               </div>
-              {isCreaterUser() ? (
-                <div className="flex justify-end">
+              <div
+                className={`flex ${
+                  isBlocked ? "justify-between" : "justify-end"
+                }`}
+              >
+                {isBlocked && (
+                  <div className="flex items-end">
+                    <div className="flex items-center">
+                      <MdError className="text-red-600 text-2xl mr-0.5" />
+                      <p className="text-red-600 text-base">
+                        This group has been blocked by the admin
+                      </p>
+                    </div>
+                  </div>
+                )}
+                {isCreaterUser() ? (
                   <button
-                      onClick={openDeleteGroupModal}
-                      className="border border-sky-700 rounded text-sky-700 px-3 py-1.5 transition duration-500 hover:transition hover:duration-300 hover:bg-sky-700 hover:text-white "
-                    >
-                      Delete Group
-                    </button>
-                </div>
-              ) : (
-                <div className="flex justify-end">
-                  {userIsMember() ? (
-                    <button
-                      onClick={openLeaveModal}
-                      className="border border-sky-700 rounded text-sky-700 px-3 py-1.5 transition duration-500 hover:transition hover:duration-300 hover:bg-sky-700 hover:text-white "
-                    >
-                      Leave Group
-                    </button>
-                  ) : (
-                    <button
-                      onClick={() => handleJoin(groupData?._id)}
-                      className="border border-sky-700 rounded text-sky-700 px-3 py-1.5 transition duration-500 hover:transition hover:duration-300 hover:bg-sky-700 hover:text-white "
-                    >
-                      Join Group
-                    </button>
-                  )}
-                </div>
-              )}
+                    onClick={openDeleteGroupModal}
+                    className={`border rounded px-3 py-1.5 transition duration-500 hover:transition hover:duration-300 hover:text-white ${
+                      isBlocked
+                        ? "border-red-600 hover:bg-red-600 text-red-600"
+                        : "border-sky-700 hover:bg-sky-700 text-sky-700"
+                    }`}
+                  >
+                    Delete Group
+                  </button>
+                ) : userIsMember() ? (
+                  <button
+                    onClick={openLeaveModal}
+                    className={`border rounded px-3 py-1.5 transition duration-500 hover:transition hover:duration-300 hover:text-white ${
+                      isBlocked
+                        ? "border-red-600 hover:bg-red-600 text-red-600"
+                        : "border-sky-700 hover:bg-sky-700 text-sky-700"
+                    }`}
+                  >
+                    Leave Group
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => handleJoin(groupData?._id)}
+                    className={`border rounded px-3 py-1.5 transition duration-500 hover:transition hover:duration-300 hover:text-white ${
+                      isBlocked
+                        ? "border-red-600 hover:bg-red-600 text-red-600"
+                        : "border-sky-700 hover:bg-sky-700 text-sky-700"
+                    }`}
+                  >
+                    Join Group
+                  </button>
+                )}
+              </div>
             </div>
             <div className="bg-white w-full shadow-lg">
               <div className="px-4 py-4 flex">
@@ -217,7 +239,12 @@ const GroupDetailedPage: React.FC = () => {
                   {userIsMember() ? (
                     <button
                       onClick={openModal}
-                      className="bg-sky-700 hover:bg-sky-600 text-white font-semibold px-3 py-1.5 rounded"
+                      className={`${
+                        isBlocked
+                          ? "bg-red-600 opacity-50 cursor-not-allowed"
+                          : "bg-sky-700 hover:bg-sky-600"
+                      } text-white font-semibold px-3 py-1.5 rounded transition duration-300`}
+                      disabled={isBlocked} // Disable the button when isBlocked is true
                     >
                       New Topic
                     </button>
@@ -227,10 +254,9 @@ const GroupDetailedPage: React.FC = () => {
                 </div>
               </div>
               {groupData.discussions?.length > 0 ? (
-                groupData.discussions.map((discussion: any) => (
-                  <div className="px-4 py-4 flex justify-between ">
+                groupData.discussions.map((discussion: any, index: number) => (
+                  <div className="px-4 py-4 flex justify-between" key={index}>
                     <div className="flex gap-4">
-                      
                       {discussion?.userId?.profileImage ? (
                         <img
                           src={`${discussion?.userId.profileImage}`}
@@ -279,8 +305,16 @@ const GroupDetailedPage: React.FC = () => {
         closeModal={closeModal}
         setUpdateUI={setUpdateUI}
       />
-      <DeleteGroupModal visible={modal} closeModal={closeDeleteModal} deleteGroup={() => deleteGroup(groupData?._id)} />
-      <LeaveGroup visible={LeaveModal} closeModal={closeLeaveModal} LeaveGroup={() => leaveGroup(groupData?._id)} />
+      <DeleteGroupModal
+        visible={modal}
+        closeModal={closeDeleteModal}
+        deleteGroup={() => deleteGroup(groupData?._id)}
+      />
+      <LeaveGroup
+        visible={LeaveModal}
+        closeModal={closeLeaveModal}
+        LeaveGroup={() => leaveGroup(groupData?._id)}
+      />
     </>
   );
 };

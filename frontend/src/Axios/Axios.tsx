@@ -3,7 +3,7 @@ import { toast } from "react-toastify";
 
 const arr = ["http://localhost:5000","https://wandeo.website"]
 const axiosInstance = axios.create({
-    baseURL: arr[1]
+    baseURL: arr[0]
 });
 
 axiosInstance.interceptors.request.use(

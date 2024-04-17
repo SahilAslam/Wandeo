@@ -1,0 +1,36 @@
+.spinner {
+    animation: spin 2s linear infinite;
+    z-index: 2;
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+}
+
+.spinner .path {
+    stroke: rgb(11, 17, 22);
+    stroke-linecap: round;
+    animation: spinner-path 1.5s ease-in-out infinite;
+}
+
+@keyframes spin {
+    100% {
+        transform: spin(360deg);
+    }
+}
+
+@keyframes spinner-path {
+    0% {
+        stroke-dasharray: 1, 150;
+        stroke-dashoffset: 0;
+    }
+    50% {
+        stroke-dasharray: 90, 150;
+        stroke-dashoffset: -35;
+    }
+    100% {
+        stroke-dasharray: 90, 150;
+        stroke-dashoffset: -124;
+    }
+}

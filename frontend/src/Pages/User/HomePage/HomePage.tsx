@@ -15,6 +15,7 @@ function HomePage() {
   const [userDetails, setUserDetails] = useState<any>([]);
   const [publicTrips, setPublicTrips] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const user = useSelector(selectUser) as any;
   const id = user?.id ? user?.id : user?.user?._id;
@@ -22,6 +23,7 @@ function HomePage() {
   const navigate = useNavigate();
 
   useEffect(() => {
+    setIsLoading(true);
     axiosInstance
       .get(`/profile/${id}`)
       .then((res) => {
@@ -29,6 +31,7 @@ function HomePage() {
           console.log(res.data.user);
 
           setUserDetails(res.data.user);
+          setIsLoading(false);
         } else {
           console.error("Invalid data received from the API:", res.data.user);
         }
@@ -68,11 +71,17 @@ function HomePage() {
         <div className="pt-3 px-4 lg:px-32">
           <div className="flex flex-col md:flex-row gap-3">
             <div className="flex flex-col gap-3">
-              <div>
-                <UserDetailsCard userDetails={userDetails} />
+              <div className="w-auto md:w-72 bg-white">
+                <UserDetailsCard
+                  userDetails={userDetails}
+                  isLoading={isLoading}
+                />
               </div>
               <div>
-                <UserGroupCard userDetails={userDetails} />
+                <UserGroupCard
+                  userDetails={userDetails}
+                  isLoading={isLoading}
+                />
               </div>
             </div>
             <div className="w-full flex flex-col gap-3">
@@ -99,7 +108,10 @@ function HomePage() {
                       </div>
                     </div>
                     <div className="w-full flex justify-center items-center pb-4 sm:justify-end sm:pr-8 sm:pt-8 ">
-                      <button className="bg-green-500 text-white rounded-sm px-20 py-2 h-[43px]" onClick={() => navigate('/payment')}>
+                      <button
+                        className="bg-green-500 text-white rounded-sm px-20 py-2 h-[43px]"
+                        onClick={() => navigate("/payment")}
+                      >
                         Verify
                       </button>
                     </div>
@@ -107,9 +119,7 @@ function HomePage() {
                 </div>
               )}
               <div className="bg-white shadow-lg">
-                <form
-                  onSubmit={handleSearch}
-                >
+                <form onSubmit={handleSearch}>
                   <div className="px-5 py-4 border-b flex items-center">
                     <MdOutlineTour className="text-xl text-slate-700 mr-2" />
                     <h1 className="text-lg font-semibold text-slate-700 uppercase">

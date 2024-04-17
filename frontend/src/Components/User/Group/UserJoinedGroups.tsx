@@ -5,6 +5,7 @@ import { useSelector } from "react-redux";
 import { selectUser } from "../../../Redux/Slice/userSlice";
 import axiosInstance from "../../../Axios/Axios";
 import { useNavigate } from "react-router-dom";
+import Spinner from "../../Spinner/Spinner";
 
 interface Group {
   _id: string;
@@ -21,6 +22,7 @@ interface UserData {
 
 const UserJoinedGroups: React.FC = () => {
   const [userData, setUserData] = useState<UserData>({ groups: [] });
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const user = useSelector(selectUser) as any;
   const userId = user?.id ? user?.id : user?.user?._id;
@@ -31,11 +33,13 @@ const UserJoinedGroups: React.FC = () => {
     "https://res.cloudinary.com/dkba47utw/image/upload/v1698223651";
 
   useEffect(() => {
+    setIsLoading(true);
     axiosInstance
       .get(`/joinedGroups/${userId}`)
       .then((response) => {
         if (response.data.user) {
           setUserData(response.data.user);
+          setIsLoading(false)
         } else {
           console.log(
             "Invalid data received from the API:",
@@ -91,7 +95,11 @@ const UserJoinedGroups: React.FC = () => {
         <h1 className="font-semibold text-slate-800 text-lg">My Groups</h1>
       </div>
       <div className="w-full">
-        {userData.groups?.length > 0 ? (
+        {isLoading ? (
+          <div>
+            <Spinner />
+          </div>
+        ) : userData.groups?.length > 0 ? (
           userData.groups.map((group) => (
             <div key={group?._id} className="w-auto event-card border-t">
               <div className="flex flex-row gap-4">
@@ -132,7 +140,7 @@ const UserJoinedGroups: React.FC = () => {
                         Last Activity
                       </h3>
                       <p className="text-gray-400 text-xs font-semibold">
-                      {timeAgo(group.updatedAt)}
+                        {timeAgo(group.updatedAt)}
                       </p>
                     </div>
                   </div>
@@ -143,7 +151,7 @@ const UserJoinedGroups: React.FC = () => {
                       Last Activity
                     </h3>
                     <p className="text-slate-800 text-xs lg:text-sm">
-                    {timeAgo(group.updatedAt)}
+                      {timeAgo(group.updatedAt)}
                     </p>
                   </div>
                 </div>

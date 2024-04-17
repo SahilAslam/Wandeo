@@ -49,7 +49,7 @@ const getSingleDiscussion = async (req: Request, res: Response) => {
       .populate("userId")
       .populate({
         path: "groupId",
-        select: "name",
+        select: "name isBlocked",
       })
       .populate({
         path: "replies.userId",

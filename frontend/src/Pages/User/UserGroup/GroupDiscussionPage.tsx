@@ -8,6 +8,7 @@ const GroupDiscussionPage = () => {
   const [discussion, setDiscussion] = useState<any>({});
   const [updateUI, setUpdateUI] = useState<boolean>(false);
   const [reply, setReply] = useState("");
+  const [isBlocked, setIsBlocked] = useState<boolean>(false);
 
   const { id } = useParams();
 
@@ -18,9 +19,8 @@ const GroupDiscussionPage = () => {
     try {
       const response = await axiosInstance.get(`/getDiscussion/${id}`);
       const groupDetails = response.data?.discussion;
-      console.log(response.data?.discussion);
-
       setDiscussion(groupDetails);
+      setIsBlocked(groupDetails?.groupId?.isBlocked)
     } catch (error) {
       throw error;
     }
@@ -28,7 +28,7 @@ const GroupDiscussionPage = () => {
 
   useEffect(() => {
     getDiscussion();
-  }, [updateUI,id]);
+  }, [updateUI, id]);
 
   const handleSubmit = async (
     e: React.FormEvent<HTMLFormElement | HTMLTextAreaElement>
@@ -167,6 +167,11 @@ const GroupDiscussionPage = () => {
             )}
           </div>
           <div className="py-5">
+            <div className="pb-1">
+              {isBlocked && (
+                <p className="text-red-600">Every interactions are disabled, as this group is currently on the blacklist!</p>
+              )}
+            </div>
             <form onSubmit={handleSubmit}>
               <textarea
                 name=""
@@ -176,12 +181,22 @@ const GroupDiscussionPage = () => {
                 value={reply}
                 onChange={(e) => setReply(e.target.value)}
                 required
-                className="w-full border border-slate-300 hover:border-sky-700 rounded px-2 py-1"
+                disabled={isBlocked}
+                className={`w-full border rounded px-2 py-1 ${
+                  isBlocked
+                    ? "border-red-600 cursor-not-allowed"
+                    : "border-slate-300 hover:border-sky-700"
+                }`}
               ></textarea>
               <div className="flex justify-end pt-2">
                 <button
                   type="submit"
-                  className="bg-sky-600 text-white font-semibold hover:bg-sky-500 duration-300 hover:duration-300  px-8 py-1.5 rounded"
+                  className={`${
+                    isBlocked
+                      ? "bg-red-600 opacity-50 cursor-not-allowed"
+                      : "bg-sky-600 hover:bg-sky-500"
+                  } text-white font-semibold duration-300 hover:duration-300 px-8 py-1.5 rounded`}
+                  disabled={isBlocked}
                 >
                   Post
                 </button>
