@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useSelector } from "react-redux";
 import { selectUser } from "../../../Redux/Slice/userSlice";
 import { useNavigate } from "react-router-dom";
-import axiosInstance from "../../../Axios/Axios";
+
 import moment from "moment";
 
 interface User {
@@ -25,26 +25,15 @@ interface Chat {
   latestMessage: Message;
 }
 
-const DirectMessageInbox: React.FC = () => {
-  const [chat, setChat] = useState<Chat[]>([]);
+interface DirectMessageInboxProps {
+  chat: Chat[];
+}
 
+const DirectMessageInbox: React.FC<DirectMessageInboxProps> = ({ chat }) => {
   const user = useSelector(selectUser) as any;
   const userId = user?.id ? user?.id : user?.user?._id;
 
   const navigate = useNavigate();
-
-  useEffect(() => {
-    axiosInstance
-      .get("/getdirectmessage")
-      .then((res) => {
-        if (res.data) {
-          setChat(res.data.chat);
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, []);
 
   const handleClick = (messageId: string) => {
     navigate(`/directmessagedetailed/${messageId}`);

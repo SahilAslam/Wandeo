@@ -9,12 +9,31 @@ import axiosInstance from "../../../Axios/Axios";
 import UserJoinedGroups from "../../../Components/User/Group/UserJoinedGroups";
 import { MdArrowRight } from "react-icons/md";
 import Spinner from "../../../Components/Spinner/Spinner";
+import { useSelector } from "react-redux";
+import { selectUser } from "../../../Redux/Slice/userSlice";
+
+interface Group {
+  _id: string;
+  name: string;
+  image: string;
+  members?: any[];
+  discussions?: any[];
+  updatedAt: string;
+}
+
+interface UserData {
+  groups: Group[];
+}
 
 const GroupPage: React.FC = () => {
   const [mostPopularGroup, setMostPopularGroup] = useState<any[]>([]);
+  const [userData, setUserData] = useState<UserData>({ groups: [] });
   const [isLoading, setIsLoading] = useState(false);
 
-  const BASE_URL = import.meta.env.VITE_CLOUDINARY_BASE_URL || ""
+  const user = useSelector(selectUser) as any;
+  const userId = user?.id ? user?.id : user?.user?._id;
+
+  const BASE_URL = import.meta.env.VITE_CLOUDINARY_BASE_URL || "";
 
   const navigate = useNavigate();
 
@@ -22,23 +41,47 @@ const GroupPage: React.FC = () => {
     navigate("/createGroup");
   };
 
-
   useEffect(() => {
-    setIsLoading(true)
+    setIsLoading(true);
     axiosInstance
       .get("/getPopularGroups") // Adjust the endpoint based on your backend
       .then((response) => {
         if (response.data.popularGroups) {
           setMostPopularGroup(response.data.popularGroups);
-          setIsLoading(false);
+          
         } else {
           console.log("No response received for the most popular group");
         }
       })
       .catch((error) => {
         console.log("Cannot get the most popular group:" + error);
+      })
+      .finally(() => {
+        setIsLoading(false);
       });
-  }, [])
+  }, []);
+
+  useEffect(() => {
+    setIsLoading(true);
+    axiosInstance
+      .get(`/joinedGroups/${userId}`)
+      .then((response) => {
+        if (response.data.user) {
+          setUserData(response.data.user);
+        } else {
+          console.log(
+            "Invalid data received from the API:",
+            response.data.message
+          );
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  }, []);
 
   const timeAgo = (date: string) => {
     const currentDate = new Date();
@@ -73,24 +116,19 @@ const GroupPage: React.FC = () => {
   };
 
   const handleClick = async (groupId: string) => {
-    navigate(`/groupDetailedPage/${groupId}`)
-  }
+    navigate(`/groupDetailedPage/${groupId}`);
+  };
 
   return (
     <>
       <SignupNavbar />
       <ToastContainer />
-      <div className="w-full px-0 lg:px-4 pb-20 xl:px-40 bg-bgColor lg:rounded-lg overflow-hidden">
-        {/* {isLoading ? (
-          <div
-            className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
-            role="status"
-          >
-            <span className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">
-              Loading...
-            </span>
-          </div>
-        ) : ( */}
+      {isLoading ? (
+        <div>
+          <Spinner />
+        </div>
+      ) : (
+        <div className="w-full px-0 lg:px-4 pb-20 xl:px-40 bg-bgColor lg:rounded-lg overflow-hidden">
           <div className="w-full flex justify-center xl:justify-start flex-col gap-2 pt-5 pb-10 h-auto sm:flex-col sm:w-full lg:gap-4 md:flex-row  ">
             <div className="flex flex-col gap-4">
               <div className="flex items-center flex-col bg-white border border-slate-300 mx-4 md:mr-2 lg:mx-0">
@@ -118,84 +156,80 @@ const GroupPage: React.FC = () => {
                     Popular Groups
                   </h1>
                 </div>
-                {isLoading ? (
-                  <div>
-                    <Spinner />
-                  </div>
-                ) : (
-                  <div className="w-full ">
-                    {mostPopularGroup ? (
-                      mostPopularGroup.map((group) => (
-                        <div
-                          key={group?._id}
-                          className="w-auto event-card border-t"
-                        >
-                          <div className="flex flex-row gap-4">
-                            <div className="min-w-fit">
-                              <img
-                                className="w-8 h-8 rounded-full sm:w-[100px] sm:h-[100px] border sm:rounded"
-                                src={`${BASE_URL}/${group?.image}`}
-                                alt="Image"
-                              />
+
+                <div className="w-full ">
+                  {mostPopularGroup ? (
+                    mostPopularGroup.map((group) => (
+                      <div
+                        key={group?._id}
+                        className="w-auto event-card border-t"
+                      >
+                        <div className="flex flex-row gap-4">
+                          <div className="min-w-fit">
+                            <img
+                              className="w-8 h-8 rounded-full sm:w-[100px] sm:h-[100px] border sm:rounded"
+                              src={`${BASE_URL}/${group?.image}`}
+                              alt="Image"
+                            />
+                          </div>
+                          <div className="flex flex-col justify-start w-full">
+                            <div className="h-full">
+                              <h1
+                                className="text-green-700 hover:text-green-900 hover:underline underline-offset-1 font-semibold text-lg cursor-pointer pb-0"
+                                onClick={() => handleClick(group?._id)}
+                              >
+                                {group?.name}
+                              </h1>
                             </div>
-                            <div className="flex flex-col justify-start w-full">
-                              <div className="h-full">
-                                <h1
-                                  className="text-green-700 hover:text-green-900 hover:underline underline-offset-1 font-semibold text-lg cursor-pointer pb-0"
-                                  onClick={() => handleClick(group?._id)}
-                                >
-                                  {group?.name}
-                                </h1>
+                            <div className="flex items-start h-full">
+                              <div className="flex pr-4">
+                                <ImUsers className="text-gray-400 text-sm mr-1" />
+                                <h2 className="text-gray-400 text-xs font-semibold">
+                                  {group.memberCount ? group.memberCount : 0}{" "}
+                                  Members
+                                </h2>
                               </div>
-                              <div className="flex items-start h-full">
-                                <div className="flex pr-4">
-                                  <ImUsers className="text-gray-400 text-sm mr-1" />
-                                  <h2 className="text-gray-400 text-xs font-semibold">
-                                    {group.memberCount ? group.memberCount : 0}{" "}
-                                    Members
-                                  </h2>
-                                </div>
-                                <div className="flex">
-                                  <FaComments className="text-gray-400 text-sm mr-1" />
-                                  <h2 className="text-gray-400 text-xs font-semibold">
-                                    {group.discussions
-                                      ? group.discussions.length
-                                      : 0}{" "}
-                                    Discussions
-                                  </h2>
-                                </div>
-                              </div>
-                              <div className="sm:hidden flex w-full pt-1">
-                                <div className="flex flex-row gap-12 items-baseline">
-                                  <h3 className="text-gray-400 text-xs font-semibold">
-                                    Last Activity
-                                  </h3>
-                                  <p className="text-gray-400 text-xs font-semibold">
-                                    {timeAgo(group.updatedAt)}
-                                  </p>
-                                </div>
+                              <div className="flex">
+                                <FaComments className="text-gray-400 text-sm mr-1" />
+                                <h2 className="text-gray-400 text-xs font-semibold">
+                                  {group.discussions
+                                    ? group.discussions.length
+                                    : 0}{" "}
+                                  Discussions
+                                </h2>
                               </div>
                             </div>
-                            <div className="hidden sm:flex justify-end py-5 min-w-fit">
-                              <div className="flex flex-col ">
-                                <h3 className="text-slate-800 text-sm lg:text-base">
+                            <div className="sm:hidden flex w-full pt-1">
+                              <div className="flex flex-row gap-12 items-baseline">
+                                <h3 className="text-gray-400 text-xs font-semibold">
                                   Last Activity
                                 </h3>
-                                <p className="text-slate-800 text-xs lg:text-sm">
+                                <p className="text-gray-400 text-xs font-semibold">
                                   {timeAgo(group.updatedAt)}
                                 </p>
                               </div>
                             </div>
                           </div>
+                          <div className="hidden sm:flex justify-end py-5 min-w-fit">
+                            <div className="flex flex-col ">
+                              <h3 className="text-slate-800 text-sm lg:text-base">
+                                Last Activity
+                              </h3>
+                              <p className="text-slate-800 text-xs lg:text-sm">
+                                {timeAgo(group.updatedAt)}
+                              </p>
+                            </div>
+                          </div>
                         </div>
-                      ))
-                    ) : (
-                      <p className="px-5 py-5 text-center">
-                        No groups available at the moment.
-                      </p>
-                    )}
-                  </div>
-                )}
+                      </div>
+                    ))
+                  ) : (
+                    <p className="px-5 py-5 text-center">
+                      No groups available at the moment.
+                    </p>
+                  )}
+                </div>
+
                 <div className="py-3.5 px-4 w-full flex bg-slate-100">
                   <h1
                     onClick={() => navigate("/allGroups")}
@@ -206,11 +240,12 @@ const GroupPage: React.FC = () => {
                   <MdArrowRight className="text-link-color text-2xl mt-0.5 hover:underline" />
                 </div>
               </div>
-              <UserJoinedGroups />
+              <UserJoinedGroups userData={userData} />
             </div>
           </div>
-        {/* )} */}
-      </div>
+          {/* )} */}
+        </div>
+      )}
     </>
   );
 };

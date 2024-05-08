@@ -16,7 +16,6 @@ const createUserEvent = async (req: Request, res: Response) => {
       image,
       description,
     } = req.body;
-    console.log(req.body);
 
     const user = await userModel.findById(id);
 
@@ -70,10 +69,8 @@ const getUserEvent = async (req: Request, res: Response) => {
 const joinUserEvent = async (req: Request, res: Response) => {
   try {
     const eventId = req.params.eventId;
-    console.log(eventId);
 
     const user = req.user;
-    console.log(user);
 
     if (!user) {
       return res.status(404).json({ error: "No user found" });
@@ -122,10 +119,8 @@ const joinUserEvent = async (req: Request, res: Response) => {
 const leaveUserEvent = async (req: Request, res: Response) => {
   try {
     const eventId = req.params.eventId;
-    console.log(eventId);
 
     const user = req.user;
-    console.log(user);
 
     if (!user) {
       return res.status(404).json({ error: "No user found" });
@@ -201,7 +196,6 @@ const getEventDetailedPage = async (req: Request, res: Response) => {
     const event = await EventModel.findById(id)
       .populate("organizedBy", "name")
       .populate("attendees");
-    console.log(event);
 
     if (!event) {
       res.status(404).json({ error: "Event not found!" });

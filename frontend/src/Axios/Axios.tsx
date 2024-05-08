@@ -1,9 +1,15 @@
 import axios from "axios";
 import { toast } from "react-toastify";
 
-const arr = ["http://localhost:5000","https://wandeo.website"]
+let BASEURL;
+if (import.meta.env.VITE_MODE === "development") {
+  BASEURL = "http://localhost:5000"
+} else {
+  BASEURL = "https://wandeo.website"
+}
+
 const axiosInstance = axios.create({
-    baseURL: arr[0]
+    baseURL: BASEURL
 });
 
 axiosInstance.interceptors.request.use(

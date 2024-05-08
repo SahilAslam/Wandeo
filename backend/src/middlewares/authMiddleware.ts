@@ -40,7 +40,7 @@ const protect = asyncHandler(
       try {
         const decoded = jwt.verify(token, secretKey) as JwtPayload;
         const userId: string = decoded.user_id;
-        console.log("token is valid:", decoded);
+        // console.log("token is valid:", decoded);
 
         const user = await userModel
           .findById(userId)

@@ -11,6 +11,7 @@ import CreateDiscussion from "../../../../Components/Modals/UserModals/CreateDis
 import DeleteGroupModal from "../../../../Components/Modals/UserModals/DeleteGroupModal";
 import LeaveGroup from "../../../../Components/Modals/UserModals/LeaveGroup";
 import { MdError } from "react-icons/md";
+import Spinner from "../../../../Components/Spinner/Spinner";
 
 const GroupDetailedPage: React.FC = () => {
   const [groupData, setGroupData] = useState<any>("");
@@ -19,6 +20,7 @@ const GroupDetailedPage: React.FC = () => {
   const [modal, setModal] = useState<boolean>(false);
   const [LeaveModal, setLeaveModal] = useState<boolean>(false);
   const [isBlocked, setIsBlocked] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const { id } = useParams();
 
@@ -56,12 +58,20 @@ const GroupDetailedPage: React.FC = () => {
   const getGroupDetails = async () => {
     // eslint-disable-next-line no-useless-catch
     try {
+      setIsLoading(true)
       const response = await axiosInstance.get(`/groupDetailedPage/${id}`);
-      const groupDetails = response.data?.group;
+
+      if (response && response.data && response.data.group) {
+      const groupDetails = response.data.group;
       setGroupData(groupDetails);
-      setIsBlocked(response?.data?.group?.isBlocked);
-    } catch (error) {
-      throw error;
+      setIsBlocked(groupDetails.isBlocked);
+    } else {
+      throw new Error("Invalid response format");
+    }
+  } catch (error) {
+    console.error("Error fetching group details:", error);
+  } finally {
+      setIsLoading(false)
     }
   };
 
@@ -158,148 +168,162 @@ const GroupDetailedPage: React.FC = () => {
     <>
       <Navbar />
       <ToastContainer />
-      <div className="w-full p-4 xl:px-52">
-        <div className="flex flex-col md:flex-row gap-4">
-          <div className="">
-            <MembersCard groupData={groupData} />
-          </div>
-          <div className="flex flex-col gap-4 xl:w-[660px]">
-            <div className="px-4 py-4 bg-white shadow-lg">
-              <div className="flex flex-row gap-4">
-                <img
-                  src={`${BASE_URL}/${groupData?.image}`}
-                  alt="img"
-                  className="w-[80px] h-[80px] rounded"
-                />
-                <h1 className="text-4xl text-slate-800 font-semibold">
-                  {groupData?.name}
-                </h1>
-              </div>
-              <div className="pt-8 pb-5">
-                <p>{groupData?.description}</p>
-              </div>
-              <div
-                className={`flex ${
-                  isBlocked ? "justify-between" : "justify-end"
-                }`}
-              >
-                {isBlocked && (
-                  <div className="flex items-end">
-                    <div className="flex items-center">
-                      <MdError className="text-red-600 text-2xl mr-0.5" />
-                      <p className="text-red-600 text-base">
-                        This group has been blocked by the admin
-                      </p>
-                    </div>
-                  </div>
-                )}
-                {isCreaterUser() ? (
-                  <button
-                    onClick={openDeleteGroupModal}
-                    className={`border rounded px-3 py-1.5 transition duration-500 hover:transition hover:duration-300 hover:text-white ${
-                      isBlocked
-                        ? "border-red-600 hover:bg-red-600 text-red-600"
-                        : "border-sky-700 hover:bg-sky-700 text-sky-700"
-                    }`}
-                  >
-                    Delete Group
-                  </button>
-                ) : userIsMember() ? (
-                  <button
-                    onClick={openLeaveModal}
-                    className={`border rounded px-3 py-1.5 transition duration-500 hover:transition hover:duration-300 hover:text-white ${
-                      isBlocked
-                        ? "border-red-600 hover:bg-red-600 text-red-600"
-                        : "border-sky-700 hover:bg-sky-700 text-sky-700"
-                    }`}
-                  >
-                    Leave Group
-                  </button>
-                ) : (
-                  <button
-                    onClick={() => handleJoin(groupData?._id)}
-                    className={`border rounded px-3 py-1.5 transition duration-500 hover:transition hover:duration-300 hover:text-white ${
-                      isBlocked
-                        ? "border-red-600 hover:bg-red-600 text-red-600"
-                        : "border-sky-700 hover:bg-sky-700 text-sky-700"
-                    }`}
-                  >
-                    Join Group
-                  </button>
-                )}
-              </div>
+      {isLoading ? (
+        <div>
+          <Spinner />
+        </div>
+      ) : (
+        <div className="w-full p-4 xl:px-52">
+          <div className="flex flex-col md:flex-row gap-4">
+            <div className="">
+              <MembersCard groupData={groupData} />
             </div>
-            <div className="bg-white w-full shadow-lg">
-              <div className="px-4 py-4 flex">
-                <div className="flex">
-                  <FaComments className="text-gray-700 text-2xl mt-1 mr-1.5" />
-                  <h1 className="text-gray-700 text-2xl">Discussions</h1>
+            <div className="flex flex-col gap-4 xl:w-[660px]">
+              <div className="px-4 py-4 bg-white shadow-lg">
+                <div className="flex flex-row gap-4">
+                  <img
+                    src={`${BASE_URL}/${groupData?.image}`}
+                    alt="img"
+                    className="w-[80px] h-[80px] rounded"
+                  />
+                  <h1 className="text-4xl text-slate-800 font-semibold">
+                    {groupData?.name}
+                  </h1>
                 </div>
-                <div className="flex justify-end w-full">
-                  {userIsMember() ? (
+                <div className="pt-8 pb-5">
+                  <p>{groupData?.description}</p>
+                </div>
+                <div
+                  className={`flex ${
+                    isBlocked ? "justify-between" : "justify-end"
+                  }`}
+                >
+                  {isBlocked && (
+                    <div className="flex items-end">
+                      <div className="flex items-center">
+                        <MdError className="text-red-600 text-2xl mr-0.5" />
+                        <p className="text-red-600 text-base">
+                          This group has been blocked by the admin
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                  {isCreaterUser() ? (
                     <button
-                      onClick={openModal}
-                      className={`${
+                      onClick={openDeleteGroupModal}
+                      className={`border rounded px-3 py-1.5 transition duration-500 hover:transition hover:duration-300 hover:text-white ${
                         isBlocked
-                          ? "bg-red-600 opacity-50 cursor-not-allowed"
-                          : "bg-sky-700 hover:bg-sky-600"
-                      } text-white font-semibold px-3 py-1.5 rounded transition duration-300`}
-                      disabled={isBlocked} // Disable the button when isBlocked is true
+                          ? "border-red-600 hover:bg-red-600 text-red-600"
+                          : "border-sky-700 hover:bg-sky-700 text-sky-700"
+                      }`}
                     >
-                      New Topic
+                      Delete Group
+                    </button>
+                  ) : userIsMember() ? (
+                    <button
+                      onClick={openLeaveModal}
+                      className={`border rounded px-3 py-1.5 transition duration-500 hover:transition hover:duration-300 hover:text-white ${
+                        isBlocked
+                          ? "border-red-600 hover:bg-red-600 text-red-600"
+                          : "border-sky-700 hover:bg-sky-700 text-sky-700"
+                      }`}
+                    >
+                      Leave Group
                     </button>
                   ) : (
-                    <p>Join this group to start a new discussion.</p>
+                    <button
+                      onClick={() => handleJoin(groupData?._id)}
+                      className={`border rounded px-3 py-1.5 transition duration-500 hover:transition hover:duration-300 hover:text-white ${
+                        isBlocked
+                          ? "border-red-600 hover:bg-red-600 text-red-600"
+                          : "border-sky-700 hover:bg-sky-700 text-sky-700"
+                      }`}
+                    >
+                      Join Group
+                    </button>
                   )}
                 </div>
               </div>
-              {groupData.discussions?.length > 0 ? (
-                groupData.discussions.map((discussion: any, index: number) => (
-                  <div className="px-4 py-4 flex justify-between" key={index}>
-                    <div className="flex gap-4">
-                      {discussion?.userId?.profileImage ? (
-                        <img
-                          src={`${discussion?.userId.profileImage}`}
-                          alt="img"
-                          className="border rounded-full w-8 h-8"
-                        />
-                      ) : (
-                        <img
-                          src={`/profile-picture-placeholder.png`}
-                          alt=""
-                          className="w-8 h-8 object-cover rounded-full opacity-100"
-                        />
-                      )}
-                      <div className="flex flex-col">
-                        <p
-                          onClick={() => handleClick(discussion?._id)}
-                          className="text-slate-800 font-medium hover:underline cursor-pointer"
-                        >
-                          {discussion.title}
-                        </p>
-                        <div className="flex">
-                          <FaComments className="text-gray-400 text-xs mt-0.5 mr-1" />
-                          <p className="text-gray-400 text-xs font-medium">
-                            {discussion.replies ? discussion.replies.length : 0}{" "}
-                            replies
-                          </p>
+              <div className="bg-white w-full shadow-lg">
+                <div className="px-4 py-4 flex">
+                  <div className="flex">
+                    <FaComments className="text-gray-700 text-2xl mt-1 mr-1.5" />
+                    <h1 className="text-gray-700 text-2xl">Discussions</h1>
+                  </div>
+                  <div className="flex justify-end w-full">
+                    {userIsMember() ? (
+                      <button
+                        onClick={openModal}
+                        className={`${
+                          isBlocked
+                            ? "bg-red-600 opacity-50 cursor-not-allowed"
+                            : "bg-sky-700 hover:bg-sky-600"
+                        } text-white font-semibold px-3 py-1.5 rounded transition duration-300`}
+                        disabled={isBlocked} // Disable the button when isBlocked is true
+                      >
+                        New Topic
+                      </button>
+                    ) : (
+                      <p>Join this group to start a new discussion.</p>
+                    )}
+                  </div>
+                </div>
+                {groupData.discussions?.length > 0 ? (
+                  groupData.discussions.map(
+                    (discussion: any, index: number) => (
+                      <div
+                        className="px-4 py-4 flex justify-between"
+                        key={index}
+                      >
+                        <div className="flex gap-4">
+                          {discussion?.userId?.profileImage ? (
+                            <img
+                              src={`${discussion?.userId.profileImage}`}
+                              alt="img"
+                              className="border rounded-full w-8 h-8"
+                            />
+                          ) : (
+                            <img
+                              src={`/profile-picture-placeholder.png`}
+                              alt=""
+                              className="w-8 h-8 object-cover rounded-full opacity-100"
+                            />
+                          )}
+                          <div className="flex flex-col">
+                            <p
+                              onClick={() => handleClick(discussion?._id)}
+                              className="text-slate-800 font-medium hover:underline cursor-pointer"
+                            >
+                              {discussion.title}
+                            </p>
+                            <div className="flex">
+                              <FaComments className="text-gray-400 text-xs mt-0.5 mr-1" />
+                              <p className="text-gray-400 text-xs font-medium">
+                                {discussion.replies
+                                  ? discussion.replies.length
+                                  : 0}{" "}
+                                replies
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="">
+                          <p>{timeAgo(discussion.createdAt)}</p>
                         </div>
                       </div>
-                    </div>
-                    <div className="">
-                      <p>{timeAgo(discussion.createdAt)}</p>
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <p className="px-5 py-3 bg-slate-100 text-center">
-                  No Discussions yet!
-                </p>
-              )}
+                    )
+                  )
+                ) : (
+                  <p className="px-5 py-3 bg-slate-100 text-center">
+                    No Discussions yet!
+                  </p>
+                )}
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      )}
+
       <CreateDiscussion
         visible={discussionModal}
         closeModal={closeModal}

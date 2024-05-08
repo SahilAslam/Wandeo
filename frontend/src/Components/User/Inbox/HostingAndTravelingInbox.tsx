@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
-import axiosInstance from "../../../Axios/Axios";
 import { useSelector } from "react-redux";
 import { selectUser } from "../../../Redux/Slice/userSlice";
 import moment from "moment";
@@ -25,26 +24,17 @@ interface HostingMessage {
   latestMessage: Message;
 }
 
-const HostingAndTravelingInbox: React.FC = () => {
-  const [messages, setMessages] = useState<HostingMessage[]>([]);
+interface HostingMessageProps {
+  messages: HostingMessage[];
+}
 
+const HostingAndTravelingInbox: React.FC<HostingMessageProps> = ({
+  messages,
+}) => {
   const user = useSelector(selectUser) as any;
   const userId = user?.id ? user?.id : user?.user?._id;
 
   const navigate = useNavigate();
-
-  useEffect(() => {
-    axiosInstance
-      .get("/gethostingmessages")
-      .then((res) => {
-        if (res.data) {
-          setMessages(res.data.messages);
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, []);
 
   const handleClick = (messageId: string) => {
     navigate(`/messageDetailedPage/${messageId}`);

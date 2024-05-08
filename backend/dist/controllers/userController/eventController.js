@@ -19,7 +19,6 @@ const createUserEvent = (req, res) => __awaiter(void 0, void 0, void 0, function
     try {
         const id = req.params.id;
         const { eventName, location, startDate, endDate, attendeesLimit, image, description, } = req.body;
-        console.log(req.body);
         const user = yield userModel_1.default.findById(id);
         if (!user) {
             return res.status(404).json({ message: "Not found" });
@@ -66,9 +65,7 @@ exports.getUserEvent = getUserEvent;
 const joinUserEvent = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const eventId = req.params.eventId;
-        console.log(eventId);
         const user = req.user;
-        console.log(user);
         if (!user) {
             return res.status(404).json({ error: "No user found" });
         }
@@ -106,9 +103,7 @@ exports.joinUserEvent = joinUserEvent;
 const leaveUserEvent = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const eventId = req.params.eventId;
-        console.log(eventId);
         const user = req.user;
-        console.log(user);
         if (!user) {
             return res.status(404).json({ error: "No user found" });
         }
@@ -168,7 +163,6 @@ const getEventDetailedPage = (req, res) => __awaiter(void 0, void 0, void 0, fun
         const event = yield eventModel_1.default.findById(id)
             .populate("organizedBy", "name")
             .populate("attendees");
-        console.log(event);
         if (!event) {
             res.status(404).json({ error: "Event not found!" });
         }

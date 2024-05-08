@@ -56,42 +56,37 @@ app.get("*", function (req, res) {
 
 
 io.on('connection', (socket) => {
-    console.log(`User Connected: ${socket.id}`);
+  console.log(`User Connected: ${socket.id}`);
 
-    socket.on("send_message", (data) => {
-      console.log("message: ", data)
-      socket.broadcast.emit("receive_message", data);
-    })
-
-    // socket.on("join_room", (data) => {
-    //   socket.join(data);
-    //   console.log("joined room: ", data)
-    // });
-
-    // socket.on("send_message", (data) => {
-    //   console.log("message: ", data)
-    //   socket.to(data.id).emit("receive_message", data);
-    // });
-
-    
-
-    // socket.on("new message", (msg) => {
-    //   console.log("message: " + msg);
-    //   io.to(msg.room).emit("receive_message", msg);
-    // });
-  
-    // socket.on("setup", (userData) => {
-    //   socket.join(userData);
-    //   console.log('userId:', userData);
-    //   socket.emit("connected");
-    // });
-  
-    // socket.on("join chat", (room) => {
-    //   socket.join(room);
-    //   console.log("user Joined room: " + room);
-    // });
-  
-    
+  socket.on("send_message", (data) => {
+    console.log("message: ", data);
+    socket.broadcast.emit("receive_message", data);
   });
+
+  // socket.on("setup", (userData) => {
+  //   socket.join(userData);
+  //   console.log("userId:", userData);
+  //   socket.emit("connected");
+  // });
+
+  // socket.on("send_message", (data) => {
+  //   console.log("message: ", data)
+  //   socket.broadcast.emit("receive_message", data);
+  // })
+
+  // socket.on("send_message", async (data) => {
+  //   console.log("message: ", data);
+  //   try {
+  //     const { id, message } = data;
+  //     socket.broadcast.to(id).emit("receive_message", { message });
+  //   } catch (error) {
+  //     console.error("Error sending message:", error);
+  //   }
+  // });
+
+  // socket.on("disconnect", () => {
+  //   console.log(`User Disconnected: ${socket.id}`);
+  // });
+});
 
 server.listen(port, () => console.log(`server is running on port: http://localhost:${port}`));

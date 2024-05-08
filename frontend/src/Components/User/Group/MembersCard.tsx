@@ -30,7 +30,7 @@ const MembersCard: React.FC<MembersCardProps> = ({ groupData }) => {
         <h1 className="text-sm font-semibold">MEMBERS</h1>
       </div>
       <div>
-        <div key={groupData?._id} className="flex gap-4 px-5 py-4">
+        <div key={groupData?._id} className="flex gap-2 px-5 py-4">
           {groupData?.members?.length > 0 ? (
             groupData?.members?.map((member: any) => (
               <div>
@@ -46,7 +46,7 @@ const MembersCard: React.FC<MembersCardProps> = ({ groupData }) => {
                     src={`/profile-picture-placeholder.png`}
                     alt=""
                     onClick={() => handleClick(member._id)}
-                    className="w-8 h-8 object-cover rounded-full opacity-100"
+                    className="w-8 h-8 rounded-full opacity-100"
                   />
                 )}
               </div>

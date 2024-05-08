@@ -30,7 +30,6 @@ const protect = (0, express_async_handler_1.default)((req, res, next) => __await
         try {
             const decoded = jsonwebtoken_1.default.verify(token, secretKey);
             const userId = decoded.user_id;
-            console.log("token is valid:", decoded);
             const user = yield userModel_1.default
                 .findById(userId)
                 .select("-password");

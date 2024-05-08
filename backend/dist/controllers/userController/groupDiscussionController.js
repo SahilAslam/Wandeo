@@ -56,7 +56,7 @@ const getSingleDiscussion = (req, res) => __awaiter(void 0, void 0, void 0, func
             .populate("userId")
             .populate({
             path: "groupId",
-            select: "name",
+            select: "name isBlocked",
         })
             .populate({
             path: "replies.userId",

@@ -1,7 +1,14 @@
 import axios from "axios";
-const arr = ["http://localhost:5000/admin","https://wandeo.website/admin"]
+
+let BASEURL;
+if (import.meta.env.VITE_MODE === "development") {
+  BASEURL = "http://localhost:5000/admin";
+} else {
+  BASEURL = "https://wandeo.website/admin";
+}
+
 const adminInstance = axios.create({
-    baseURL: arr[0]
+    baseURL: BASEURL
 });
 
 adminInstance.interceptors.request.use(

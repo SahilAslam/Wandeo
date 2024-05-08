@@ -204,7 +204,12 @@ const Navbar: React.FC = () => {
                   onChange={handleSearchChange}
                   onClick={(e) => e.stopPropagation()}
                   className="block w-full p-2 pl-10 text-sm text-gray-900 border-y border-r border-gray-300 rounded-r-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 "
-                  placeholder="Search"
+                  placeholder={
+                    selectedMenu === "Find Hosts" ||
+                    selectedMenu === "Find Travelers"
+                      ? `Enter a place or name`
+                      : `Search`
+                  }
                 />
               </form>
             </div>
@@ -437,9 +442,7 @@ const Navbar: React.FC = () => {
             )}
           </div>
           <div className="relative block lg:hidden">
-            <div
-              className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"
-            >
+            <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
               <svg
                 className="w-4 h-4 text-gray-500 cursor-pointer"
                 aria-hidden="true"
@@ -511,7 +514,7 @@ const Navbar: React.FC = () => {
               </Link>
             </li>
             <li>
-              <Link to="/inbox"> 
+              <Link to="/inbox">
                 <a
                   className={`togglenavitem block py-2 pl-3 pr-4 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 ${
                     isInboxPage ? "bg-green-800 text-white" : "text-gray-900"

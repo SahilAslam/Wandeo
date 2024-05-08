@@ -11,6 +11,7 @@ import { useNavigate } from "react-router-dom";
 interface PublicTripsProps {
   publicTrips: Trip[];
   hostingExists: any;
+  userName: string;
 }
 
 interface Trip {
@@ -23,7 +24,7 @@ interface Trip {
   description: string;
 }
 
-const UsersTrips: React.FC<PublicTripsProps> = ({ publicTrips, hostingExists }) => {
+const UsersTrips: React.FC<PublicTripsProps> = ({ publicTrips, hostingExists, userName }) => {
   const [showMoreStates, setShowMoreStates] = useState<{
     [key: string]: boolean;
   }>({});
@@ -122,7 +123,7 @@ const UsersTrips: React.FC<PublicTripsProps> = ({ publicTrips, hostingExists }) 
         ))
       ) : (
         <div className="flex items-center justify-center bg-slate-100">
-          <p className="py-8">You have no upcoming trips.</p>
+          <p className="py-8">{userName} have no upcoming trips.</p>
         </div>
       )}
     </>
